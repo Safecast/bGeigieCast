@@ -1,0 +1,40 @@
+@startuml
+
+State Initializing
+State Active
+
+[*] -> Initializing
+
+state Active {
+    state SetupServer
+    state ServerActive
+
+    SetupServer -d-> ServerActive
+
+    state MobileMode
+    state StationaryMode
+
+    state StationaryMode {
+        state Connecting
+        state Connected
+        state Reconnecting
+        state Disconnecting
+
+        MobileMode -> Connecting
+        Connecting --> Connected
+        Connected --> Disconnecting
+        Connected -> Reconnecting
+        Reconnecting -> Connected
+
+        Connecting -> MobileMode
+        Disconnecting -> MobileMode
+
+    }
+
+    Initializing --> SetupServer
+    Initializing --> MobileMode
+
+}
+
+
+@enduml
