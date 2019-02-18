@@ -8,32 +8,32 @@ State Active
 state Active {
     state SetupServer
     state ServerActive
-
-    SetupServer -d-> ServerActive
-
-    state MobileMode
     state StationaryMode
+    state MobileMode
 
     state StationaryMode {
         state Connecting
         state Connected
         state Reconnecting
-        state Disconnecting
 
-        MobileMode -> Connecting
-        Connecting --> Connected
-        Connected --> Disconnecting
-        Connected -> Reconnecting
-        Reconnecting -> Connected
+        [*] -> Connecting
+        Connecting -> Connected : connected
+        Connected -> Reconnecting : connectionLost
+        Reconnecting -l-> Connected : connected
 
-        Connecting -> MobileMode
-        Disconnecting -> MobileMode
+        Connecting -> MobileMode : connectFailed
 
     }
 
-    Initializing --> SetupServer
-    Initializing --> MobileMode
+    Initializing -> MobileMode : setupCompleted
+    Initializing -> SetupServer : [button down] setupCompleted
 
+    SetupServer -> ServerActive : serverInitialized
+    ServerActive --> MobileMode : buttonPressed
+    ServerActive --> StationaryMode : startStationary
+
+    MobileMode -> StationaryMode : buttonPressed
+    StationaryMode --> MobileMode : buttonPressed
 }
 
 
