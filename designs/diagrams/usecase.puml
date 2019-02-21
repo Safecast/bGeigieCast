@@ -4,52 +4,34 @@
 :bGeigieUser: as user
 :API service: as API<<secondairy>>
 :Bluetooth: as BLU<<secondairy>>
-
-rectangle bGeigieController {
-    (Set bGeigie mode)
-    (Set bGeigie\n logging mode)
-    (Set bGeigie\n surface mode)
-    (Report data)
-    (Log data)
-
-    (Log data) -u.> (Report data) : <<extend>>
-    (Set bGeigie\n logging mode) -u-|> (Set bGeigie mode)
-    (Set bGeigie\n surface mode) -u-|> (Set bGeigie mode)
-
-    user -d- (Set bGeigie mode)
-}
+:bGeigieController: as BGN<<internal>>
 
 
-rectangle esp32Controller{
-    (Set wifi settings)
+rectangle <<subsystem>>\nesp32Controller{
+    (Set config)
     (Set esp mode)
-    (Set esp\n mobile mode)
-    (Set esp\n stationary mode)
+    (Set\n mobile mode)
+    (Set\n stationary mode)
     (Publish to API)
-    (Publish over bluetooth)
-    (Process data)
+    (Publish\n over bluetooth)
+    (Report data)
 
-    (Report data) -d.> (Process data) : <<include>>
 
-    (Publish to API) -u.> (Process data) : <<extend>>
-    (Process data) -d.> (Publish over bluetooth) : <<include>>
-    (Set esp\n mobile mode) -u-|> (Set esp mode)
-    (Set esp\n stationary mode) -u-|> (Set esp mode)
+    (Publish to API) -u.> (Report data) : <<extend>>
+    (Report data) -d.> (Publish\n over bluetooth) : <<include>>
+    (Set\n mobile mode) -u-|> (Set esp mode)
+    (Set\n stationary mode) -u-|> (Set esp mode)
 
     (Publish to API) -d- API
-    (Publish over bluetooth) -d- BLU
+    (Publish\n over bluetooth) -d- BLU
 
     user -d- (Set esp mode)
-    user -d- (Set wifi settings)
+    user -d- (Set config)
+    BGN -- (Report data)
 }
 
-note top of (Set bGeigie mode)
-  Logging mode (default)
-  or surface mode
-  - Using switch
-endnote
-
-note top of (Set wifi settings)
+note top of (Set config)
+  Set wifi settings etc.
   - Using web interface
 endnote
 

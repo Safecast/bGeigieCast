@@ -1,0 +1,47 @@
+@startuml
+
+interface espMode<<physical button>>
+interface deviceConfig<<webserver>>
+interface liveData
+interface api
+
+component bGeigieNano\n {
+    interface dataReports<<RX/TX>>
+    component bGeigieController
+
+    component <<subcomponent>>\nESP32\n {
+        interface IBL as "temp IBL"
+        interface IAP as "temp IAP"
+        interface serverControl
+        component Controller
+        component Server
+        component ApiConnector
+        component Bluetooth
+        component EspConfig
+
+        ''' For ordering '''
+        Server -[hidden]> EspConfig
+        ''''''
+
+        Controller -( serverControl
+        serverControl - Server
+        dataReports - Controller
+        config )-u- Server
+        config -u- EspConfig
+        deviceConfig -d- Server
+        espMode -d- Controller
+        IBL )-u- Controller
+        IBL -d- Bluetooth
+        IAP )-u- Controller
+        IAP -d- ApiConnector
+        ApiConnector -u-( config
+
+        liveData -u- Bluetooth
+        api )-u- ApiConnector
+    }
+
+    bGeigieController -( dataReports
+
+}
+
+@enduml

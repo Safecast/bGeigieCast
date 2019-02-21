@@ -1,0 +1,63 @@
+@startuml
+
+State Initializing
+Initializing: action: setup ESP32
+state SetupServer
+SetupServer: entry: setLedColor
+SetupServer: action: startServer
+state ServerActive
+ServerActive: entry: setLedColor
+ServerActive: action: handleClients
+ServerActive: exit: stopServer
+State Active
+Active: action: process readings
+
+
+state Active {
+    state StationaryMode
+    state MobileMode
+    MobileMode: entry: setLedColor
+
+    state StationaryMode {
+        state Connecting
+        Connecting: entry: setLedColor
+        Connecting: action: connectWifi
+        state ConnectionTest
+        ConnectionTest: action: testAPI
+        state Connected
+        Connected: entry: setLedColor
+        Connected: action: sendData
+        state Reconnecting
+        Reconnecting: entry: setLedColor
+        Reconnecting: action: connectWifi
+
+        [*] -> Connecting
+        Connecting -> ConnectionTest : connected
+        ConnectionTest --> Connected : APIAvailable
+        Connected -> Reconnecting : connectionLost
+        Reconnecting -l-> ConnectionTest : connected
+
+        ''' This next line messes up the diagram, but its still important
+'        Connecting -> MobileMode: connectionFailed
+    }
+
+
+    MobileMode -d-> StationaryMode : buttonPressed
+    StationaryMode -u-> MobileMode : buttonPressed
+}
+
+[*] -> Initializing
+Initializing -> SetupServer : [button down] controllerInitialized
+Initializing --> MobileMode : controllerInitialized
+
+SetupServer -> ServerActive : serverInitialized
+ServerActive --> MobileMode : buttonPressed
+ServerActive --> StationaryMode : startStationary
+
+''' Layout
+Initializing -[hidden]-> Active
+MobileMode -[hidden]> StationaryMode
+
+
+
+@enduml
