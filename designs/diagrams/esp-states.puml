@@ -3,10 +3,10 @@
 State Initializing
 Initializing: action: setup ESP32
 state SetupServer
-SetupServer: entry: setLedColor
+SetupServer: entry: setLedColor(serverSetup)
 SetupServer: action: startServer
 state ServerActive
-ServerActive: entry: setLedColor
+ServerActive: entry: setLedColor(serverActive)
 ServerActive: action: handleClients
 ServerActive: exit: stopServer
 State Active
@@ -16,29 +16,27 @@ Active: action: process readings
 state Active {
     state StationaryMode
     state MobileMode
-    MobileMode: entry: setLedColor
+    MobileMode: entry: setLedColor(mobile)
 
     state StationaryMode {
         state Connecting
-        Connecting: entry: setLedColor
+        Connecting: entry: setLedColor(conn)
         Connecting: action: connectWifi
+        state ConnectingError
+        ConnectingError: entry: setLedColor(error)
+        ConnectingError: action: connectWifi
         state ConnectionTest
         ConnectionTest: action: testAPI
         state Connected
-        Connected: entry: setLedColor
+        Connected: entry: setLedColor(stationary)
         Connected: action: sendData
-        state Reconnecting
-        Reconnecting: entry: setLedColor
-        Reconnecting: action: connectWifi
 
         [*] -> Connecting
         Connecting -> ConnectionTest : connected
         ConnectionTest --> Connected : APIAvailable
-        Connected -> Reconnecting : connectionLost
-        Reconnecting -l-> ConnectionTest : connected
-
-        ''' This next line messes up the diagram, but its still important
-'        Connecting -> MobileMode: connectionFailed
+        Connected -> Connecting: connectionLost
+        Connecting -u-> ConnectingError : [time > 5s]
+        ConnectingError -d-> ConnectionTest: connected
     }
 
 
@@ -47,10 +45,10 @@ state Active {
 }
 
 [*] -> Initializing
-Initializing -> SetupServer : [button down] controllerInitialized
+Initializing --> SetupServer : [button down] controllerInitialized
 Initializing --> MobileMode : controllerInitialized
 
-SetupServer -> ServerActive : serverInitialized
+SetupServer --> ServerActive : serverInitialized
 ServerActive --> MobileMode : buttonPressed
 ServerActive --> StationaryMode : startStationary
 
