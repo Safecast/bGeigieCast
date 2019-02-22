@@ -2,58 +2,63 @@
 
 State Initializing
 Initializing: action: setup ESP32
-state SetupServer
-SetupServer: entry: setLedColor(serverSetup)
-SetupServer: action: startServer
-state ServerActive
-ServerActive: entry: setLedColor(serverActive)
-ServerActive: action: handleClients
-ServerActive: exit: stopServer
-State Active
-Active: action: process readings
+
+state On {
+
+    state SetupServer
+    SetupServer: entry: setLedColor(serverSetup)
+    SetupServer: action: startServer
+    state ServerActive
+    ServerActive: entry: setLedColor(serverActive)
+    ServerActive: action: handleClients
+    ServerActive: exit: stopServer
+    State Active
+    Active: action: process readings
 
 
-state Active {
-    state StationaryMode
-    state MobileMode
-    MobileMode: entry: setLedColor(mobile)
+    state Active {
+        state StationaryMode
+        state MobileMode
+        MobileMode: entry: setLedColor(mobile)
 
-    state StationaryMode {
-        state Connecting
-        Connecting: entry: setLedColor(conn)
-        Connecting: action: connectWifi
-        state ConnectingError
-        ConnectingError: entry: setLedColor(error)
-        ConnectingError: action: connectWifi
-        state ConnectionTest
-        ConnectionTest: action: testAPI
-        state Connected
-        Connected: entry: setLedColor(stationary)
-        Connected: action: sendData
+        state StationaryMode {
+            state Connecting
+            Connecting: entry: setLedColor(conn)
+            Connecting: action: connectWifi
+            state ConnectingError
+            ConnectingError: entry: setLedColor(error)
+            ConnectingError: action: connectWifi
+            state ConnectionTest
+            ConnectionTest: action: testAPI
+            state Connected
+            Connected: entry: setLedColor(stationary)
+            Connected: action: sendData
 
-        [*] -> Connecting
-        Connecting -> ConnectionTest : connected
-        ConnectionTest --> Connected : APIAvailable
-        Connected -> Connecting: connectionLost
-        Connecting -u-> ConnectingError : [time > 5s]
-        ConnectingError -d-> ConnectionTest: connected
+            [*] -> Connecting
+            Connecting -> ConnectionTest : connected
+            ConnectionTest --> Connected : APIAvailable
+            Connected -> Connecting: connectionLost
+            Connecting -u-> ConnectingError : [time > 5s]
+            ConnectingError -d-> ConnectionTest: connected
+        }
+
+
+        MobileMode -d-> StationaryMode : buttonPressed
+        StationaryMode -u-> MobileMode : buttonPressed
     }
 
+    SetupServer -> ServerActive : serverInitialized
+    ServerActive -> MobileMode : buttonPressed
+    ServerActive -> StationaryMode : startStationary
 
-    MobileMode -d-> StationaryMode : buttonPressed
-    StationaryMode -u-> MobileMode : buttonPressed
+
 }
-
 [*] -> Initializing
-Initializing --> SetupServer : [button down] controllerInitialized
-Initializing --> MobileMode : controllerInitialized
-
-SetupServer --> ServerActive : serverInitialized
-ServerActive --> MobileMode : buttonPressed
-ServerActive --> StationaryMode : startStationary
+Initializing -> SetupServer : [button down] controllerInitialized
+Initializing -> MobileMode : controllerInitialized
 
 ''' Layout
-Initializing -[hidden]-> Active
+Initializing -[hidden]> On
 MobileMode -[hidden]> StationaryMode
 
 

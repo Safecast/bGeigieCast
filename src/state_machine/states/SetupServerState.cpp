@@ -13,7 +13,6 @@ void SetupServerState::do_activity() {
 }
 
 void SetupServerState::exit_action() {
-
 }
 
 void SetupServerState::handle_event(Event_enum event_id) {

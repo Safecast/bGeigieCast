@@ -7,12 +7,12 @@
 #include "debugger.h"
 
 // Keys for config
-char* key_ap_ssid = "ap_ssid";
-char* key_ap_password = "ap_password";
-char* key_wifi_ssid = "wifi_ssid";
-char* key_wifi_password = "wifi_password";
-char* key_api_key = "api_key";
-char* key_use_dev = "use_dev";
+const char* key_ap_ssid = "ap_ssid";
+const char* key_ap_password = "ap_password";
+const char* key_wifi_ssid = "wifi_ssid";
+const char* key_wifi_password = "wifi_password";
+const char* key_api_key = "api_key";
+const char* key_use_dev = "use_dev";
 
 EspConfig::EspConfig() :
     _memory(),
