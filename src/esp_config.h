@@ -25,15 +25,15 @@ class EspConfig {
 
   // Getters and setters
   int get_ap_ssid(char* out) const;
-  void set_ap_ssid(char* ap_ssid);
+  void set_ap_ssid(const char* ap_ssid);
   int get_ap_password(char* out) const;
-  void set_ap_password(char* ap_password);
+  void set_ap_password(const char* ap_password);
   int get_wifi_ssid(char* out) const;
-  void set_wifi_ssid(char* wifi_ssid);
+  void set_wifi_ssid(const char* wifi_ssid);
   int get_wifi_password(char* out) const;
-  void set_wifi_password(char* wifi_password);
+  void set_wifi_password(const char* wifi_password);
   int get_api_key(char* out) const;
-  void set_api_key(char* api_key);
+  void set_api_key(const char* api_key);
   bool get_use_dev() const;
   void set_use_dev(bool use_dev);
 

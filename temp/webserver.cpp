@@ -5,12 +5,16 @@
   Complete project details at http://randomnerdtutorials.com
 *********/
 
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
+
+
 // Load Wi-Fi library
 #include <WiFi.h>
 
 // Replace with your network credentials
-const char* ssid     = "........";
-const char* password = "........";
+const char* ssid     = "kittywood";
+const char* password = "schatjeyuka";
 
 // Set web server port number to 80
 WiFiServer server(80);
@@ -27,6 +31,8 @@ const int output26 = 26;
 const int output27 = 27;
 
 void setup() {
+WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
+
   Serial.begin(115200);
   // Initialize the output variables as outputs
   pinMode(output26, OUTPUT);
