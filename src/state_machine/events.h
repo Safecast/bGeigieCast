@@ -2,6 +2,7 @@
 #define BGEIGIE_POINTCAST_EVENT_H
 
 typedef enum {
+  e_undefined = -1,
   e_button_pressed,
   e_controller_initialized,
   e_server_initialized,

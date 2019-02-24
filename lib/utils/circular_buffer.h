@@ -1,23 +1,28 @@
 #ifndef BGEIGIE_POINTCAST_CIRCULARBUFFER_HPP
 #define BGEIGIE_POINTCAST_CIRCULARBUFFER_HPP
 
-#include <stdint.h>
 #include <Arduino.h>
 
-template<typename T, uint16_t max>
+/**
+ * Simple circular buffer
+ * @tparam T: Type of the buffer
+ * @tparam max: max items in buffer
+ * @tparam null_value: return value if you get but no items are in the buffer
+ */
+template<typename T, uint16_t max, T null_value = nullptr>
 class CircularBuffer {
  public:
   CircularBuffer(): buffer(), count(0), current(0){};
   virtual ~CircularBuffer() = default;
 
   T get(){
-    T val;
-    if (!empty()) {
-      val = buffer[current];
-      --count;
-      ++current;
-      current %= max;
+    if (empty()) {
+      return null_value;
     }
+    T val = buffer[current];
+    --count;
+    ++current;
+    current %= max;
     return val;
   };
 
@@ -35,7 +40,7 @@ class CircularBuffer {
     return count == 0;
   }
  private:
-  T buffer[max - 1];
+  T buffer[max];
   uint16_t count;
   uint16_t current;
 };
