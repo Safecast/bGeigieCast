@@ -32,7 +32,7 @@ void ApiConnector::stop() {
 
 bool ApiConnector::test() {
   WiFiClient client;
-  if(client.connect("flebbel.safecast.org", 80)) {
+  if(client.connect(API_PING_TEST_ADDRESS, 80)) {
     Serial.println("API test success");
     return true;
   }

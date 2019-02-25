@@ -5,7 +5,7 @@
 #define MODE_BUTTON_PIN 17
 
 // API settings
-#define API_PING_TEST_ADDRESS "http://dev.safecast.org/"
+#define API_PING_TEST_ADDRESS "dev.safecast.org"
 
 // Access point settings
 #define SERVER_WIFI_PORT 80
