@@ -10,7 +10,7 @@ void SetupServerState::entry_action() {
 
 void SetupServerState::do_activity() {
   if(controller.get_ap_server().initialize()) {
-    controller.schedule_event(Event_enum::e_server_initialized);
+    controller.schedue_event(Event_enum::e_server_initialized);
   }
 }
 

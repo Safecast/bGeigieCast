@@ -1,13 +1,12 @@
 #ifndef BGEIGIE_POINTCAST_CONTROLLER_HPP
 #define BGEIGIE_POINTCAST_CONTROLLER_HPP
 
-#include "hardware/button.h"
-#include "hardware/button_observer.h"
+#include <button.h>
+#include <button_observer.h>
 
 #include "state_machine/context.h"
 #include "web_server.h"
 #include "api_connector.h"
-#include "debugger.h"
 
 class Controller : public Context, public ButtonObserver {
  public:

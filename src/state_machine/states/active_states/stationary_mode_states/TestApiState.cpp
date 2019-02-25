@@ -10,7 +10,7 @@ void TestApiState::entry_action() {
 
 void TestApiState::do_activity() {
   if(controller.get_api_connector().test()) {
-    controller.schedule_event(Event_enum::e_API_available);
+    controller.schedue_event(Event_enum::e_API_available);
   }
 }
 

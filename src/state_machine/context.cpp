@@ -1,5 +1,5 @@
+#include <debugger.h>
 #include "context.h"
-#include "../debugger.h"
 
 Context::Context() : currentState(nullptr), eventQueue() {
 }
@@ -26,7 +26,7 @@ void Context::run() {
   currentState->do_activity();
 }
 
-void Context::schedule_event(Event_enum event_id) {
+void Context::schedue_event(Event_enum event_id) {
   eventQueue.add(event_id);
 }
 
