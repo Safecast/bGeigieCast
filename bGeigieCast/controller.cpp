@@ -1,5 +1,6 @@
 #include "state_machine/states/InitializeState.h"
 #include "controller.h"
+#include "debugger.h"
 
 Controller::Controller() :
     Context(),
@@ -17,15 +18,15 @@ void Controller::setup_state_machine() {
 void Controller::initialize() {
   _mode_button.set_observer(this);
   _config.set_all();
-  schedue_event(Event_enum::e_controller_initialized);
+  schedule_event(Event_enum::e_controller_initialized);
 }
 
 void Controller::on_button_pressed(Button* button, uint32_t millis) {
   if(button->get_pin() == MODE_BUTTON_PIN) {
     if (millis > 4000)
-      schedue_event(Event_enum::e_button_long_pressed);
+      schedule_event(Event_enum::e_button_long_pressed);
     else
-      schedue_event(Event_enum::e_button_pressed);
+      schedule_event(Event_enum::e_button_pressed);
   }
 }
 

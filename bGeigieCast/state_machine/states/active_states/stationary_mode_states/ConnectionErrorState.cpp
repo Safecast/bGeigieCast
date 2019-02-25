@@ -11,7 +11,7 @@ void ConnectionErrorState::entry_action() {
 
 void ConnectionErrorState::do_activity() {
   if(!((millis() - timer) % 5000) && controller.get_api_connector().start_connect()) {
-    controller.schedue_event(Event_enum::e_connected);
+    controller.schedule_event(Event_enum::e_connected);
   }
 }
 
