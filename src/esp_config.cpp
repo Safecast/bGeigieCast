@@ -67,11 +67,11 @@ void EspConfig::set_all() {
 
 void EspConfig::reset_defaults() {
   _memory.begin("data");
-//  set_ap_ssid(D_ACCESS_POINT_SSID);
-//  set_ap_password(D_ACCESS_POINT_PASSWORD);
-//  set_wifi_ssid(D_WIFI_SSID);
-//  set_wifi_password(D_WIFI_PASSWORD);
-//  set_api_key(D_APIKEY);
+  set_ap_ssid(D_ACCESS_POINT_SSID);
+  set_ap_password(D_ACCESS_POINT_PASSWORD);
+  set_wifi_ssid(D_WIFI_SSID);
+  set_wifi_password(D_WIFI_PASSWORD);
+  set_api_key(D_APIKEY);
   set_use_dev(D_USE_DEV_SERVER);
   _memory.end();
 }

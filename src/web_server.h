@@ -5,10 +5,14 @@
 
 #include "esp_config.h"
 
-class WebServer {
+/**
+ * Class to host a web server for configuring the ESP32. Will set up an access
+ * point based on user_config.h "Access point settings".
+ */
+class ConfigWebServer {
  public:
-  WebServer(EspConfig& config);
-  virtual ~WebServer() = default;
+  ConfigWebServer(EspConfig& config);
+  virtual ~ConfigWebServer() = default;
 
   /**
    * Initialize the web server, does nothing if it is already initialized.

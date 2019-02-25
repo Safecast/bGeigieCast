@@ -4,6 +4,9 @@
 #define RGB_LED_PIN 16
 #define MODE_BUTTON_PIN 17
 
+// API settings
+#define API_PING_TEST_ADDRESS "http://dev.safecast.org/"
+
 // Access point settings
 #define SERVER_WIFI_PORT 80
 #define SERVER_MAX_CLIENTS 4
@@ -13,7 +16,7 @@
 // Default settings
 #define D_ACCESS_POINT_SSID "bGeigie-ESP32"
 #define D_ACCESS_POINT_PASSWORD "safecast"
-#define D_WIFI_SSID "SAFECAST FREE"
-#define D_WIFI_PASSWORD "PASSWD"
+#define D_WIFI_SSID "Loftwork COOOP3 Free"
+#define D_WIFI_PASSWORD ""
 #define D_APIKEY "YE_KEY"
 #define D_USE_DEV_SERVER true

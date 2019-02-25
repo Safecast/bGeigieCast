@@ -43,7 +43,7 @@ Controller controller;
 
 
 void setup() {
-  debug_begin(9600);
+  debug_begin(115200);
   controller.setup_state_machine();
 }
 

@@ -3,10 +3,10 @@
 #include "esp_config.h"
 #include "debugger.h"
 
-WebServer::WebServer(EspConfig& config) : server(SERVER_WIFI_PORT, SERVER_MAX_CLIENTS), config(config) {
+ConfigWebServer::ConfigWebServer(EspConfig& config) : server(SERVER_WIFI_PORT, SERVER_MAX_CLIENTS), config(config) {
 }
 
-bool WebServer::initialize() {
+bool ConfigWebServer::initialize() {
   char ssid[32], password[32];
   if(!config.get_ap_ssid(ssid) || !config.get_ap_password(password)) {
     debug_println("No SSID or password");
@@ -27,11 +27,12 @@ bool WebServer::initialize() {
   return is_running();
 }
 
-void WebServer::stop() {
-  server.close();
+void ConfigWebServer::stop() {
+  server.stop();
+  WiFi.softAPdisconnect(true);
 }
 
-void WebServer::handle_requests() {
+void ConfigWebServer::handle_requests() {
   String header;
   WiFiClient client = server.available();   // Listen for incoming clients
 
@@ -41,7 +42,7 @@ void WebServer::handle_requests() {
     while(client.connected()) {            // loop while the client's connected
       if(client.available()) {             // if there's bytes to read from the client,
         char c = client.read();             // read a byte, then
-        Serial.write(c);                    // print it out the serial monitor
+        debug_print(c);                    // print it out the serial monitor
         header += c;
         if(c == '\n') {                    // if the byte is a newline character
           // if the current line is blank, you got two newline characters in a row.
@@ -81,15 +82,12 @@ void WebServer::handle_requests() {
         }
       }
     }
-    // Clear the header variable
-    header = "";
     // Close the connection
     client.stop();
     debug_println("Client disconnected.");
-    debug_println("");
   }
 }
 
-bool WebServer::is_running() {
+bool ConfigWebServer::is_running() {
   return !!server;
 }

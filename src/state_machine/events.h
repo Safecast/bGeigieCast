@@ -4,6 +4,7 @@
 typedef enum {
   e_undefined = -1,
   e_button_pressed,
+  e_button_long_pressed,
   e_controller_initialized,
   e_server_initialized,
   e_start_stationary,

@@ -6,6 +6,7 @@
 
 #include "state_machine/context.h"
 #include "web_server.h"
+#include "api_connector.h"
 
 class Controller : public Context, public ButtonObserver {
  public:
@@ -23,24 +24,18 @@ class Controller : public Context, public ButtonObserver {
   void initialize();
 
   /**
-   * Initialize the access point server
-   */
-  void initialize_ap_server();
-
-  /**
    * Callback for the button
    */
-
-  EspConfig& get_config();
- private:
   void on_button_pressed(Button* button, uint32_t millis) override;
- public:
-  WebServer& get_ap_server();
+  EspConfig& get_config();
+  ConfigWebServer& get_ap_server();
+  ApiConnector& get_api_connector();
   const Button& get_mode_button() const;
 
  private:
   EspConfig _config;
-  WebServer _ap_server;
+  ConfigWebServer _ap_server;
+  ApiConnector _api_connector;
   Button _mode_button;
 
 };

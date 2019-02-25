@@ -9,7 +9,9 @@ void SetupServerState::entry_action() {
 }
 
 void SetupServerState::do_activity() {
-  controller.initialize_ap_server();
+  if(controller.get_ap_server().initialize()) {
+    controller.schedue_event(Event_enum::e_server_initialized);
+  }
 }
 
 void SetupServerState::exit_action() {

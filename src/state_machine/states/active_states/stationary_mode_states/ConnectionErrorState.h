@@ -13,6 +13,8 @@ class ConnectionErrorState: public StationaryModeState {
   void exit_action() override;
   void handle_event(Event_enum event_id) override;
 
+ private:
+  uint32_t timer;
 };
 
 #endif //BGEIGIE_POINTCAST_CONNECTIONERRORSTATE_HPP

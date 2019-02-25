@@ -1,7 +1,13 @@
 #include "state_machine/states/InitializeState.h"
 #include "controller.h"
 
-Controller::Controller() : Context(), ButtonObserver(), _config(), _ap_server(_config), _mode_button(MODE_BUTTON_PIN) {
+Controller::Controller() :
+    Context(),
+    ButtonObserver(),
+    _config(),
+    _ap_server(_config),
+    _api_connector(_config),
+    _mode_button(MODE_BUTTON_PIN) {
 }
 
 void Controller::setup_state_machine() {
@@ -16,7 +22,10 @@ void Controller::initialize() {
 
 void Controller::on_button_pressed(Button* button, uint32_t millis) {
   if(button->get_pin() == MODE_BUTTON_PIN) {
-    schedue_event(Event_enum::e_button_pressed);
+    if (millis > 4000)
+      schedue_event(Event_enum::e_button_long_pressed);
+    else
+      schedue_event(Event_enum::e_button_pressed);
   }
 }
 
@@ -24,14 +33,12 @@ EspConfig& Controller::get_config() {
   return _config;
 }
 
-WebServer& Controller::get_ap_server() {
+ConfigWebServer& Controller::get_ap_server() {
   return _ap_server;
 }
 
-void Controller::initialize_ap_server() {
-  if(_ap_server.initialize()) {
-    schedue_event(Event_enum::e_server_initialized);
-  }
+ApiConnector& Controller::get_api_connector() {
+  return _api_connector;
 }
 
 const Button& Controller::get_mode_button() const {
