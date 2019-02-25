@@ -26,7 +26,7 @@ void Context::run() {
   currentState->do_activity();
 }
 
-void Context::schedue_event(Event_enum event_id) {
+void Context::schedule_event(Event_enum event_id) {
   eventQueue.add(event_id);
 }
 

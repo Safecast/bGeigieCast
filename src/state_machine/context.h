@@ -30,7 +30,7 @@ class Context {
    * Schedule a new event
    * @param event_id
    */
-  void schedue_event(Event_enum event_id);
+  void schedule_event(Event_enum event_id);
  private:
 
   AbstractState* currentState;

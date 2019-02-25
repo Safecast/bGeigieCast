@@ -13,10 +13,10 @@ void ConnectingState::entry_action() {
 
 void ConnectingState::do_activity() {
   if(controller.get_api_connector().is_connected()) {
-    controller.schedue_event(Event_enum::e_connected);
+    controller.schedule_event(Event_enum::e_connected);
   }
   else if (millis() > timer + MILLIS_BEFORE_CONNECTION_FAILURE) {
-    controller.schedue_event(e_connection_failed);
+    controller.schedule_event(e_connection_failed);
   }
 }
 
