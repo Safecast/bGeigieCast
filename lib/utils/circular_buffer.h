@@ -12,11 +12,11 @@
 template<typename T, uint16_t max, T null_value = nullptr>
 class CircularBuffer {
  public:
-  CircularBuffer(): buffer(), count(0), current(0){};
+  CircularBuffer() : buffer(), count(0), current(0) {};
   virtual ~CircularBuffer() = default;
 
-  T get(){
-    if (empty()) {
+  T get() {
+    if(empty()) {
       return null_value;
     }
     T val = buffer[current];
@@ -26,19 +26,24 @@ class CircularBuffer {
     return val;
   };
 
-  void add(T val){
+  void add(T val) {
     buffer[(current + count) % max] = val;
     if(count < max) {
       ++count;
-    }else {
+    } else {
       ++current;
       current %= max;
     }
   };
 
-  bool empty() const{
+  bool empty() const {
     return count == 0;
   }
+
+  uint16_t get_count() const {
+    return count;
+  }
+
  private:
   T buffer[max];
   uint16_t count;

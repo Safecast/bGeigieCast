@@ -1,33 +1,35 @@
 #include <debugger.h>
 #include "context.h"
 
-Context::Context() : currentState(nullptr), eventQueue() {
+Context::Context() : current_state(nullptr), eventQueue() {
 }
 
 void Context::set_state(AbstractState* state) {
-  if(currentState) {
-    currentState->exit_action();
-    delete currentState;
+  if(current_state) {
+    current_state->exit_action();
+    delete current_state;
   }
-  currentState = state;
-  currentState->entry_action();
-  currentState->do_activity();
+  current_state = state;
+  current_state->entry_action();
+  current_state->do_activity();
 }
 
 void Context::run() {
-  if(!currentState) {
+  if(!current_state) {
     debug_println("Trying to run state machine with no active state");
     return;
   }
   while(!eventQueue.empty()) {
     Event_enum event_id = eventQueue.get();
-    currentState->handle_event(event_id);
+    current_state->handle_event(event_id);
   }
-  currentState->do_activity();
+  current_state->do_activity();
 }
 
 void Context::schedule_event(Event_enum event_id) {
   eventQueue.add(event_id);
 }
 
-
+AbstractState* Context::get_current_state() const {
+  return current_state;
+}

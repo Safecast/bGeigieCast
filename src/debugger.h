@@ -3,6 +3,10 @@
 
 #include "user_config.h"
 
+#ifdef UNIT_TEST
+#undef ENABLE_DEBUG
+#endif
+
 #if ENABLE_DEBUG
 #include <Arduino.h>
 #endif

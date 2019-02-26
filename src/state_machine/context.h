@@ -31,9 +31,11 @@ class Context {
    * @param event_id
    */
   void schedule_event(Event_enum event_id);
+
+  AbstractState* get_current_state() const;
  private:
 
-  AbstractState* currentState;
+  AbstractState* current_state;
   CircularBuffer<Event_enum, MAX_EVENTS, Event_enum::e_undefined> eventQueue;
 };
 

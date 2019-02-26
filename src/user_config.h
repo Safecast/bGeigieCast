@@ -1,4 +1,10 @@
+#ifndef USER_CONFIG_H
+#define USER_CONFIG_H
+
+
+// System config
 #define ENABLE_DEBUG 1
+#define SERIAL_BAUD 115200
 
 // Hardware pins settings
 #define RGB_LED_PIN 16
@@ -20,3 +26,5 @@
 #define D_WIFI_PASSWORD ""
 #define D_APIKEY "YE_KEY"
 #define D_USE_DEV_SERVER true
+
+#endif

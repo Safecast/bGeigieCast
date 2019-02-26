@@ -36,17 +36,22 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
  */
 
+
 #include "debugger.h"
 #include "controller.h"
+
+#ifndef UNIT_TEST
 
 Controller controller;
 
 
 void setup() {
-  debug_begin(115200);
+  debug_begin(SERIAL_BAUD);
   controller.setup_state_machine();
 }
 
 void loop() {
   controller.run();
 }
+
+#endif
