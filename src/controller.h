@@ -30,7 +30,7 @@ class Controller : public Context, public ButtonObserver {
   EspConfig& get_config();
   ConfigWebServer& get_ap_server();
   ApiConnector& get_api_connector();
-  const Button& get_mode_button() const;
+  Button& get_mode_button();
 
  private:
   EspConfig _config;

@@ -23,9 +23,16 @@ class Button {
 
   /**
    * Let the button know that the state has changed
+   * @param state: LOW / HIGH reading from the button
    */
-  void stateChanged();
+  void state_changed(int state);
+
+  /**
+   * Get pin number
+   * @return: pin number
+   */
   uint8_t get_pin() const;
+
   /**
    * check if the button is currently hold down
    * @return: true if button is down

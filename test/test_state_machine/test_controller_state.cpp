@@ -2,7 +2,7 @@
 #include <unity.h>
 
 void controller_init(void);
-void controller_ap_server(void);
+void controller_state_transitions(void);
 
 void setup() {
   delay(2000);
@@ -11,7 +11,7 @@ void setup() {
 
   RUN_TEST(controller_init);
 
-  RUN_TEST(controller_ap_server);
+  RUN_TEST(controller_state_transitions);
 
   UNITY_END();
 }

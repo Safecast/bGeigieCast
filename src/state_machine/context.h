@@ -13,7 +13,7 @@
 class Context {
  public:
   Context();
-  virtual ~Context() = default;
+  virtual ~Context();
 
   /**
    * Will exit the current one and enter the new one
@@ -42,6 +42,11 @@ class Context {
    * Clear all events in the event queue
    */
   void clear_events();
+
+  /**
+   * Handle all events in queue for current state
+   */
+  void handle_events();
  private:
 
   AbstractState* current_state;

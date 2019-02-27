@@ -41,6 +41,6 @@ ApiConnector& Controller::get_api_connector() {
   return _api_connector;
 }
 
-const Button& Controller::get_mode_button() const {
+Button& Controller::get_mode_button() {
   return _mode_button;
 }

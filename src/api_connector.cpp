@@ -11,15 +11,15 @@ bool ApiConnector::start_connect() {
     return false;
   }
   if(config.get_wifi_password(password)) {
-    Serial.print("Connecting to wifi ssid: \"");
-    Serial.print(ssid);
-    Serial.print("\", and password: ");
-    Serial.println(password);
+    debug_print("Connecting to wifi ssid: \"");
+    debug_print(ssid);
+    debug_print("\", using password: ");
+    debug_println(password);
     WiFi.begin(ssid, password);
   } else {
-    Serial.print("Connecting to wifi ssid: ");
-    Serial.print(ssid);
-    Serial.println(" and no password");
+    debug_print("Connecting to wifi ssid: ");
+    debug_print(ssid);
+    debug_println(", using no password");
     WiFi.begin(ssid);
   }
 
@@ -32,12 +32,7 @@ void ApiConnector::stop() {
 
 bool ApiConnector::test() {
   WiFiClient client;
-  if(client.connect(API_PING_TEST_ADDRESS, 80)) {
-    Serial.println("API test success");
-    return true;
-  }
-  Serial.println("API test failed");
-  return false;
+  return client.connect(API_PING_TEST_ADDRESS, 80) != 0;
 }
 
 bool ApiConnector::is_connected() {

@@ -4,7 +4,9 @@ void IRAM_ATTR buttonTrigger(void* arg) {
   if(!arg) {
     return;
   }
-  ((Button*) arg)->stateChanged();
+  Button* b = ((Button*) arg);
+  // Read the pin value here so we can use the state_changed in unit tests
+  b->state_changed(digitalRead(b->get_pin()));
 }
 
 Button::Button(uint8_t pin, uint8_t pull_type) :
@@ -29,8 +31,8 @@ bool Button::currently_pressed() const {
   return _current_state;
 }
 
-void Button::stateChanged() {
-  bool read_state = digitalRead(_pin) == _pull_type_mode;
+void Button::state_changed(int state) {
+  bool read_state = state == _pull_type_mode;
   if(_last_state_change + DEBOUNCE_TIME_MILLIS > millis() || read_state == _current_state) {
     return;
   }
