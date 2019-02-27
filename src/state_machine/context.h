@@ -49,8 +49,8 @@ class Context {
   void handle_events();
  private:
 
-  AbstractState* current_state;
-  CircularBuffer<Event_enum, MAX_EVENTS, Event_enum::e_undefined> eventQueue;
+  AbstractState* _current_state;
+  CircularBuffer<Event_enum, MAX_EVENTS, Event_enum::e_undefined> _event_queue;
 };
 
 #endif //BGEIGIE_POINTCAST_CONTEXT_H

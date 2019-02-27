@@ -31,10 +31,10 @@ bool Button::currently_pressed() const {
   return _current_state;
 }
 
-void Button::state_changed(int state) {
+bool Button::state_changed(int state) {
   bool read_state = state == _pull_type_mode;
   if(_last_state_change + DEBOUNCE_TIME_MILLIS > millis() || read_state == _current_state) {
-    return;
+    return false;
   }
   uint32_t time = millis();
   _current_state = read_state;
@@ -49,6 +49,7 @@ void Button::state_changed(int state) {
     if(_on_button_pressed_fn) { _on_button_pressed_fn(this, time - _last_state_change); }
   }
   _last_state_change = time;
+  return true;
 }
 
 uint8_t Button::get_pin() const {

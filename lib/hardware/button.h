@@ -24,8 +24,9 @@ class Button {
   /**
    * Let the button know that the state has changed
    * @param state: LOW / HIGH reading from the button
+   * @return: true if event was handled (false if ignored)
    */
-  void state_changed(int state);
+  bool state_changed(int state);
 
   /**
    * Get pin number

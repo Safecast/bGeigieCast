@@ -63,17 +63,3 @@ void test_int_buffer() {
 
   TEST_ASSERT_EQUAL(int_buffer_10.get(), another_val);
 }
-
-void setup() {
-  delay(2000);
-  // Unit test start
-  UNITY_BEGIN();
-
-  RUN_TEST(test_int_buffer);
-
-  // Unit test done
-  UNITY_END();
-}
-
-void loop() {
-}
