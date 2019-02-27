@@ -32,7 +32,16 @@ class Context {
    */
   void schedule_event(Event_enum event_id);
 
+  /**
+   * Get current state
+   * @return
+   */
   AbstractState* get_current_state() const;
+
+  /**
+   * Clear all events in the event queue
+   */
+  void clear_events();
  private:
 
   AbstractState* current_state;

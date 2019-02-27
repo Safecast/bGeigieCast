@@ -33,3 +33,7 @@ void Context::schedule_event(Event_enum event_id) {
 AbstractState* Context::get_current_state() const {
   return current_state;
 }
+
+void Context::clear_events() {
+  eventQueue.clear();
+}

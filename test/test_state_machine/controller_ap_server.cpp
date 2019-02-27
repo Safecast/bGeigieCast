@@ -1,7 +1,7 @@
+#include <Arduino.h>
 #include <unity.h>
 #include <controller.h>
-#include <state_machine/states/InitializeState.h>
-#include <state_machine/states/active_states/MobileModeState.h>
+#include <state_machine/states/SetupServerState.hpp>
 
 /**
  * Test controller state transition to start AP server
@@ -9,9 +9,7 @@
 void controller_ap_server(void) {
   Controller controller;
 
-  TEST_ASSERT_EQUAL(controller.get_current_state(), nullptr);
-
-  controller.setup_state_machine();
+  controller.set_state(new SetupServerState(controller));
 
   TEST_ASSERT_NOT_NULL(dynamic_cast<InitializeState*>(controller.get_current_state()));
 

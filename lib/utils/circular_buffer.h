@@ -44,6 +44,10 @@ class CircularBuffer {
     return count;
   }
 
+  void clear() {
+    count = 0;
+  }
+
  private:
   T buffer[max];
   uint16_t count;
