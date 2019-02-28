@@ -7,6 +7,7 @@
 #include "state_machine/context.h"
 #include "web_server.h"
 #include "api_connector.h"
+#include "bgeigie_connector.h"
 
 class Controller : public Context, public ButtonObserver {
  public:
@@ -24,6 +25,13 @@ class Controller : public Context, public ButtonObserver {
   void initialize();
 
   /**
+   * Tries to read new serial input from the bGeigie, if there is, it will report to bluetooth / api
+   * @param report_bluetooth: If true, it will command the bluetooth component to process the report
+   * @param report_api: If true, it will command the api component to process the report
+   */
+  void get_bgeigie_readings(bool report_bluetooth, bool report_api);
+
+  /**
    * Callback for the button
    */
   void on_button_pressed(Button* button, uint32_t millis) override;
@@ -37,6 +45,7 @@ class Controller : public Context, public ButtonObserver {
   ConfigWebServer _ap_server;
   ApiConnector _api_connector;
   Button _mode_button;
+  BGeigieConnector _bgeigie_connector;
 
 };
 

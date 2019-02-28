@@ -7,7 +7,8 @@ Controller::Controller() :
     _config(),
     _ap_server(_config),
     _api_connector(_config),
-    _mode_button(MODE_BUTTON_PIN) {
+    _mode_button(MODE_BUTTON_PIN),
+    _bgeigie_connector(Serial1){
 }
 
 void Controller::setup_state_machine() {
@@ -27,6 +28,11 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
     else
       schedule_event(Event_enum::e_button_pressed);
   }
+}
+
+void Controller::get_bgeigie_readings(bool report_bluetooth, bool report_api) {
+  char reading[100];
+  _bgeigie_connector.get_reading(reading);
 }
 
 EspConfig& Controller::get_config() {
