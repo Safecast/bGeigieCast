@@ -5,10 +5,11 @@
 // System config
 #define ENABLE_DEBUG 1
 #define SERIAL_BAUD 115200
+#define BGEIGIE_CONNECTION_BAUD 9600
 
 // Hardware pins settings
-#define RGB_LED_PIN 16
-#define MODE_BUTTON_PIN 17
+#define RGB_LED_PIN 21
+#define MODE_BUTTON_PIN 22
 
 // API settings
 #define API_PING_TEST_ADDRESS "dev.safecast.org"

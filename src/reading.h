@@ -50,7 +50,7 @@ class Reading {
 
   // Reading content
   uint16_t _device_id;
-  char _iso_timestr[50];
+  char _iso_timestr[30];
   uint16_t _cpm;
   uint16_t _cpb;
   uint16_t _total_count;

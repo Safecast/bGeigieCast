@@ -58,7 +58,7 @@ void reading_parsing_mobile(void) {
 }
 
 /**
- * Test a valid reading as json
+ * Test an invalid reading as json
  */
 void reading_parsing_invalid(void) {
   const char* invalid_str = "$BNRDD,204,2012-09-20T16:53:58Z";

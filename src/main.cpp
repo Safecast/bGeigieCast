@@ -36,7 +36,6 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
  */
 
-
 #include "debugger.h"
 #include "controller.h"
 

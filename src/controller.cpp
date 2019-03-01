@@ -1,5 +1,6 @@
 #include "state_machine/states/InitializeState.h"
 #include "controller.h"
+#include "reading.h"
 
 Controller::Controller() :
     Context(),
@@ -8,7 +9,7 @@ Controller::Controller() :
     _ap_server(_config),
     _api_connector(_config),
     _mode_button(MODE_BUTTON_PIN),
-    _bgeigie_connector(Serial1){
+    _bgeigie_connector(Serial2){
 }
 
 void Controller::setup_state_machine() {
@@ -31,8 +32,30 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
 }
 
 void Controller::get_bgeigie_readings(bool report_bluetooth, bool report_api) {
-  char reading[100];
-  _bgeigie_connector.get_reading(reading);
+  char reading_str[100];
+
+  if (_bgeigie_connector.get_reading(reading_str)) {
+    Reading reading(reading_str);
+    reading.parse_values();
+    debug_print("New reading, validity is: ");
+    switch(reading.get_validity()) {
+      case e_unparsed:
+        debug_println("unparsed");
+        break;
+      case e_valid:
+        debug_println("valid");
+        break;
+      case e_invalid_string:
+        debug_println("invalid_string");
+        break;
+      case e_invalid_sensor:
+        debug_println("invalid_sensor");
+        break;
+      case e_invalid_gps:
+        debug_println("invalid_gps");
+        break;
+    }
+  }
 }
 
 EspConfig& Controller::get_config() {

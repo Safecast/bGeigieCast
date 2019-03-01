@@ -48,7 +48,7 @@ void Reading::parse_values() {
       &_checksum
   );
 
-  if(parse_result != 15) { // 14 values to be parsed
+  if(parse_result != 15) { // 15 values to be parsed
     _validity = ReadingValidity::e_invalid_string;
   }
   else if(_gps_status != 'A') {

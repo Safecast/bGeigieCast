@@ -16,7 +16,6 @@ class BGeigieConnector {
   bool get_reading(char* out);
 
  private:
-  char buffer[100];
   HardwareSerial& _serial_connection;
 };
 
