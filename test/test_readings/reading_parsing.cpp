@@ -26,7 +26,8 @@ void reading_parsing(void) {
   TEST_ASSERT_EQUAL_FLOAT(9861.20, r.get_altitude());
   TEST_ASSERT_EQUAL_INT8('A', r.get_gps_status());
   TEST_ASSERT_EQUAL(109, r.get_sat_count());
-  TEST_ASSERT_EQUAL_STRING("9*46", r.get_precision());
+  TEST_ASSERT_EQUAL_FLOAT(9, r.get_precision());
+  TEST_ASSERT_EQUAL(0x46, r.get_checksum());
 }
 
 /**
@@ -54,7 +55,8 @@ void reading_parsing_inverse_lat_long(void) {
   TEST_ASSERT_EQUAL_FLOAT(9861.20, r.get_altitude());
   TEST_ASSERT_EQUAL_INT8('A', r.get_gps_status());
   TEST_ASSERT_EQUAL(109, r.get_sat_count());
-  TEST_ASSERT_EQUAL_STRING("9*46", r.get_precision());
+  TEST_ASSERT_EQUAL_FLOAT(9, r.get_precision());
+  TEST_ASSERT_EQUAL(0x46, r.get_checksum());
 }
 
 /**

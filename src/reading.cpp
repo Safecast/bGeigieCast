@@ -19,7 +19,8 @@ Reading::Reading(const char* reading_str) :
     _altitude(),
     _gps_status(),
     _sat_count(),
-    _precision() {
+    _precision(0),
+    _checksum(0) {
   strcpy(_reading_str, reading_str);
 }
 
@@ -29,7 +30,7 @@ void Reading::parse_values() {
 
   int parse_result = nsscanf(
       _reading_str,
-      "$BNRDD,%04d,%[^,],%d,%d,%d,%c,%f,%c,%f,%c,%f,%c,%d,%s",
+      "$BNRDD,%04d,%[^,],%d,%d,%d,%c,%f,%c,%f,%c,%f,%c,%d,%f*%x",
       &_device_id,
       _iso_timestr,
       &_cpm,
@@ -43,10 +44,11 @@ void Reading::parse_values() {
       &_altitude,
       &_gps_status,
       &_sat_count,
-      _precision
+      &_precision,
+      &_checksum
   );
 
-  if(parse_result != 14) { // 14 values to be parsed
+  if(parse_result != 15) { // 14 values to be parsed
     _validity = ReadingValidity::e_invalid_string;
   }
   else if(_gps_status != 'A') {
@@ -68,11 +70,11 @@ bool Reading::as_json(char* out, bool stationary) {
     return false;
   }
   int longitude_a = static_cast<int>(_longitude);
-  int longitude_b = static_cast<int>((_longitude - longitude_a) * 1000);
+  int longitude_b = static_cast<int>((_longitude - longitude_a) * 10000);
   if(longitude_b < 0) { longitude_b *= -1; }
 
   int latitude_a = static_cast<int>(_latitude);
-  int latitude_b = static_cast<int>((_latitude - latitude_a) * 1000);
+  int latitude_b = static_cast<int>((_latitude - latitude_a) * 10000);
   if(latitude_b < 0) { latitude_b *= -1; }
 
   uint32_t device_id = stationary && _device_id < 10000 ? _device_id + 60000 : _device_id;
@@ -134,6 +136,9 @@ char Reading::get_gps_status() const {
 int Reading::get_sat_count() const {
   return _sat_count;
 }
-const char* Reading::get_precision() const {
+float Reading::get_precision() const {
   return _precision;
+}
+uint16_t Reading::get_checksum() const {
+  return _checksum;
 }

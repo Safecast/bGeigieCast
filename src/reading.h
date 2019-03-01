@@ -42,7 +42,8 @@ class Reading {
   float get_altitude() const;
   char get_gps_status() const;
   int get_sat_count() const;
-  const char* get_precision() const;
+  float get_precision() const;
+  uint16_t get_checksum() const;
  protected:
   char _reading_str[100];
   ReadingValidity _validity;
@@ -59,7 +60,8 @@ class Reading {
   float _altitude;
   char _gps_status;
   int _sat_count;
-  char _precision[50];
+  float _precision;
+  uint16_t _checksum;
 
 };
 
