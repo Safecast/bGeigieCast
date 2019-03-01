@@ -4,7 +4,7 @@
 /**
  * Test a valid stationary reading as json
  */
-void reading_parsing_stationairy(void) {
+void reading_parsing_stationary(void) {
   const char* valid_str = "$BNRDD,204,2012-09-20T16:53:58Z,776,63,33895,A,5641.7788,N,1411.8820,E,9861.20,A,109,9*46";
 
   Reading r(valid_str);
@@ -22,6 +22,34 @@ void reading_parsing_stationairy(void) {
   TEST_ASSERT_EQUAL_STRING(
       "{\"captured_at\":\"2012-09-20T16:53:58Z\","
       "\"device_id\":\"60204\","
+      "\"value\":\"776\","
+      "\"unit\":\"cpm\","
+      "\"longitude\":\"1411.8820\","
+      "\"latitude\":\"5641.7788\"}\n", json_buffer);
+
+}
+
+/**
+ * Test a valid mobile reading as json
+ */
+void reading_parsing_mobile(void) {
+  const char* valid_str = "$BNRDD,204,2012-09-20T16:53:58Z,776,63,33895,A,5641.7788,N,1411.8820,E,9861.20,A,109,9*46";
+
+  Reading r(valid_str);
+
+  TEST_ASSERT_EQUAL(ReadingValidity::e_unparsed, r.get_validity());
+
+  r.parse_values();
+
+  TEST_ASSERT_EQUAL(ReadingValidity::e_valid, r.get_validity());
+
+  char json_buffer[200];
+
+  TEST_ASSERT_TRUE(r.as_json(json_buffer, false));
+
+  TEST_ASSERT_EQUAL_STRING(
+      "{\"captured_at\":\"2012-09-20T16:53:58Z\","
+      "\"device_id\":\"204\","
       "\"value\":\"776\","
       "\"unit\":\"cpm\","
       "\"longitude\":\"1411.8820\","

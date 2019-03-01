@@ -69,13 +69,6 @@ bool Reading::as_json(char* out, bool stationary) {
   if(_validity != ReadingValidity::e_valid) {
     return false;
   }
-  int longitude_a = static_cast<int>(_longitude);
-  int longitude_b = static_cast<int>((_longitude - longitude_a) * 10000);
-  if(longitude_b < 0) { longitude_b *= -1; }
-
-  int latitude_a = static_cast<int>(_latitude);
-  int latitude_b = static_cast<int>((_latitude - latitude_a) * 10000);
-  if(latitude_b < 0) { latitude_b *= -1; }
 
   uint32_t device_id = stationary && _device_id < 10000 ? _device_id + 60000 : _device_id;
   sprintf(
