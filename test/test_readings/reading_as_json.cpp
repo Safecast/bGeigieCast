@@ -19,14 +19,13 @@ void reading_parsing_stationairy(void) {
 
   TEST_ASSERT_TRUE(r.as_json(json_buffer, true));
 
-  // Does not work atm due to float issues...
-//  TEST_ASSERT_EQUAL_STRING(
-//      "{\"captured_at\":\"2012-09-20T16:53:58Z\","
-//      "\"device_id\":\"60204\","
-//      "\"value\":\"776\","
-//      "\"unit\":\"cpm\","
-//      "\"longitude\":\"1411.8820\","
-//      "\"latitude\":\"5641.7788\"}\n", json_buffer);
+  TEST_ASSERT_EQUAL_STRING(
+      "{\"captured_at\":\"2012-09-20T16:53:58Z\","
+      "\"device_id\":\"60204\","
+      "\"value\":\"776\","
+      "\"unit\":\"cpm\","
+      "\"longitude\":\"1411.8820\","
+      "\"latitude\":\"5641.7788\"}\n", json_buffer);
 
 }
 

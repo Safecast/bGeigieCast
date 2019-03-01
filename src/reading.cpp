@@ -84,15 +84,13 @@ bool Reading::as_json(char* out, bool stationary) {
       "\"device_id\":\"%d\","
       "\"value\":\"%d\","
       "\"unit\":\"cpm\","
-      "\"longitude\":\"%d.%d\","
-      "\"latitude\":\"%d.%d\"}\n",
+      "\"longitude\":\"%.4f\","
+      "\"latitude\":\"%.4f\"}\n",
       _iso_timestr,
       device_id,
       _cpm,
-      longitude_a,
-      longitude_b,
-      latitude_a,
-      latitude_b
+      _longitude,
+      _latitude
   );
   return true;
 }
