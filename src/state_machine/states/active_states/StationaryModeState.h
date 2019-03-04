@@ -8,6 +8,8 @@ class StationaryModeState: public ActiveState {
   StationaryModeState(Controller& context);
   virtual ~StationaryModeState() = default;
 
+  void do_activity() override;
+
   void handle_event(Event_enum event_id) override;
 
 };

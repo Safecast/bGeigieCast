@@ -4,6 +4,10 @@
 StationaryModeState::StationaryModeState(Controller& context) : ActiveState(context) {
 }
 
+void StationaryModeState::do_activity() {
+  controller.get_bgeigie_readings(true, true);
+}
+
 void StationaryModeState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_button_pressed:

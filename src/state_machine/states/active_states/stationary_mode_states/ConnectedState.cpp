@@ -9,6 +9,7 @@ void ConnectedState::entry_action() {
 }
 
 void ConnectedState::do_activity() {
+  StationaryModeState::do_activity();
 }
 
 void ConnectedState::exit_action() {

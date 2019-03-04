@@ -7,9 +7,13 @@ void reading_parsing_invalid_format(void);
 void reading_parsing_invalid_sensor(void);
 void reading_parsing_invalid_gps(void);
 
-void reading_parsing_stationary(void);
-void reading_parsing_mobile(void);
-void reading_parsing_invalid(void);
+void reading_json_stationary(void);
+void reading_json_mobile(void);
+void reading_json_invalid(void);
+
+void reading_merging_new(void);
+void reading_merging_normal(void);
+void reading_merging_multiple(void);
 
 void setup() {
   delay(2000);
@@ -22,9 +26,13 @@ void setup() {
   RUN_TEST(reading_parsing_invalid_sensor);
   RUN_TEST(reading_parsing_invalid_gps);
 
-  RUN_TEST(reading_parsing_stationary);
-  RUN_TEST(reading_parsing_mobile);
-  RUN_TEST(reading_parsing_invalid);
+  RUN_TEST(reading_json_stationary);
+  RUN_TEST(reading_json_mobile);
+  RUN_TEST(reading_json_invalid);
+
+  RUN_TEST(reading_merging_new);
+  RUN_TEST(reading_merging_normal);
+  RUN_TEST(reading_merging_multiple);
 
   UNITY_END();
 }

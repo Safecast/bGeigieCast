@@ -13,13 +13,19 @@ typedef enum {
 
 class Reading {
  public:
-  explicit Reading(const char* reading_str);
-  virtual ~Reading() = default;
+  /**
+   * Create a new empty reading
+   */
+  Reading();
 
   /**
-   * Parse values from the reading_str
+   * Create a new reading from string
+   * @param reading_str: the reading from the bgeigie connection, it will parse right away
    */
-  void parse_values();
+  explicit Reading(const char* reading_str);
+  virtual ~Reading() = default;
+  Reading(const Reading& copy) = delete;
+  Reading operator=(const Reading& copy) = delete;
 
   /**
    * Get this reading as a json object in string
@@ -28,6 +34,17 @@ class Reading {
    * @return: succes / not
    */
   bool as_json(char* out, bool stationary);
+
+  /**
+   * Merge another reading with this one, takes the averages of all
+   * @param o
+   */
+  Reading& operator+=(const Reading& o);
+
+  /**
+   * Clear this reading
+   */
+  void reset();
 
   const char* get_reading_str() const;
   ReadingValidity get_validity() const;
@@ -44,9 +61,17 @@ class Reading {
   int get_sat_count() const;
   float get_precision() const;
   uint16_t get_checksum() const;
- protected:
-  char _reading_str[100];
+
+ private:
+
+  /**
+   * Parse values from the reading_str
+   */
+  void parse_values(const char* reading_str);
+
+
   ReadingValidity _validity;
+  uint16_t _average_of;
 
   // Reading content
   uint16_t _device_id;

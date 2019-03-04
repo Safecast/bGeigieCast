@@ -12,6 +12,7 @@ void ConnectingState::entry_action() {
 }
 
 void ConnectingState::do_activity() {
+  StationaryModeState::do_activity();
   if(controller.get_api_connector().is_connected()) {
     controller.schedule_event(Event_enum::e_connected);
   }

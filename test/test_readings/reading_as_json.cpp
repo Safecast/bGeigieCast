@@ -4,14 +4,10 @@
 /**
  * Test a valid stationary reading as json
  */
-void reading_parsing_stationary(void) {
+void reading_json_stationary(void) {
   const char* valid_str = "$BNRDD,204,2012-09-20T16:53:58Z,776,63,33895,A,5641.7788,N,1411.8820,E,9861.20,A,109,9*46";
 
   Reading r(valid_str);
-
-  TEST_ASSERT_EQUAL(ReadingValidity::e_unparsed, r.get_validity());
-  
-  r.parse_values();
 
   TEST_ASSERT_EQUAL(ReadingValidity::e_valid, r.get_validity());
 
@@ -32,14 +28,10 @@ void reading_parsing_stationary(void) {
 /**
  * Test a valid mobile reading as json
  */
-void reading_parsing_mobile(void) {
+void reading_json_mobile(void) {
   const char* valid_str = "$BNRDD,204,2012-09-20T16:53:58Z,776,63,33895,A,-5641.7788,N,-1411.8820,E,9861.20,A,109,9*46";
 
   Reading r(valid_str);
-
-  TEST_ASSERT_EQUAL(ReadingValidity::e_unparsed, r.get_validity());
-
-  r.parse_values();
 
   TEST_ASSERT_EQUAL(ReadingValidity::e_valid, r.get_validity());
 
@@ -60,14 +52,12 @@ void reading_parsing_mobile(void) {
 /**
  * Test an invalid reading as json
  */
-void reading_parsing_invalid(void) {
+void reading_json_invalid(void) {
   const char* invalid_str = "$BNRDD,204,2012-09-20T16:53:58Z";
 
   Reading r(invalid_str);
 
-  TEST_ASSERT_EQUAL(ReadingValidity::e_unparsed, r.get_validity());
-
-  r.parse_values();
+  TEST_ASSERT_EQUAL(ReadingValidity::e_invalid_string, r.get_validity());
 
   char json_buffer[200];
 

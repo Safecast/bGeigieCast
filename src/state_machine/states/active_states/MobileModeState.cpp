@@ -9,8 +9,7 @@ void MobileModeState::entry_action() {
 }
 
 void MobileModeState::do_activity() {
-  // Temp call get reading
-  controller.get_bgeigie_readings(false, false);
+  controller.get_bgeigie_readings(true, false);
 }
 
 void MobileModeState::exit_action() {

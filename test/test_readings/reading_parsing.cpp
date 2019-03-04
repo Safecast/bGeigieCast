@@ -9,10 +9,6 @@ void reading_parsing(void) {
 
   Reading r(valid_str);
 
-  TEST_ASSERT_EQUAL(ReadingValidity::e_unparsed, r.get_validity());
-  
-  r.parse_values();
-
   TEST_ASSERT_EQUAL(ReadingValidity::e_valid, r.get_validity());
 
   TEST_ASSERT_EQUAL(204, r.get_device_id());
@@ -37,10 +33,6 @@ void reading_parsing_inverse_lat_long(void) {
   const char* valid_str = "$BNRDD,204,2012-09-20T16:53:58Z,776,63,33895,A,5641.7788,S,1411.8820,W,9861.20,A,109,9*46";
 
   Reading r(valid_str);
-
-  TEST_ASSERT_EQUAL(ReadingValidity::e_unparsed, r.get_validity());
-
-  r.parse_values();
 
   TEST_ASSERT_EQUAL(ReadingValidity::e_valid, r.get_validity());
 
@@ -67,8 +59,6 @@ void reading_parsing_invalid_format(void) {
 
   Reading r(invalid_str);
 
-  r.parse_values();
-
   TEST_ASSERT_EQUAL(ReadingValidity::e_invalid_string, r.get_validity());
 }
 
@@ -80,8 +70,6 @@ void reading_parsing_invalid_sensor(void) {
 
   Reading r(invalid_sensor);
 
-  r.parse_values();
-
   TEST_ASSERT_EQUAL(ReadingValidity::e_invalid_sensor, r.get_validity());
 }
 
@@ -92,8 +80,6 @@ void reading_parsing_invalid_gps(void) {
   const char* invalid_gps = "$BNRDD,204,2012-09-20T16:53:58Z,776,63,33895,A,5641.7788,P,1411.8820,E,9861.20,V,109,9*46";
 
   Reading r(invalid_gps);
-
-  r.parse_values();
 
   TEST_ASSERT_EQUAL(ReadingValidity::e_invalid_gps, r.get_validity());
 }
