@@ -118,8 +118,10 @@ void test_button() {
 
   int slack = 10;
 
-  TEST_ASSERT_GREATER_THAN(wait_time, pressed_time);
+  // We delayed for `wait_time` so the `pressed_time` should be greater or equal to `wait_time`
+  TEST_ASSERT_GREATER_OR_EQUAL(wait_time, pressed_time);
+  TEST_ASSERT_GREATER_OR_EQUAL(wait_time, fn_pressed_time);
+  // And the `pressed_time` should be less than `wait_time + slack`
   TEST_ASSERT_LESS_THAN(wait_time + slack, pressed_time);
-  TEST_ASSERT_GREATER_THAN(wait_time, fn_pressed_time);
   TEST_ASSERT_LESS_THAN(wait_time + slack, fn_pressed_time);
 }
