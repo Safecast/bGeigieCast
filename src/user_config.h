@@ -6,6 +6,8 @@
 #define ENABLE_DEBUG 1
 #define SERIAL_BAUD 115200
 #define BGEIGIE_CONNECTION_BAUD 9600
+#define BGEIGIE_CONNECTION_RX 16
+#define BGEIGIE_CONNECTION_TX 17
 
 // Hardware pins settings
 #define RGB_LED_PIN 21

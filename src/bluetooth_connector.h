@@ -23,7 +23,7 @@ class BluetoohConnector {
   uint32_t baud;
 
   uint8_t reading_final[2];
-  BLECharacteristic* pDataRXCharacteristic;
+//  BLECharacteristic* pDataRXCharacteristic;
 
 };
 

@@ -9,8 +9,8 @@ Controller::Controller() :
     _ap_server(_config),
     _api_connector(_config),
     _mode_button(MODE_BUTTON_PIN),
-    _bgeigie_connector(Serial2),
-    _bluetooth(){
+//    _bluetooth(),
+    _bgeigie_connector(Serial2){
 }
 
 void Controller::setup_state_machine() {
@@ -20,7 +20,7 @@ void Controller::setup_state_machine() {
 void Controller::initialize() {
   _mode_button.set_observer(this);
   _config.set_all();
-  _bluetooth.init();
+//  _bluetooth.init();
   schedule_event(Event_enum::e_controller_initialized);
 }
 
@@ -37,11 +37,11 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
 void Controller::get_bgeigie_readings(bool report_bluetooth, bool report_api) {
   char reading_str[100];
 
-  if(_bgeigie_connector.get_reading(reading_str)) {
+  if((report_api || report_bluetooth) && _bgeigie_connector.get_reading(reading_str )) {
     if(report_bluetooth) {
       debug_println("reporting over bluetooth");
-      debug_println(strlen(reading_str));
-      _bluetooth.send_reading(reading_str, static_cast<uint16_t>(strlen(reading_str)));
+//      debug_println(strlen(reading_str));
+//      _bluetooth.send_reading(reading_str, static_cast<uint16_t>(strlen(reading_str)));
     }
     if(report_api) {
       debug_println("reporting over api");
