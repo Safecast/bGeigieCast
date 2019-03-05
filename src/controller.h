@@ -46,7 +46,7 @@ class Controller : public Context, public ButtonObserver {
   ConfigWebServer _ap_server;
   ApiConnector _api_connector;
   Button _mode_button;
-//  BluetoohConnector _bluetooth;
+  BluetoohConnector _bluetooth;
   BGeigieConnector _bgeigie_connector;
 
 };
