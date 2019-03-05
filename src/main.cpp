@@ -45,17 +45,13 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
 Controller controller;
 
-BluetoohConnector btc;
-
 void setup() {
   debug_begin(SERIAL_BAUD);
   controller.setup_state_machine();
-  btc.init();
 }
 
 void loop() {
   controller.run();
-  btc.send_reading("$BNRDD,204,2012-09-20T16:53:58Z,776,63,33895,A,5641.7788,N,1411.8820,E,9861.20,A,109,9*46", 89);
 }
 
 #endif

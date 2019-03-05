@@ -8,6 +8,7 @@
 #include "web_server.h"
 #include "api_connector.h"
 #include "bgeigie_connector.h"
+#include "bluetooth_connector.h"
 
 class Controller : public Context, public ButtonObserver {
  public:
@@ -46,6 +47,7 @@ class Controller : public Context, public ButtonObserver {
   ApiConnector _api_connector;
   Button _mode_button;
   BGeigieConnector _bgeigie_connector;
+  BluetoohConnector _bluetooth;
 
 };
 

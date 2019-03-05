@@ -9,6 +9,7 @@ BGeigieConnector::BGeigieConnector(HardwareSerial& serial_connection) : _serial_
 bool BGeigieConnector::get_reading(char* out) {
   if(_serial_connection.available() > 0) {
     String read = _serial_connection.readString();
+    debug_println(read);
     strcpy(out, read.c_str());
     return true;
   }

@@ -1,13 +1,17 @@
 #include <Arduino.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "bluetooth_connector.h"
 #include "bluetooth_settings.h"
+#include "debugger.h"
 
 BluetoohConnector::BluetoohConnector() :
     initialized(false),
     temp_millis(0),
     addr(BLE_DATA_ADDR),
-    baud(BLE_DATA_BAUD) {
+    baud(BLE_DATA_BAUD),
+    reading_final({0x0D, 0x0A}){
 }
 
 void BluetoohConnector::init() {
@@ -32,6 +36,8 @@ void BluetoohConnector::init() {
 
   BLEDevice::startAdvertising();
   initialized = true;
+
+  debug_println("Bluetooth initialized");
 }
 
 void BluetoohConnector::create_ble_profile_service(BLEServer* pServer) {
@@ -148,7 +154,7 @@ void BluetoohConnector::create_ble_data_service(BLEServer* pServer) {
   pDescriptorTX->setValue("TS");
   pDataTXCharacteristic->addDescriptor(pDescriptorTX);
 
-  pDataDBAddrCharacteristic->setValue(addr, (sizeof(addr)/sizeof(addr[0])));
+  pDataDBAddrCharacteristic->setValue(addr, (sizeof(addr) / sizeof(addr[0])));
   pDataBaudCharacteristic->setValue(baud);
 
   pDataService->start();
@@ -156,7 +162,22 @@ void BluetoohConnector::create_ble_data_service(BLEServer* pServer) {
 
 void BluetoohConnector::send_reading(const char* reading, uint16_t size) {
   if(initialized && millis() > temp_millis + 5000) {
-    pDataRXCharacteristic->setValue((uint8_t*) reading, size);
+    int segment = 0;
+    const static uint8_t max_segment_size = 20; // Max that can be send over bluetooth
+    debug_print("sending reading with size ("); debug_print(size); debug_print("): "); debug_println(reading);
+    do {
+      ++segment;
+      uint8_t segment_size = segment * max_segment_size > size ? size % max_segment_size : max_segment_size;
+      char to_send[segment_size];
+      strncpy(to_send, reading + ((segment - 1) * max_segment_size), segment_size);
+
+      pDataRXCharacteristic->setValue((uint8_t*) to_send, segment_size);
+      pDataRXCharacteristic->notify();
+    } while(segment * max_segment_size < size);
+
+    pDataRXCharacteristic->setValue(reading_final, 2);
+    pDataRXCharacteristic->notify();
+
     temp_millis = millis();
   }
 }
