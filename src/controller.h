@@ -30,7 +30,7 @@ class Controller : public Context, public ButtonObserver {
    * @param report_bluetooth: If true, it will command the bluetooth component to process the report
    * @param report_api: If true, it will command the api component to process the report
    */
-  void get_bgeigie_readings(bool report_bluetooth, bool report_api);
+  void process_possible_bgeigie_readings(bool report_bluetooth, bool report_api);
 
   /**
    * Callback for the button

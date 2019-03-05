@@ -164,7 +164,6 @@ void BluetoohConnector::send_reading(const char* reading, uint16_t size) {
   if(initialized && millis() > temp_millis + 5000) {
     int segment = 0;
     const static uint8_t max_segment_size = 20; // Max that can be send over bluetooth
-    debug_print("sending reading with size ("); debug_print(size); debug_print("): "); debug_println(reading);
     do {
       ++segment;
       uint8_t segment_size = segment * max_segment_size > size ? size % max_segment_size : max_segment_size;

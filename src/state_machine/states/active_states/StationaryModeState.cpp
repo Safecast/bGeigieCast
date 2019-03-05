@@ -5,7 +5,7 @@ StationaryModeState::StationaryModeState(Controller& context) : ActiveState(cont
 }
 
 void StationaryModeState::do_activity() {
-  controller.get_bgeigie_readings(true, true);
+  controller.process_possible_bgeigie_readings(true, true);
 }
 
 void StationaryModeState::handle_event(Event_enum event_id) {

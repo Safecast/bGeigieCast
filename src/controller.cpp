@@ -34,11 +34,10 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
   }
 }
 
-void Controller::get_bgeigie_readings(bool report_bluetooth, bool report_api) {
+void Controller::process_possible_bgeigie_readings(bool report_bluetooth, bool report_api) {
   char reading_str[100];
 
   if((report_api || report_bluetooth) && _bgeigie_connector.get_reading(reading_str)) {
-    debug_println("reporting new reading");
     if(report_bluetooth) {
       debug_println("reporting over bluetooth");
       _bluetooth.send_reading(reading_str, static_cast<uint16_t>(strlen(reading_str)));
