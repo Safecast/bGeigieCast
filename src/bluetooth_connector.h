@@ -12,22 +12,17 @@ class BluetoohConnector {
 
   void send_reading(const char* reading, uint16_t size);
  private:
+  void create_ble_profile_service(BLEServer* pServer);
+  void create_ble_device_service(BLEServer* pServer);
+  void create_ble_data_service(BLEServer* pServer);
+
   bool initialized;
   uint32_t temp_millis;
 
-  int addr = 0x0011223344;
-  int baud = 0x00;
+  uint8_t addr[6];
+  uint32_t baud;
 
-  BLECharacteristic* pProfileNameCharacteristic;
-  BLECharacteristic* pProfileAppearanceCharacteristic;
-  BLECharacteristic* pDeviceManufacturerCharacteristic;
-  BLECharacteristic* pDeviceModelCharacteristic;
-  BLECharacteristic* pDeviceFirmwareCharacteristic;
-  BLECharacteristic* pDeviceRevisionCharacteristic;
-  BLECharacteristic* pDataDBAddrCharacteristic;
-  BLECharacteristic* pDataBaudCharacteristic;
   BLECharacteristic* pDataRXCharacteristic;
-  BLECharacteristic* pDataTXCharacteristic;
 
 };
 
