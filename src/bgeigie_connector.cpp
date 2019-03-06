@@ -6,10 +6,10 @@ BGeigieConnector::BGeigieConnector(HardwareSerial& serial_connection) : _serial_
   _serial_connection.begin(BGEIGIE_CONNECTION_BAUD);
 }
 
-bool BGeigieConnector::get_reading(char* out) {
+bool BGeigieConnector::get_reading(Reading** out) {
   if(_serial_connection.available() > 0) {
-    String read = _serial_connection.readString();
-    strcpy(out, read.c_str());
+    String str = _serial_connection.readString();
+    *out = new Reading(str.c_str());
     return true;
   }
   return false;

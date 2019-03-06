@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define READING_STR_MAX 100
+
 typedef enum {
   e_unparsed,
   e_valid,
@@ -63,13 +65,13 @@ class Reading {
   uint16_t get_checksum() const;
 
  private:
-
   /**
    * Parse values from the reading_str
    */
-  void parse_values(const char* reading_str);
+  void parse_values();
 
 
+  char _reading_str[READING_STR_MAX];
   ReadingValidity _validity;
   uint16_t _average_of;
 

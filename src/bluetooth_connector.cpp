@@ -9,12 +9,15 @@
 BluetoohConnector::BluetoohConnector() : initialized(false) {
 }
 
-void BluetoohConnector::init() {
+void BluetoohConnector::init(uint16_t device_id) {
   if(initialized) {
     return;
   }
 
-  BLEDevice::init("Safecast ESP32BLE");
+  char deviceName[16];
+  sprintf(deviceName, "bGeigie%d", device_id);
+
+  BLEDevice::init(deviceName);
   BLEServer* pServer = BLEDevice::createServer();
 
   create_ble_profile_service(pServer);
@@ -154,10 +157,12 @@ void BluetoohConnector::create_ble_data_service(BLEServer* pServer) {
   pDataService->start();
 }
 
-void BluetoohConnector::send_reading(const char* reading, uint16_t size) {
+void BluetoohConnector::send_reading(Reading* reading) {
   if(!initialized) {
-    return;
+    init(reading->get_device_id());
   }
+  const char* reading_str = reading->get_reading_str();
+  size_t size = strlen(reading_str);
 
   int segment = 0;
   const static uint8_t max_segment_size = 20; // Max that can be send over bluetooth
@@ -165,7 +170,7 @@ void BluetoohConnector::send_reading(const char* reading, uint16_t size) {
     ++segment;
     uint8_t segment_size = segment * max_segment_size > size ? size % max_segment_size : max_segment_size;
     char to_send[segment_size];
-    strncpy(to_send, reading + ((segment - 1) * max_segment_size), segment_size);
+    strncpy(to_send, reading_str + ((segment - 1) * max_segment_size), segment_size);
 
     pDataRXCharacteristic->setValue((uint8_t*) to_send, segment_size);
     pDataRXCharacteristic->notify();

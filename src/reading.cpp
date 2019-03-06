@@ -6,6 +6,7 @@
 #include "reading_parser/nsscanf.h"
 
 Reading::Reading() :
+    _reading_str(""),
     _validity(e_unparsed),
     _average_of(0),
     _device_id(0),
@@ -24,6 +25,7 @@ Reading::Reading() :
 }
 
 Reading::Reading(const char* reading_str) :
+    _reading_str(""),
     _validity(e_unparsed),
     _average_of(1),
     _device_id(0),
@@ -39,15 +41,16 @@ Reading::Reading(const char* reading_str) :
     _sat_count(),
     _precision(0),
     _checksum(0) {
-  parse_values(reading_str);
+  strcpy(_reading_str, reading_str);
+  parse_values();
 }
 
-void Reading::parse_values(const char* reading_str) {
+void Reading::parse_values() {
   char NorS;
   char WorE;
 
   int parse_result = nsscanf(
-      reading_str,
+      _reading_str,
       "$BNRDD,%04d,%[^,],%d,%d,%d,%c,%f,%c,%f,%c,%f,%c,%d,%f*%x",
       &_device_id,
       _iso_timestr,
@@ -108,6 +111,7 @@ Reading& Reading::operator+=(const Reading& o) {
     return *this;
   }
   if(_average_of == 0) {
+    strcpy(_reading_str, o._reading_str);
     _validity = o._validity;
     _device_id = o._device_id;
     strcpy(_iso_timestr, o._iso_timestr);
@@ -156,6 +160,9 @@ void Reading::reset() {
   _average_of = 0;
 }
 
+const char* Reading::get_reading_str() const {
+  return _reading_str;
+}
 ReadingValidity Reading::get_validity() const {
   return _validity;
 }
