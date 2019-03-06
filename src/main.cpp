@@ -39,7 +39,6 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
 #include "debugger.h"
 #include "controller.h"
-#include "bluetooth_connector.h"
 
 #ifndef UNIT_TEST
 
