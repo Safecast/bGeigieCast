@@ -13,6 +13,9 @@ typedef enum {
   e_invalid_gps,
 } ReadingValidity;
 
+/**
+ * Container for a reading from the bGeigie, with some extra functions
+ */
 class Reading {
  public:
   /**

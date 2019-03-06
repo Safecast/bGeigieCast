@@ -10,6 +10,9 @@
 #include "bgeigie_connector.h"
 #include "bluetooth_connector.h"
 
+/**
+ * Main controller for the system, implements state machine to run
+ */
 class Controller : public Context, public ButtonObserver {
  public:
   Controller();
@@ -36,6 +39,8 @@ class Controller : public Context, public ButtonObserver {
    * Callback for the button
    */
   void on_button_pressed(Button* button, uint32_t millis) override;
+
+  // Getters
   EspConfig& get_config();
   ConfigWebServer& get_ap_server();
   ApiConnector& get_api_connector();

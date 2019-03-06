@@ -11,7 +11,7 @@
  */
 class ConfigWebServer {
  public:
-  ConfigWebServer(EspConfig& config);
+  explicit ConfigWebServer(EspConfig& config);
   virtual ~ConfigWebServer() = default;
 
   /**
