@@ -64,9 +64,9 @@ void Controller::process_possible_bgeigie_readings(bool report_bluetooth, bool r
           debug_println("invalid_gps");
           break;
       }
-      delete reading;
     }
   }
+  delete reading;
 }
 
 EspConfig& Controller::get_config() {
