@@ -2,6 +2,7 @@
 #define BGEIGIE_POINTCAST_BLUETOOTH_CONNECTOR_H
 
 #include <BLEDevice.h>
+#include "bluetooth_settings.h"
 
 class BluetoohConnector {
  public:
@@ -17,12 +18,8 @@ class BluetoohConnector {
   void create_ble_data_service(BLEServer* pServer);
 
   bool initialized;
-  uint32_t temp_millis;
-
-  uint8_t addr[6];
-  uint32_t baud;
-
-  uint8_t reading_final[2];
+  uint8_t addr[6] = BLE_DATA_ADDR;
+  uint8_t reading_final[2] = BLE_DATA_FINAL;
   BLECharacteristic* pDataRXCharacteristic;
 
 };
