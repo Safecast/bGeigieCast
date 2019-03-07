@@ -6,10 +6,9 @@
 
 #include <circular_buffer.h>
 
+#include "user_config.h"
 #include "esp_config.h"
 #include "reading.h"
-
-#define MAX_MISSED_READINGS 3
 
 /**
  * Connects over WiFi to the API to send readings

@@ -38,10 +38,12 @@ bool ApiConnector::is_connected() {
 }
 
 void ApiConnector::process_reading(Reading& reading) {
+  debug_println("Adding new reading to merged_reading");
   merged_reading += reading;
   uint32_t now = millis();
   if(last_send + (API_SEND_FREQUENCY_MINUTES * 60) <= now) {
     if(is_connected()) {
+      debug_println("Sending reading(s) to API");
       while(!missed_readings.empty()) {
         Reading* past_reading = missed_readings.get();
         send_reading(*past_reading);
@@ -50,6 +52,7 @@ void ApiConnector::process_reading(Reading& reading) {
       send_reading(reading);
 
     } else {
+      debug_println("No API Connection saving it for later");
       // Save the reading to send it later
       save_reading(reading);
     }
