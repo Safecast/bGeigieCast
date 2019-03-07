@@ -34,7 +34,7 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
 }
 
 void Controller::process_possible_bgeigie_readings(bool report_bluetooth, bool report_api) {
-  Reading* reading;
+  Reading* reading = nullptr;
 
   if(_bgeigie_connector.get_reading(&reading) && reading) {
     if(report_bluetooth) {
