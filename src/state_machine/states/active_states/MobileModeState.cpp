@@ -9,7 +9,7 @@ void MobileModeState::entry_action() {
 }
 
 void MobileModeState::do_activity() {
-  controller.get_bgeigie_readings(true, false);
+  controller.process_possible_bgeigie_readings(true, false);
 }
 
 void MobileModeState::exit_action() {

@@ -8,6 +8,7 @@
 #include "web_server.h"
 #include "api_connector.h"
 #include "bgeigie_connector.h"
+#include "bluetooth_connector.h"
 
 class Controller : public Context, public ButtonObserver {
  public:
@@ -29,7 +30,7 @@ class Controller : public Context, public ButtonObserver {
    * @param report_bluetooth: If true, it will command the bluetooth component to process the report
    * @param report_api: If true, it will command the api component to process the report
    */
-  void get_bgeigie_readings(bool report_bluetooth, bool report_api);
+  void process_possible_bgeigie_readings(bool report_bluetooth, bool report_api);
 
   /**
    * Callback for the button
@@ -45,6 +46,7 @@ class Controller : public Context, public ButtonObserver {
   ConfigWebServer _ap_server;
   ApiConnector _api_connector;
   Button _mode_button;
+  BluetoohConnector _bluetooth;
   BGeigieConnector _bgeigie_connector;
 
 };
