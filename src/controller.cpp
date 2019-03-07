@@ -36,34 +36,12 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
 void Controller::process_possible_bgeigie_readings(bool report_bluetooth, bool report_api) {
   Reading* reading = nullptr;
 
-  if((report_api || report_bluetooth) && _bgeigie_connector.get_reading(&reading)) {
+  if(_bgeigie_connector.get_reading(&reading) && reading) {
     if(report_bluetooth) {
-      debug_println("reporting over bluetooth");
-      _bluetooth.send_reading(reading);
+      _bluetooth.send_reading(*reading);
     }
     if(report_api) {
-      debug_println("reporting over api");
-//      _api_connector.process(reading);
-
-      // TODO: remove this once API process reading is implemented
-      debug_print("New reading, status: ");
-      switch(reading->get_validity()) {
-        case e_unparsed:
-          debug_println("unparsed");
-          break;
-        case e_valid:
-          debug_println("valid");
-          break;
-        case e_invalid_string:
-          debug_println("invalid_string");
-          break;
-        case e_invalid_sensor:
-          debug_println("invalid_sensor");
-          break;
-        case e_invalid_gps:
-          debug_println("invalid_gps");
-          break;
-      }
+      _api_connector.process_reading(*reading);
     }
   }
   delete reading;

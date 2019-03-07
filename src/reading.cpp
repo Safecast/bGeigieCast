@@ -10,7 +10,7 @@ Reading::Reading() :
     _validity(e_unparsed),
     _average_of(0),
     _device_id(0),
-    _iso_timestr(),
+    _iso_timestr(""),
     _cpm(0),
     _cpb(0),
     _total_count(0),
@@ -29,7 +29,7 @@ Reading::Reading(const char* reading_str) :
     _validity(e_unparsed),
     _average_of(1),
     _device_id(0),
-    _iso_timestr(),
+    _iso_timestr(""),
     _cpm(0),
     _cpb(0),
     _total_count(0),
@@ -45,65 +45,25 @@ Reading::Reading(const char* reading_str) :
   parse_values();
 }
 
-void Reading::parse_values() {
-  char NorS;
-  char WorE;
-
-  int parse_result = nsscanf(
-      _reading_str,
-      "$BNRDD,%04d,%[^,],%d,%d,%d,%c,%f,%c,%f,%c,%f,%c,%d,%f*%x",
-      &_device_id,
-      _iso_timestr,
-      &_cpm,
-      &_cpb,
-      &_total_count,
-      &_geiger_status,
-      &_latitude,
-      &NorS,
-      &_longitude,
-      &WorE,
-      &_altitude,
-      &_gps_status,
-      &_sat_count,
-      &_precision,
-      &_checksum
-  );
-
-  if(parse_result != 15) { // 15 values to be parsed
-    _validity = ReadingValidity::e_invalid_string;
-  } else if(_gps_status != 'A') {
-    _validity = ReadingValidity::e_invalid_gps;
-  } else if(_geiger_status != 'A') {
-    _validity = ReadingValidity::e_invalid_sensor;
-  } else {
-    if(NorS == 'S') { _latitude *= -1; }
-    if(WorE == 'W') { _longitude *= -1; }
-
-    _validity = ReadingValidity::e_valid;
-  }
-}
-
-bool Reading::as_json(char* out, bool stationary) {
-  if(_validity != ReadingValidity::e_valid) {
-    return false;
-  }
-
-  uint32_t device_id = stationary && _device_id < 10000 ? _device_id + 60000 : _device_id;
-  sprintf(
-      out,
-      "{\"captured_at\":\"%s\","
-      "\"device_id\":\"%d\","
-      "\"value\":\"%d\","
-      "\"unit\":\"cpm\","
-      "\"longitude\":\"%.4f\","
-      "\"latitude\":\"%.4f\"}\n",
-      _iso_timestr,
-      device_id,
-      _cpm,
-      _longitude,
-      _latitude
-  );
-  return true;
+Reading::Reading(const Reading& copy) :
+    _reading_str(""),
+    _validity(copy._validity),
+    _average_of(copy._average_of),
+    _device_id(copy._device_id),
+    _iso_timestr(""),
+    _cpm(copy._cpm),
+    _cpb(copy._cpb),
+    _total_count(copy._total_count),
+    _geiger_status(copy._geiger_status),
+    _latitude(copy._latitude),
+    _longitude(copy._longitude),
+    _altitude(copy._altitude),
+    _gps_status(copy._gps_status),
+    _sat_count(copy._sat_count),
+    _precision(copy._precision),
+    _checksum(copy._checksum) {
+  strcpy(_reading_str, copy._reading_str);
+  strcpy(_iso_timestr, copy._iso_timestr);
 }
 
 Reading& Reading::operator+=(const Reading& o) {
@@ -156,8 +116,73 @@ Reading& Reading::operator+=(const Reading& o) {
   return *this;
 }
 
+bool Reading::as_json(char* out) {
+  if(_validity != ReadingValidity::e_valid) {
+    return false;
+  }
+
+  uint32_t device_id = _device_id + 60000; // Stationary bGeigie sensors in 60k-70k range
+  sprintf(
+      out,
+      "{\"captured_at\":\"%s\","
+      "\"device_id\":%d,"
+      "\"value\":%d,"
+      "\"unit\":\"cpm\","
+      "\"longitude\":%.4f,"
+      "\"latitude\":%.4f}\n",
+      _iso_timestr,
+      device_id,
+      _cpm,
+      _longitude,
+      _latitude
+  );
+  return true;
+}
+
 void Reading::reset() {
   _average_of = 0;
+}
+
+void Reading::parse_values() {
+  char NorS;
+  char WorE;
+
+  int parse_result = nsscanf(
+      _reading_str,
+      "$BNRDD,%04d,%[^,],%d,%d,%d,%c,%f,%c,%f,%c,%f,%c,%d,%f*%x",
+      &_device_id,
+      _iso_timestr,
+      &_cpm,
+      &_cpb,
+      &_total_count,
+      &_geiger_status,
+      &_latitude,
+      &NorS,
+      &_longitude,
+      &WorE,
+      &_altitude,
+      &_gps_status,
+      &_sat_count,
+      &_precision,
+      &_checksum
+  );
+
+  if(parse_result != 15) { // 15 values to be parsed
+    _validity = ReadingValidity::e_invalid_string;
+  } else if(_gps_status != 'A') {
+    _validity = ReadingValidity::e_invalid_gps;
+  } else if(_geiger_status != 'A') {
+    _validity = ReadingValidity::e_invalid_sensor;
+  } else {
+    _validity = ReadingValidity::e_valid;
+  }
+
+  if(NorS == 'S') { _latitude *= -1; }
+  if(WorE == 'W') { _longitude *= -1; }
+
+  _latitude /= 100;
+  _longitude /= 100;
+  _altitude /= 100;
 }
 
 const char* Reading::get_reading_str() const {

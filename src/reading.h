@@ -29,8 +29,14 @@ class Reading {
    */
   explicit Reading(const char* reading_str);
   virtual ~Reading() = default;
-  Reading(const Reading& copy) = delete;
+  Reading(const Reading& copy);
   Reading operator=(const Reading& copy) = delete;
+
+  /**
+   * Merge another reading with this one, takes the averages of all
+   * @param o
+   */
+  Reading& operator+=(const Reading& o);
 
   /**
    * Get this reading as a json object in string
@@ -38,13 +44,7 @@ class Reading {
    * @param stationary: if the device is in stationary mode, it will add 60000 to the device id
    * @return: succes / not
    */
-  bool as_json(char* out, bool stationary);
-
-  /**
-   * Merge another reading with this one, takes the averages of all
-   * @param o
-   */
-  Reading& operator+=(const Reading& o);
+  bool as_json(char* out);
 
   /**
    * Clear this reading
@@ -72,7 +72,6 @@ class Reading {
    * Parse values from the reading_str
    */
   void parse_values();
-
 
   char _reading_str[READING_STR_MAX];
   ReadingValidity _validity;

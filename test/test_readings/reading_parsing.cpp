@@ -17,13 +17,31 @@ void reading_parsing(void) {
   TEST_ASSERT_EQUAL(63, r.get_cpb());
   TEST_ASSERT_EQUAL(33895, r.get_total_count());
   TEST_ASSERT_EQUAL_INT8('A', r.get_geiger_status());
-  TEST_ASSERT_EQUAL_FLOAT(5641.7788, r.get_latitude());
-  TEST_ASSERT_EQUAL_FLOAT(1411.8820, r.get_longitude());
-  TEST_ASSERT_EQUAL_FLOAT(9861.20, r.get_altitude());
+  TEST_ASSERT_EQUAL_FLOAT(56.4177, r.get_latitude());
+  TEST_ASSERT_EQUAL_FLOAT(14.1188, r.get_longitude());
+  TEST_ASSERT_EQUAL_FLOAT(98.6120, r.get_altitude());
   TEST_ASSERT_EQUAL_INT8('A', r.get_gps_status());
   TEST_ASSERT_EQUAL(109, r.get_sat_count());
   TEST_ASSERT_EQUAL_FLOAT(9, r.get_precision());
   TEST_ASSERT_EQUAL(0x46, r.get_checksum());
+
+  // Test copy constructor
+  Reading r2 = r;
+
+  TEST_ASSERT_EQUAL(204, r2.get_device_id());
+  TEST_ASSERT_EQUAL_STRING("2012-09-20T16:53:58Z", r2.get_iso_timestr());
+  TEST_ASSERT_EQUAL(776, r2.get_cpm());
+  TEST_ASSERT_EQUAL(63, r2.get_cpb());
+  TEST_ASSERT_EQUAL(33895, r2.get_total_count());
+  TEST_ASSERT_EQUAL_INT8('A', r2.get_geiger_status());
+  TEST_ASSERT_EQUAL_FLOAT(56.4177, r2.get_latitude());
+  TEST_ASSERT_EQUAL_FLOAT(14.1188, r2.get_longitude());
+  TEST_ASSERT_EQUAL_FLOAT(98.6120, r2.get_altitude());
+  TEST_ASSERT_EQUAL_INT8('A', r2.get_gps_status());
+  TEST_ASSERT_EQUAL(109, r2.get_sat_count());
+  TEST_ASSERT_EQUAL_FLOAT(9, r2.get_precision());
+  TEST_ASSERT_EQUAL(0x46, r2.get_checksum());
+  
 }
 
 /**
@@ -42,9 +60,9 @@ void reading_parsing_inverse_lat_long(void) {
   TEST_ASSERT_EQUAL(63, r.get_cpb());
   TEST_ASSERT_EQUAL(33895, r.get_total_count());
   TEST_ASSERT_EQUAL_INT8('A', r.get_geiger_status());
-  TEST_ASSERT_EQUAL_FLOAT(-5641.7788, r.get_latitude());
-  TEST_ASSERT_EQUAL_FLOAT(-1411.8820, r.get_longitude());
-  TEST_ASSERT_EQUAL_FLOAT(9861.20, r.get_altitude());
+  TEST_ASSERT_EQUAL_FLOAT(-56.417788, r.get_latitude());
+  TEST_ASSERT_EQUAL_FLOAT(-14.118820, r.get_longitude());
+  TEST_ASSERT_EQUAL_FLOAT(98.6120, r.get_altitude());
   TEST_ASSERT_EQUAL_INT8('A', r.get_gps_status());
   TEST_ASSERT_EQUAL(109, r.get_sat_count());
   TEST_ASSERT_EQUAL_FLOAT(9, r.get_precision());
