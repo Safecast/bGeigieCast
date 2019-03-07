@@ -1,8 +1,6 @@
 #ifndef BGEIGIE_POINTCAST_CIRCULARBUFFER_HPP
 #define BGEIGIE_POINTCAST_CIRCULARBUFFER_HPP
 
-#include <Arduino.h>
-
 /**
  * Simple circular buffer
  * @tparam T: Type of the buffer
@@ -15,6 +13,10 @@ class CircularBuffer {
   CircularBuffer() : buffer(), count(0), current(0) {};
   virtual ~CircularBuffer() = default;
 
+  /**
+   * Get the next value from the buffer, should check if buffer is not empty before calling this
+   * @return: next value T or null_value if the buffer is empty
+   */
   T get() {
     if(empty()) {
       return null_value;
@@ -26,6 +28,10 @@ class CircularBuffer {
     return val;
   };
 
+  /**
+   * Add a value to the buffer. If the buffer is full, it will throw away the oldest value and add this.
+   * @param val
+   */
   void add(T val) {
     buffer[(current + count) % max] = val;
     if(count < max) {
@@ -36,14 +42,25 @@ class CircularBuffer {
     }
   };
 
+  /**
+   * Check if the buffer is empty
+   * @return: true if buffer is empty
+   */
   bool empty() const {
     return count == 0;
   }
 
+  /**
+   * Get the amount of items in the buffer
+   * @return
+   */
   uint16_t get_count() const {
     return count;
   }
 
+  /**
+   * Clear the buffer
+   */
   void clear() {
     count = 0;
   }

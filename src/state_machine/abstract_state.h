@@ -8,7 +8,7 @@
  */
 class AbstractState {
  public:
-  AbstractState(){};
+  AbstractState() = default;;
   virtual ~AbstractState() = default;
 
   /**

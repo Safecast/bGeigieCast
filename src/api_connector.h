@@ -10,7 +10,7 @@
  */
 class ApiConnector {
  public:
-  ApiConnector(EspConfig& config);
+  explicit ApiConnector(EspConfig& config);
   virtual ~ApiConnector() = default;
 
   /**
