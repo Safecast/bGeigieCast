@@ -1,6 +1,8 @@
 #ifndef BGEIGIE_POINTCAST_CIRCULARBUFFER_HPP
 #define BGEIGIE_POINTCAST_CIRCULARBUFFER_HPP
 
+#include <stdint.h>
+
 /**
  * Simple circular buffer
  * @tparam T: Type of the buffer
