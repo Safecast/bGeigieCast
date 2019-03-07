@@ -10,7 +10,7 @@ Reading::Reading() :
     _validity(e_unparsed),
     _average_of(0),
     _device_id(0),
-    _iso_timestr(),
+    _iso_timestr(""),
     _cpm(0),
     _cpb(0),
     _total_count(0),
@@ -29,7 +29,7 @@ Reading::Reading(const char* reading_str) :
     _validity(e_unparsed),
     _average_of(1),
     _device_id(0),
-    _iso_timestr(),
+    _iso_timestr(""),
     _cpm(0),
     _cpb(0),
     _total_count(0),
@@ -43,6 +43,27 @@ Reading::Reading(const char* reading_str) :
     _checksum(0) {
   strcpy(_reading_str, reading_str);
   parse_values();
+}
+
+Reading::Reading(const Reading& copy) :
+    _reading_str(""),
+    _validity(copy._validity),
+    _average_of(copy._average_of),
+    _device_id(copy._device_id),
+    _iso_timestr(""),
+    _cpm(copy._cpm),
+    _cpb(copy._cpb),
+    _total_count(copy._total_count),
+    _geiger_status(copy._geiger_status),
+    _latitude(copy._latitude),
+    _longitude(copy._longitude),
+    _altitude(copy._altitude),
+    _gps_status(copy._gps_status),
+    _sat_count(copy._sat_count),
+    _precision(copy._precision),
+    _checksum(copy._checksum) {
+  strcpy(_reading_str, copy._reading_str);
+  strcpy(_iso_timestr, copy._iso_timestr);
 }
 
 void Reading::parse_values() {

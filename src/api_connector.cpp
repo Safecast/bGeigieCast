@@ -1,28 +1,26 @@
 #include "api_connector.h"
 #include "debugger.h"
 
-ApiConnector::ApiConnector(EspConfig& config) : config(config) {
+ApiConnector::ApiConnector(EspConfig& config) :
+    config(config),
+    missed_readings(),
+    last_send(0),
+    merged_reading() {
 }
 
 bool ApiConnector::start_connect() {
+  if(is_connected()) {
+    return true;
+  }
   char ssid[32], password[32];
   if(!config.get_wifi_ssid(ssid)) {
     debug_println("No SSID to connect to!");
     return false;
   }
-  if(config.get_wifi_password(password)) {
-    debug_print("Connecting to wifi ssid: \"");
-    debug_print(ssid);
-    debug_print("\", using password: ");
-    debug_println(password);
-    WiFi.begin(ssid, password);
-  } else {
-    debug_print("Connecting to wifi ssid: ");
-    debug_print(ssid);
-    debug_println(", using no password");
-    WiFi.begin(ssid);
-  }
 
+  config.get_wifi_password(password) ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
+
+  merged_reading.reset();
   return is_connected();
 }
 
@@ -37,4 +35,43 @@ bool ApiConnector::test() {
 
 bool ApiConnector::is_connected() {
   return WiFi.status() == WL_CONNECTED;
+}
+
+void ApiConnector::process_reading(Reading& reading) {
+  merged_reading += reading;
+  uint32_t now = millis();
+  if(last_send + (API_SEND_FREQUENCY_MINUTES * 60) <= now) {
+    if(is_connected()) {
+      while(!missed_readings.empty()) {
+        Reading* past_reading = missed_readings.get();
+        send_reading(*past_reading);
+        delete past_reading;
+      }
+      send_reading(reading);
+
+    } else {
+      // Save the reading to send it later
+      save_reading(reading);
+    }
+
+    merged_reading.reset();
+  }
+}
+
+void ApiConnector::save_reading(Reading& reading) {
+  if(missed_readings.get_count() == MAX_MISSED_READINGS) {
+    // Delete oldest reading, else mem leak
+    delete missed_readings.get();
+  }
+  missed_readings.add(new Reading(reading));
+}
+
+bool ApiConnector::send_reading(Reading& reading) {
+  //TODO: Send reading
+  bool response = true;
+  if(!response) {
+    // Failed to send
+    save_reading(reading);
+  }
+  return false;
 }

@@ -3,7 +3,13 @@
 
 #include <WiFi.h>
 #include <HTTPClient.h>
+
+#include <circular_buffer.h>
+
 #include "esp_config.h"
+#include "reading.h"
+
+#define MAX_MISSED_READINGS 3
 
 /**
  * Connects over WiFi to the API to send readings
@@ -35,8 +41,31 @@ class ApiConnector {
    */
   bool is_connected();
 
+  /**
+   * Process a new reading. will merge with existing readings and if its time, it will be posted to the API
+   * @param reading: new reading to process
+   */
+  void process_reading(Reading& reading);
  private:
+
+  /**
+   * When a reading cannot be send to the API, we save it to send later..
+   * @param reading: reading to save
+   */
+  void save_reading(Reading& reading);
+
+  /**
+   * Send a reading to the API
+   * @param reading: reading to send
+   * @return: true if the API call was successful
+   */
+  bool send_reading(Reading& reading);
+
   EspConfig& config;
+  CircularBuffer<Reading*, MAX_MISSED_READINGS> missed_readings;
+
+  uint32_t last_send;
+  Reading merged_reading;
 };
 
 #endif //BGEIGIE_POINTCAST_APICONNECTOR_H

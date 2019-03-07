@@ -29,7 +29,7 @@ class Reading {
    */
   explicit Reading(const char* reading_str);
   virtual ~Reading() = default;
-  Reading(const Reading& copy) = delete;
+  Reading(const Reading& copy);
   Reading operator=(const Reading& copy) = delete;
 
   /**
@@ -72,7 +72,6 @@ class Reading {
    * Parse values from the reading_str
    */
   void parse_values();
-
 
   char _reading_str[READING_STR_MAX];
   ReadingValidity _validity;

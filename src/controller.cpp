@@ -36,14 +36,14 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
 void Controller::process_possible_bgeigie_readings(bool report_bluetooth, bool report_api) {
   Reading* reading;
 
-  if((report_api || report_bluetooth) && _bgeigie_connector.get_reading(&reading)) {
+  if(_bgeigie_connector.get_reading(&reading) && reading) {
     if(report_bluetooth) {
       debug_println("reporting over bluetooth");
-      _bluetooth.send_reading(reading);
+      _bluetooth.send_reading(*reading);
     }
     if(report_api) {
       debug_println("reporting over api");
-//      _api_connector.process(reading);
+      _api_connector.process_reading(*reading);
 
       // TODO: remove this once API process reading is implemented
       debug_print("New reading, status: ");

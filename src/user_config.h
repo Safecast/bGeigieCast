@@ -13,6 +13,7 @@
 
 // API settings
 #define API_PING_TEST_ADDRESS "dev.safecast.org"
+#define API_SEND_FREQUENCY_MINUTES 5
 
 // Access point settings
 #define SERVER_WIFI_PORT 80
