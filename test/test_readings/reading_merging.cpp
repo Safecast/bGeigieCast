@@ -20,9 +20,9 @@ void reading_merging_new(void) {
   TEST_ASSERT_EQUAL(63, r.get_cpb());
   TEST_ASSERT_EQUAL(33895, r.get_total_count());
   TEST_ASSERT_EQUAL_INT8('A', r.get_geiger_status());
-  TEST_ASSERT_EQUAL_FLOAT(5641.7788, r.get_latitude());
-  TEST_ASSERT_EQUAL_FLOAT(1411.8820, r.get_longitude());
-  TEST_ASSERT_EQUAL_FLOAT(9861.20, r.get_altitude());
+  TEST_ASSERT_EQUAL_FLOAT(56.4177, r.get_latitude());
+  TEST_ASSERT_EQUAL_FLOAT(14.1188, r.get_longitude());
+  TEST_ASSERT_EQUAL_FLOAT(98.6120, r.get_altitude());
   TEST_ASSERT_EQUAL_INT8('A', r.get_gps_status());
   TEST_ASSERT_EQUAL(109, r.get_sat_count());
   TEST_ASSERT_EQUAL_FLOAT(9, r.get_precision());
@@ -33,8 +33,8 @@ void reading_merging_new(void) {
  * Test merging of normal merging
  */
 void reading_merging_normal(void) {
-  const char* reading_str1 = "$BNRDD,204,2012-09-20T16:53:58Z,776,63,33895,A,5641.7788,N,1411.8820,E,9861.20,A,109,9*46";
-  const char* reading_str2 = "$BNRDD,204,2012-09-20T16:54:58Z,796,83,33915,A,5641.7766,N,1411.8800,E,9861.00,A,101,5*11";
+  const char* reading_str1 = "$BNRDD,204,2012-09-20T16:53:58Z,776,63,33895,A,5641.7788,N,1311.9100,E,9861.20,A,109,9*46";
+  const char* reading_str2 = "$BNRDD,204,2012-09-20T16:54:58Z,796,83,33915,A,5441.7788,N,1411.9100,E,9821.20,A,101,5*11";
 
   Reading r1(reading_str1);
   Reading r2(reading_str2);
@@ -54,11 +54,11 @@ void reading_merging_normal(void) {
   // Best geiger status
   TEST_ASSERT_EQUAL_INT8('A', r1.get_geiger_status());
   // Average latitude
-  TEST_ASSERT_EQUAL_FLOAT(5641.7778, r1.get_latitude());
+  TEST_ASSERT_EQUAL_FLOAT(55.4178, r1.get_latitude());
   // Average longitude
-  TEST_ASSERT_EQUAL_FLOAT(1411.8810, r1.get_longitude());
+  TEST_ASSERT_EQUAL_FLOAT(13.6191, r1.get_longitude());
   // Average altitude
-  TEST_ASSERT_EQUAL_FLOAT(9861.10, r1.get_altitude());
+  TEST_ASSERT_EQUAL_FLOAT(98.4120, r1.get_altitude());
   // Best gps status
   TEST_ASSERT_EQUAL_INT8('A', r1.get_gps_status());
   // Average satellite count
@@ -74,10 +74,10 @@ void reading_merging_normal(void) {
  * Test merging of multiple merging
  */
 void reading_merging_multiple(void) {
-  const char* reading_str1 = "$BNRDD,204,2012-09-20T16:53:58Z,776,63,33895,A,5641.7788,N,1411.8820,E,9861.20,A,109,9*46";
-  const char* reading_str2 = "$BNRDD,204,2012-09-20T16:54:58Z,796,83,33915,A,5641.7766,N,1411.8800,E,9861.00,A,101,5*11";
-  const char* reading_str3 = "$BNRDD,204,2012-09-20T16:55:58Z,762,77,33955,A,5641.7773,N,1411.8811,E,9861.05,A,91,9*41";
-  const char* reading_str4 = "$BNRDD,204,2012-09-20T16:56:58Z,780,73,33985,A,5641.7771,N,1411.8815,E,9861.08,A,85,9*19";
+  const char* reading_str1 = "$BNRDD,204,2012-09-20T16:53:58Z,776,63,33895,A,5681.7188,N,1411.8420,E,9861.20,A,109,9*46";
+  const char* reading_str2 = "$BNRDD,204,2012-09-20T16:54:58Z,796,83,33915,A,5611.7666,N,1399.8100,E,9761.00,A,101,5*11";
+  const char* reading_str3 = "$BNRDD,204,2012-09-20T16:55:58Z,762,77,33955,A,5531.7373,N,1451.8611,E,9661.05,A,91,9*41";
+  const char* reading_str4 = "$BNRDD,204,2012-09-20T16:56:58Z,780,73,33985,A,5611.7771,N,1311.8815,E,9561.08,A,85,9*19";
 
   Reading r1(reading_str1);
   Reading r2(reading_str2);
@@ -101,11 +101,11 @@ void reading_merging_multiple(void) {
   // Best geiger status
   TEST_ASSERT_EQUAL_INT8('A', r1.get_geiger_status());
   // Average latitude
-  TEST_ASSERT_EQUAL_FLOAT(5641.7774, r1.get_latitude());
+  TEST_ASSERT_EQUAL_FLOAT(56.0925, r1.get_latitude());
   // Average longitude
-  TEST_ASSERT_EQUAL_FLOAT(1411.8811, r1.get_longitude());
+  TEST_ASSERT_EQUAL_FLOAT(13.9385, r1.get_longitude());
   // Average altitude
-  TEST_ASSERT_EQUAL_FLOAT(9861.08, r1.get_altitude());
+  TEST_ASSERT_EQUAL_FLOAT(97.1108, r1.get_altitude());
   // Best gps status
   TEST_ASSERT_EQUAL_INT8('A', r1.get_gps_status());
   // Average satellite count

@@ -12,7 +12,8 @@
 #define MODE_BUTTON_PIN 22
 
 // API connector settings
-#define API_PING_TEST_ADDRESS "dev.safecast.org"
+#define API_HOST "tt.safecast.org"
+#define API_ENDPOINT "http://tt.safecast.org/measurements.json"
 #define API_SEND_FREQUENCY_MINUTES 1
 // max 3 with sending every 5 minutes would mean saving the last 15 minutes if connection failed
 #define MAX_MISSED_READINGS 3
@@ -28,7 +29,7 @@
 #define D_ACCESS_POINT_PASSWORD "safecast"
 #define D_WIFI_SSID             "Loftwork COOOP3 Free"
 #define D_WIFI_PASSWORD         ""
-#define D_APIKEY                "YE_KEY"
+#define D_APIKEY                ""
 #define D_USE_DEV_SERVER        true
 
 #endif

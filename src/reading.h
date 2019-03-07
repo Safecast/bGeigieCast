@@ -33,18 +33,18 @@ class Reading {
   Reading operator=(const Reading& copy) = delete;
 
   /**
+   * Merge another reading with this one, takes the averages of all
+   * @param o
+   */
+  Reading& operator+=(const Reading& o);
+
+  /**
    * Get this reading as a json object in string
    * @param out: output param
    * @param stationary: if the device is in stationary mode, it will add 60000 to the device id
    * @return: succes / not
    */
-  bool as_json(char* out, bool stationary);
-
-  /**
-   * Merge another reading with this one, takes the averages of all
-   * @param o
-   */
-  Reading& operator+=(const Reading& o);
+  bool as_json(char* out);
 
   /**
    * Clear this reading

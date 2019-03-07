@@ -161,6 +161,7 @@ void BluetoohConnector::send_reading(Reading& reading) {
   if(!initialized) {
     init(reading.get_device_id());
   }
+  debug_println("Sending reading over Bluetooth");
   const char* reading_str = reading.get_reading_str();
   size_t size = strlen(reading_str);
 
