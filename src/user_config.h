@@ -14,7 +14,7 @@
 // API connector settings
 #define API_HOST "tt.safecast.org"
 #define API_ENDPOINT "http://tt.safecast.org/measurements.json"
-#define API_SEND_FREQUENCY_MINUTES 1
+#define API_SEND_FREQUENCY_MINUTES 5
 // max 3 with sending every 5 minutes would mean saving the last 15 minutes if connection failed
 #define MAX_MISSED_READINGS 3
 
