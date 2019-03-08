@@ -8,7 +8,10 @@
 #define BGEIGIE_CONNECTION_BAUD 9600
 
 // Hardware pins settings
-#define RGB_LED_PIN 21
+#define RGB_LED_PIN_R A18
+#define RGB_LED_PIN_G A4
+#define RGB_LED_PIN_B A5
+
 #define MODE_BUTTON_PIN 22
 
 // API connector settings

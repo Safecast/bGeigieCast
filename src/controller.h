@@ -5,10 +5,11 @@
 #include <button_observer.h>
 
 #include "state_machine/context.h"
-#include "web_server.h"
+#include "web_server/web_server.h"
 #include "api_connector.h"
 #include "bgeigie_connector.h"
 #include "bluetooth_connector.h"
+#include "state_led.h"
 
 /**
  * Main controller for the system, implements state machine to run
@@ -45,14 +46,16 @@ class Controller : public Context, public ButtonObserver {
   ConfigWebServer& get_ap_server();
   ApiConnector& get_api_connector();
   Button& get_mode_button();
-
+  StateLED& get_state_led();
  private:
   EspConfig _config;
   ConfigWebServer _ap_server;
   ApiConnector _api_connector;
   Button _mode_button;
+  StateLED _state_led;
   BluetoohConnector _bluetooth;
   BGeigieConnector _bgeigie_connector;
+
 
 };
 

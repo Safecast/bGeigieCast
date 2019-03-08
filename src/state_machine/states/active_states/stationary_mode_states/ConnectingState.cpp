@@ -7,6 +7,7 @@ ConnectingState::ConnectingState(Controller& context): StationaryModeState(conte
 
 void ConnectingState::entry_action() {
   debug_println("Entered state Connecting");
+  controller.get_state_led().set_state_led(StateLED::StateColor::stationary_connecting);
   timer = millis();
   controller.get_api_connector().start_connect();
 }

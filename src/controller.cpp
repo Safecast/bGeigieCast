@@ -9,8 +9,9 @@ Controller::Controller() :
     _ap_server(_config),
     _api_connector(_config),
     _mode_button(MODE_BUTTON_PIN),
+    _state_led(),
     _bluetooth(),
-    _bgeigie_connector(Serial2){
+    _bgeigie_connector(Serial2) {
 }
 
 void Controller::setup_state_machine() {
@@ -61,4 +62,8 @@ ApiConnector& Controller::get_api_connector() {
 
 Button& Controller::get_mode_button() {
   return _mode_button;
+}
+
+StateLED& Controller::get_state_led() {
+  return _state_led;
 }

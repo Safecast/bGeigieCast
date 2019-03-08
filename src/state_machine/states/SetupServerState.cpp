@@ -6,6 +6,7 @@ SetupServerState::SetupServerState(Controller& context) : State(context) {
 
 void SetupServerState::entry_action() {
   debug_println("Entered state SetupServer");
+  controller.get_state_led().set_state_led(StateLED::StateColor::config);
 }
 
 void SetupServerState::do_activity() {

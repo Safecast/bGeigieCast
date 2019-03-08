@@ -6,6 +6,7 @@ TestApiState::TestApiState(Controller& context): StationaryModeState(context) {
 
 void TestApiState::entry_action() {
   debug_println("Entered state TestApi");
+  controller.get_state_led().set_state_led(StateLED::StateColor::stationary_connecting);
 }
 
 void TestApiState::do_activity() {

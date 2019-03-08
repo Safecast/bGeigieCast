@@ -31,8 +31,7 @@ class BluetoohConnector {
   void create_ble_data_service(BLEServer* pServer);
 
   bool initialized;
-  uint8_t addr[6] = BLE_DATA_ADDR;
-  uint8_t reading_final[2] = BLE_DATA_FINAL;
+  uint8_t addr[BLE_DATA_ADDR_SIZE] = BLE_DATA_ADDR;
   BLECharacteristic* pDataRXCharacteristic;
 
 };
