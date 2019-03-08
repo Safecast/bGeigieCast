@@ -15,6 +15,7 @@ class ConnectionErrorState: public StationaryModeState {
 
  private:
   uint32_t timer;
+  bool blink_state;
 };
 
 #endif //BGEIGIE_POINTCAST_CONNECTIONERRORSTATE_HPP
