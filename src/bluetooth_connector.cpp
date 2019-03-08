@@ -176,7 +176,4 @@ void BluetoohConnector::send_reading(Reading& reading) {
     pDataRXCharacteristic->setValue((uint8_t*) to_send, segment_size);
     pDataRXCharacteristic->notify();
   } while(segment * max_segment_size < size);
-
-  pDataRXCharacteristic->setValue(reading_final, BLE_DATA_FINAL_SIZE);
-  pDataRXCharacteristic->notify();
 }

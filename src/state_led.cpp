@@ -23,7 +23,7 @@ void StateLED::set_state_led(StateLED::StateColor color) {
       set(_rgb_init);
       break;
     case config:
-      set((_rgb_config));
+      set(_rgb_config);
       break;
     case mobile:
       set(_rgb_mobile);

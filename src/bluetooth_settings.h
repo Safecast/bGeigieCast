@@ -1,9 +1,7 @@
 #ifndef BGEIGIE_POINTCAST_BLUETOOTH_SETTINGS_H
 #define BGEIGIE_POINTCAST_BLUETOOTH_SETTINGS_H
 
-#define BLE_DATA_FINAL_SIZE   2
 #define BLE_DATA_ADDR_SIZE    6
-#define BLE_DATA_FINAL        {0x0D, 0x0A}
 #define BLE_DATA_ADDR         {0x88, 0x6B, 0x0F, 0x09, 0x7C, 0x9A}
 
 #define SERVICE_PROFILE_UUID                        "1800"
