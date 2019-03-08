@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <unity.h>
 
 void test_led_builtin_pin_number(void);
