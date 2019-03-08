@@ -1,4 +1,4 @@
-#include "esp_led.h"
+#include "rgb_led.h"
 
 #define CHANNEL_R 0
 #define CHANNEL_G 1
@@ -7,7 +7,7 @@
 #define CHANNEL_FREQUENCY 12800
 #define CHANNEL_RESOLUTION 8
 
-EspLED::EspLED(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b) {
+RGBLed::RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b) {
   // Connect pins to channels
   ledcSetup(CHANNEL_R, CHANNEL_FREQUENCY, CHANNEL_RESOLUTION);
   ledcAttachPin(pin_r, CHANNEL_R);
@@ -17,24 +17,26 @@ EspLED::EspLED(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b) {
   ledcAttachPin(pin_b, CHANNEL_B);
 }
 
-void EspLED::set(RGB& values) {
+void RGBLed::set(RGB& values) {
   set_r(values.r);
   set_g(values.g);
   set_b(values.b);
 }
 
-void EspLED::set_r(uint32_t value){
+void RGBLed::off() {
+  set_r(0);
+  set_g(0);
+  set_b(0);
+}
+
+void RGBLed::set_r(uint32_t value){
   ledcWrite(CHANNEL_R, value);
 }
 
-void EspLED::set_g(uint32_t value){
+void RGBLed::set_g(uint32_t value){
   ledcWrite(CHANNEL_G, value);
 }
 
-void EspLED::set_b(uint32_t value){
+void RGBLed::set_b(uint32_t value){
   ledcWrite(CHANNEL_B, value);
-}
-
-void EspLED::set_blinking(uint16_t speed) {
-  blinking_speed = speed;
 }

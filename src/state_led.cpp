@@ -3,7 +3,7 @@
 #include "debugger.h"
 
 StateLED::StateLED() :
-    EspLED(RGB_LED_PIN_R, RGB_LED_PIN_G, RGB_LED_PIN_B),
+    RGBLed(RGB_LED_PIN_R, RGB_LED_PIN_G, RGB_LED_PIN_B),
     _rgb_off{0, 0, 0},
     _rgb_init{50, 50, 50},
     _rgb_config{255, 0, 255},

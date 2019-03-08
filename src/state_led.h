@@ -1,12 +1,12 @@
 #ifndef BGEIGIE_POINTCAST_STATE_LED_H
 #define BGEIGIE_POINTCAST_STATE_LED_H
 
-#include <esp_led.h>
+#include <rgb_led.h>
 
 /**
  * Controls the LED to visualize the current state
  */
-class StateLED : private EspLED{
+class StateLED : private RGBLed{
  public:
   typedef enum {
     off,

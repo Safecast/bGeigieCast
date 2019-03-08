@@ -13,7 +13,8 @@ void test_led_builtin_pin_number(void) {
  * Check if write HIGH works (led on)
  * - Example test from: https://docs.platformio.org/en/latest/tutorials/core/unit_testing_blink.html
  */
-void test_led_state_high(void) {
+void test_led_builtin_state_high(void) {
+  pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
   TEST_ASSERT_EQUAL(HIGH, digitalRead(LED_BUILTIN));
 }
@@ -22,25 +23,8 @@ void test_led_state_high(void) {
  * Check if write LOW works (led off)
  * - Example test from: https://docs.platformio.org/en/latest/tutorials/core/unit_testing_blink.html
  */
-void test_led_state_low(void) {
+void test_led_builtin_state_low(void) {
+  pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
   TEST_ASSERT_EQUAL(LOW, digitalRead(LED_BUILTIN));
-}
-
-void setup() {
-  delay(2000);
-
-  UNITY_BEGIN();
-  RUN_TEST(test_led_builtin_pin_number);
-
-  pinMode(LED_BUILTIN, OUTPUT);
-
-  RUN_TEST(test_led_state_high);
-  delay(500);
-  RUN_TEST(test_led_state_low);
-
-  UNITY_END();
-}
-
-void loop() {
 }
