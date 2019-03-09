@@ -24,7 +24,7 @@ void Controller::initialize() {
   schedule_event(Event_enum::e_controller_initialized);
 }
 
-void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
+void IRAM_ATTR Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
   if(button->get_pin() == MODE_BUTTON_PIN) {
     if(millis_pressed > 4000) {
       schedule_event(Event_enum::e_button_long_pressed);

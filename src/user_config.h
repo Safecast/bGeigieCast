@@ -12,7 +12,7 @@
 #define RGB_LED_PIN_G A4
 #define RGB_LED_PIN_B A5
 
-#define MODE_BUTTON_PIN 22
+#define MODE_BUTTON_PIN 0
 
 // API connector settings
 #define API_HOST "tt.safecast.org"
