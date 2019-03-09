@@ -18,7 +18,7 @@ class Button {
   typedef void(*on_button_pressed_fn_t)(Button*, uint32_t);
 
 
-  Button(uint8_t pin, uint8_t pull_type = PULLUP);
+  Button(uint8_t pin, uint8_t pull_type = PULLDOWN);
   virtual ~Button() = default;
 
   /**

@@ -17,7 +17,7 @@ class ButtonObserver {
    * if button is PULLDOWN, triggers when  LOW -> HIGH
    * @param button: The button that caused the trigger
    */
-  virtual void on_button_down(Button* button) {/*no implementation*/};
+  virtual void IRAM_ATTR on_button_down(Button* button) {/*no implementation*/};
 
   /**
    * Callback when the button is released
@@ -25,7 +25,7 @@ class ButtonObserver {
    * if button is PULLDOWN, triggers when HIGH -> LOW
    * @param button: The button that caused the trigger
    */
-  virtual void on_button_release(Button* button) {/*no implementation*/};
+  virtual void IRAM_ATTR on_button_release(Button* button) {/*no implementation*/};
 
   /**
    *
@@ -35,7 +35,7 @@ class ButtonObserver {
    * @param button: The button that caused the trigger
    * @param millis: how long the button was pressed in millis
    */
-  virtual void on_button_pressed(Button* button, uint32_t millis) {/*no implementation*/};
+  virtual void IRAM_ATTR on_button_pressed(Button* button, uint32_t millis) {/*no implementation*/};
 };
 
 #endif //BGEIGIE_POINTCAST_BUTTONOBSERVER_H
