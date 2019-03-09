@@ -18,11 +18,12 @@ void ConnectionErrorState::do_activity() {
     controller.schedule_event(Event_enum::e_connected);
   }
   // Blink LED
-  if(timer % BLINK_FREQUENCY_MILLIS > BLINK_FREQUENCY_MILLIS / 2 && !blink_state) {
+  if(millis() % BLINK_FREQUENCY_MILLIS > BLINK_FREQUENCY_MILLIS / 2 && !blink_state) {
     controller.get_state_led().set_state_led(StateLED::StateColor::stationary_error);
     blink_state = true;
-  } else if(timer % BLINK_FREQUENCY_MILLIS < BLINK_FREQUENCY_MILLIS / 2 && blink_state){
+  } else if(millis() % BLINK_FREQUENCY_MILLIS < BLINK_FREQUENCY_MILLIS / 2 && blink_state){
     controller.get_state_led().set_state_led(StateLED::StateColor::off);
+    blink_state = false;
   }
 }
 

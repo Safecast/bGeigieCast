@@ -6,6 +6,7 @@ typedef enum {
   e_button_pressed,
   e_button_long_pressed,
   e_controller_initialized,
+  e_post_init_time_passed,
   e_server_initialized,
   e_start_stationary,
   e_connected,
