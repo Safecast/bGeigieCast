@@ -22,7 +22,10 @@ class StateLED : private RGBLed{
 
   void set_state_led(StateColor);
 
+  void blink(StateColor color, uint32_t frequency);
+
  private:
+  bool blink_state;
   RGB _rgb_off;
   RGB _rgb_init;
   RGB _rgb_config;

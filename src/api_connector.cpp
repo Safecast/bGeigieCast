@@ -10,7 +10,7 @@ ApiConnector::ApiConnector(EspConfig& config) :
     merged_reading() {
 }
 
-bool ApiConnector::start_connect() {
+bool ApiConnector::start_connect(bool initial) {
   if(is_connected()) {
     return true;
   }
@@ -22,8 +22,11 @@ bool ApiConnector::start_connect() {
 
   config.get_wifi_password(password) ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
 
-  merged_reading.reset();
-  last_send = millis();
+  if(initial) {
+    merged_reading.reset();
+    last_send = millis();
+  }
+
   return is_connected();
 }
 
