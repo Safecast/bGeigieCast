@@ -4,7 +4,7 @@
 
 volatile uint32_t temp = 0;
 
-void IRAM_ATTR buttonTrigger(void* arg) {
+void buttonTrigger(void* arg) {
   if(!arg) {
     return;
   }
@@ -46,7 +46,7 @@ bool Button::currently_pressed() const {
   return _current_state;
 }
 
-bool IRAM_ATTR Button::state_changed(int state) {
+bool Button::state_changed(int state) {
   bool read_state = state == _pull_type_mode;
   if(_last_state_change + DEBOUNCE_TIME_MILLIS > millis() || read_state == _current_state) {
     return false;
@@ -67,7 +67,7 @@ bool IRAM_ATTR Button::state_changed(int state) {
   return true;
 }
 
-uint8_t IRAM_ATTR Button::get_pin() const {
+uint8_t Button::get_pin() const {
   return _pin;
 }
 
