@@ -91,7 +91,7 @@ bool ApiConnector::send_reading(Reading& reading) {
   char api_key[64];
   config.get_api_key(api_key);
   char url[100];
-  sprintf(url, "%s?api_key=%s&%s", API_ENDPOINT, api_key, config.get_use_dev() ? "test=true" : "");
+  sprintf(url, "%s?api_key=%s&%s", API_MEASUREMENTS_ENDPOINT, api_key, config.get_use_dev() ? "test=true" : "");
 
   //Specify destination for HTTP request
   http.begin(url);
@@ -100,9 +100,9 @@ bool ApiConnector::send_reading(Reading& reading) {
 
   sprintf(content_length, "%d", strlen(json_str));
 
-  http.addHeader("Content-Type", "application/json");
-  http.addHeader("User-Agent", "ESP32");
-  http.addHeader("Host", API_HOST);
+  http.addHeader("Content-Type", HEADER_API_CONTENT_TYPE);
+  http.addHeader("User-Agent", HEADER_API_USER_AGENT);
+  http.addHeader("Host", HEADER_API_HOST);
   http.addHeader("Content-Length", content_length);
 
   debug_println(url);
