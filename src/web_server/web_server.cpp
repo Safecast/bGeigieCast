@@ -3,13 +3,19 @@
 #include "esp_config.h"
 #include "debugger.h"
 
+struct QueryParam {
+  const char* key;
+  uint8_t max_value_size;
+  char* value;
+};
+
 ConfigWebServer::ConfigWebServer(EspConfig& config) : server(SERVER_WIFI_PORT, SERVER_MAX_CLIENTS), config(config) {
 }
 
 bool ConfigWebServer::initialize() {
   char ssid[32], password[32];
   if(!config.get_ap_ssid(ssid) || !config.get_ap_password(password)) {
-    debug_println("No SSID or password");
+    debug_println("No SSID or password to start config server");
     return false;
   }
 
@@ -33,10 +39,10 @@ void ConfigWebServer::stop() {
 }
 
 void ConfigWebServer::handle_requests() {
-  String header;
   WiFiClient client = server.available();   // Listen for incoming clients
 
   if(client) {                             // If a new client connects,
+    String header;
     debug_println("New Client.");          // print a message out in the serial port
     String currentLine = "";                // make a String to hold incoming data from the client
     while(client.connected()) {            // loop while the client's connected
@@ -57,8 +63,8 @@ void ConfigWebServer::handle_requests() {
 
             // Display the HTML web page
             client.println("<!DOCTYPE html><html>");
-            client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-            client.println("<link rel=\"icon\" href=\"data:,\">");
+            client.println(R"(<head><meta name="viewport" content="width=device-width, initial-scale=1">)");
+            client.println(R"(<link rel="icon" href="data:,">)");
             // CSS to style the on/off buttons
             // Feel free to change the background-color and font-size attributes to fit your preferences
             client.println(

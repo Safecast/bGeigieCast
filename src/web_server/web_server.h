@@ -4,6 +4,7 @@
 #include <WiFi.h>
 
 #include "esp_config.h"
+#include "http_request.h"
 
 /**
  * Class to host a web server for configuring the ESP32. Will set up an access
@@ -36,6 +37,12 @@ class ConfigWebServer {
    */
   void handle_requests();
  private:
+
+  /**
+   * Handles request for a client
+   */
+  void handle_client_request(WiFiClient& client, HttpRequest& request);
+
   WiFiServer server;
   EspConfig& config;
 
