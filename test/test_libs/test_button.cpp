@@ -75,7 +75,7 @@ void test_button() {
   TEST_ASSERT_FALSE(fn_button_released);
   TEST_ASSERT_FALSE(fn_button_pressed);
 
-  TEST_ASSERT_TRUE(test_button.state_changed(HIGH));
+  TEST_ASSERT_TRUE(test_button.state_changed(LOW));
 
   TEST_ASSERT_TRUE(test_button.currently_pressed());
 
@@ -88,8 +88,8 @@ void test_button() {
   TEST_ASSERT_FALSE(fn_button_pressed);
 
   // Debounce timer should ignore this
-  TEST_ASSERT_FALSE(test_button.state_changed(LOW));
   TEST_ASSERT_FALSE(test_button.state_changed(HIGH));
+  TEST_ASSERT_FALSE(test_button.state_changed(LOW));
 
   TEST_ASSERT_TRUE(button_down);
   TEST_ASSERT_FALSE(button_released);
@@ -104,7 +104,7 @@ void test_button() {
   // Delay for debounce
   delay(wait_time);
 
-  test_button.state_changed(LOW);
+  test_button.state_changed(HIGH);
 
   TEST_ASSERT_FALSE(test_button.currently_pressed());
 
