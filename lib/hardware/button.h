@@ -19,7 +19,7 @@ class Button {
 
 
   Button(uint8_t pin, uint8_t pull_type = PULLUP);
-  virtual ~Button() = default;
+  virtual ~Button();
 
   /**
    * Let the button know that the state has changed
