@@ -4,6 +4,13 @@
 #define BLE_DATA_ADDR_SIZE    6
 #define BLE_DATA_ADDR         {0x88, 0x6B, 0x0F, 0x09, 0x7C, 0x9A}
 
+#define BLE_PROFILE_NAME                            "bGeigie advanced module"
+
+#define BLE_DEVICE_INFO_MANUFACTURER                "Safecast"
+#define BLE_DEVICE_INFO_MODEL                       "bGeigieNano ESP32"
+#define BLE_DEVICE_INFO_FIRMWARE_REVISION           "1.0.0"
+#define BLE_DEVICE_INFO_HARDWARE_REVISION           "1.0.0 REV-A"
+
 #define SERVICE_PROFILE_UUID                        "1800"
 #define CHARACTERISTIC_PROFILE_NAME_UUID            "2a00"
 #define CHARACTERISTIC_PROFILE_APPEARANCE_UUID      "2a01"

@@ -47,12 +47,12 @@ void BluetoohConnector::create_ble_profile_service(BLEServer* pServer) {
       CHARACTERISTIC_PROFILE_NAME_UUID,
       BLECharacteristic::PROPERTY_READ
   );
-  BLECharacteristic* pProfileAppearanceCharacteristic = pProfileService->createCharacteristic(
+  /*BLECharacteristic* pProfileAppearanceCharacteristic = */pProfileService->createCharacteristic(
       CHARACTERISTIC_PROFILE_APPEARANCE_UUID,
       BLECharacteristic::PROPERTY_READ
   );
 
-  pProfileNameCharacteristic->setValue("bGeigie test");
+  pProfileNameCharacteristic->setValue(BLE_PROFILE_NAME);
 
   pProfileService->start();
 }
@@ -99,10 +99,10 @@ void BluetoohConnector::create_ble_device_service(BLEServer* pServer) {
   pDescriptorHardware->setValue("Hardware Revision String");
   pDeviceRevisionCharacteristic->addDescriptor(pDescriptorHardware);
 
-  pDeviceManufacturerCharacteristic->setValue("Safecast");
-  pDeviceModelCharacteristic->setValue("bGeigieNano ESP32");
-  pDeviceFirmwareCharacteristic->setValue("1.0.0");
-  pDeviceRevisionCharacteristic->setValue("1.0.0 REV-A");
+  pDeviceManufacturerCharacteristic->setValue(BLE_DEVICE_INFO_MANUFACTURER);
+  pDeviceModelCharacteristic->setValue(BLE_DEVICE_INFO_MODEL);
+  pDeviceFirmwareCharacteristic->setValue(BLE_DEVICE_INFO_FIRMWARE_REVISION);
+  pDeviceRevisionCharacteristic->setValue(BLE_DEVICE_INFO_HARDWARE_REVISION);
 
   pDeviceService->start();
 }
@@ -149,7 +149,7 @@ void BluetoohConnector::create_ble_data_service(BLEServer* pServer) {
       BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_WRITE_NR
   );
   BLEDescriptor* pDescriptorTX = new BLEDescriptor((uint16_t) 0x2901);
-  pDescriptorTX->setValue("TS");
+  pDescriptorTX->setValue("TX");
   pDataTXCharacteristic->addDescriptor(pDescriptorTX);
 
   pDataDBAddrCharacteristic->setValue(addr, BLE_DATA_ADDR_SIZE);
