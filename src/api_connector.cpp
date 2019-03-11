@@ -100,9 +100,9 @@ bool ApiConnector::send_reading(Reading& reading) {
 
   sprintf(content_length, "%d", strlen(json_str));
 
+  http.addHeader("Host", API_HOST);
   http.addHeader("Content-Type", HEADER_API_CONTENT_TYPE);
   http.addHeader("User-Agent", HEADER_API_USER_AGENT);
-  http.addHeader("Host", HEADER_API_HOST);
   http.addHeader("Content-Length", content_length);
 
   debug_println(url);
