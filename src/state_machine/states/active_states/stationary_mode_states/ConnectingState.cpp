@@ -2,6 +2,8 @@
 #include "TestApiState.h"
 #include "ConnectionErrorState.h"
 
+#define CONNECTING_BLINK_FREQUENCY_MILLIS 500
+
 ConnectingState::ConnectingState(Controller& context): StationaryModeState(context), timer(0) {
 }
 
@@ -20,6 +22,8 @@ void ConnectingState::do_activity() {
   else if (millis() > timer + MILLIS_BEFORE_CONNECTION_FAILURE) {
     controller.schedule_event(e_connection_failed);
   }
+
+  controller.get_state_led().blink(StateLED::StateColor::stationary_connecting, CONNECTING_BLINK_FREQUENCY_MILLIS);
 }
 
 void ConnectingState::exit_action() {

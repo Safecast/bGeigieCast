@@ -29,7 +29,7 @@ void Context::run() {
   handle_events();
 }
 
-void IRAM_ATTR Context::schedule_event(Event_enum event_id) {
+void Context::schedule_event(Event_enum event_id) {
   _event_queue.add(event_id);
 }
 

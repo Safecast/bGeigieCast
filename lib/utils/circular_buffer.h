@@ -34,7 +34,7 @@ class CircularBuffer {
    * Add a value to the buffer. If the buffer is full, it will throw away the oldest value and add this.
    * @param val
    */
-  void IRAM_ATTR add(T val) {
+  void add(T val) {
     buffer[(current + count) % max] = val;
     if(count < max) {
       ++count;

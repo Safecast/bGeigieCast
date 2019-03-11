@@ -1,10 +1,8 @@
-#include <soc/soc.h>
-
 #include "button.h"
 
 volatile uint32_t temp = 0;
 
-void IRAM_ATTR buttonTrigger(void* arg) {
+void buttonTrigger(void* arg) {
   if(!arg) {
     return;
   }
@@ -24,18 +22,23 @@ Button::Button(uint8_t pin, uint8_t pull_type) :
     _on_button_pressed_fn(nullptr) {
 
   gpio_config_t io_conf;
-  io_conf.intr_type = (gpio_int_type_t)GPIO_PIN_INTR_DISABLE;
+  io_conf.intr_type = (gpio_int_type_t) GPIO_PIN_INTR_DISABLE;
   io_conf.mode = GPIO_MODE_INPUT;
   io_conf.pin_bit_mask = 1ULL << pin;
-  io_conf.pull_down_en = pull_type == PULLDOWN ? (gpio_pulldown_t)1 : (gpio_pulldown_t)0;
-  io_conf.pull_up_en = pull_type == PULLUP ? (gpio_pullup_t)1 : (gpio_pullup_t)0;
+  io_conf.pull_down_en = pull_type == PULLDOWN ? (gpio_pulldown_t) 1 : (gpio_pulldown_t) 0;
+  io_conf.pull_up_en = pull_type == PULLUP ? (gpio_pullup_t) 1 : (gpio_pullup_t) 0;
   gpio_config(&io_conf);
 
-  gpio_set_intr_type((gpio_num_t)pin, GPIO_INTR_ANYEDGE);
+  gpio_set_intr_type((gpio_num_t) pin, GPIO_INTR_ANYEDGE);
   gpio_install_isr_service(0);
-  gpio_isr_handler_add((gpio_num_t)pin, buttonTrigger, this);
-//  esp_intr_alloc(ETS_GPIO_INTR_SOURCE, ESP_INTR_FLAG_LEVEL3, buttonTrigger, this, nullptr);
+  gpio_isr_handler_add((gpio_num_t) pin, buttonTrigger, this);
   _current_state = digitalRead(_pin) == _pull_type_mode;
+}
+
+Button::~Button() {
+  gpio_reset_pin((gpio_num_t) _pin);
+  gpio_isr_handler_remove((gpio_num_t) _pin);
+  gpio_uninstall_isr_service();
 }
 
 void Button::set_observer(ButtonObserver* observer) {
@@ -46,7 +49,7 @@ bool Button::currently_pressed() const {
   return _current_state;
 }
 
-bool IRAM_ATTR Button::state_changed(int state) {
+bool Button::state_changed(int state) {
   bool read_state = state == _pull_type_mode;
   if(_last_state_change + DEBOUNCE_TIME_MILLIS > millis() || read_state == _current_state) {
     return false;
@@ -67,7 +70,7 @@ bool IRAM_ATTR Button::state_changed(int state) {
   return true;
 }
 
-uint8_t IRAM_ATTR Button::get_pin() const {
+uint8_t Button::get_pin() const {
   return _pin;
 }
 

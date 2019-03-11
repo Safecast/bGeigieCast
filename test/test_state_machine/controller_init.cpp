@@ -1,7 +1,7 @@
 #include <unity.h>
 #include <controller.h>
 #include <state_machine/states/InitializeState.h>
-#include <state_machine/states/active_states/MobileModeState.h>
+#include <state_machine/states/PostInitializeState.h>
 
 /**
  * Test controller initial state transition
@@ -17,5 +17,5 @@ void controller_init(void) {
 
   controller.run();
 
-  TEST_ASSERT_NOT_NULL(dynamic_cast<MobileModeState*>(controller.get_current_state()));
+  TEST_ASSERT_NOT_NULL(dynamic_cast<PostInitializeState*>(controller.get_current_state()));
 }

@@ -1,7 +1,7 @@
 #include "ConnectionErrorState.h"
 #include "TestApiState.h"
 
-#define BLINK_FREQUENCY_MILLIS 500
+#define BLINK_FREQUENCY_MILLIS 1000
 
 ConnectionErrorState::ConnectionErrorState(Controller& context) : StationaryModeState(context), timer(0), blink_state(false) {
 }
@@ -14,16 +14,11 @@ void ConnectionErrorState::entry_action() {
 
 void ConnectionErrorState::do_activity() {
   StationaryModeState::do_activity();
-  if(!((millis() - timer) % 5000) && controller.get_api_connector().start_connect()) {
+  if(!((millis() - timer) % 5000) && controller.get_api_connector().start_connect(false)) {
     controller.schedule_event(Event_enum::e_connected);
   }
-  // Blink LED
-  if(timer % BLINK_FREQUENCY_MILLIS > BLINK_FREQUENCY_MILLIS / 2 && !blink_state) {
-    controller.get_state_led().set_state_led(StateLED::StateColor::stationary_error);
-    blink_state = true;
-  } else if(timer % BLINK_FREQUENCY_MILLIS < BLINK_FREQUENCY_MILLIS / 2 && blink_state){
-    controller.get_state_led().set_state_led(StateLED::StateColor::off);
-  }
+
+  controller.get_state_led().blink(StateLED::StateColor::stationary_error, BLINK_FREQUENCY_MILLIS);
 }
 
 void ConnectionErrorState::exit_action() {
