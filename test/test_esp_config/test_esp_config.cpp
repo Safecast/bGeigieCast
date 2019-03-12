@@ -26,16 +26,6 @@ void test_set_config(void);
 
 void setup() {
   delay(2000);
-  gpio_config_t io_conf;
-  io_conf.intr_type = GPIO_INTR_DISABLE;
-  io_conf.mode = GPIO_MODE_INPUT;
-  io_conf.pin_bit_mask = 1ULL << 22;
-  io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
-  io_conf.pull_up_en = GPIO_PULLUP_ENABLE;
-  gpio_config(&io_conf);
-
-  gpio_set_intr_type((gpio_num_t) 22, GPIO_INTR_ANYEDGE);
-  gpio_install_isr_service(ESP_INTR_FLAG_LEVEL1);
 
   UNITY_BEGIN();
 

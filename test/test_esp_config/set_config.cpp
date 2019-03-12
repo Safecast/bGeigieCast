@@ -9,12 +9,10 @@
  */
 void test_set_config(void) {
   EspConfig config;
-  volatile Controller controller;
-
 
   config.set_all();
 
-  const char* new_string_val = "Loftwork COOOP3 Free";
+  const char* new_string_val = "some new string value";
   const char* long_string_val = "some new string value which is way too long for the config to save!!";
 
   TEST_ASSERT_GREATER_THAN(CONFIG_VAL_MAX, long_string_val);
