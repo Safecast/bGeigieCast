@@ -121,7 +121,7 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         "Location: /?success=true\r\n\r\n"
     );
   } else {
-    char transmission[1024];
+    char transmission[2048];
     sprintf(
         transmission,
         "HTTP/1.0 200\r\n\r\n"
@@ -129,9 +129,11 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         "<html>\r\n"
         "<head>\r\n"
         "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
+        "<style>html { font-family: Helvetica; margin: 20px auto; text-align: center;} body {text-align: center;} form {display: inline-block; text-align: left; margin: 20px; padding: 20px; background-color: lightgrey;} </style>\r\n"
         "</head>\r\n"
         "<body>\r\n"
-        "<form action=\"save\" method=\"get\"> "
+        "<strong>Config Page bGeigie-ESP32</strong><br>"
+        "<form action=\"save\" method=\"get\" > "
         "bGeigie wifi name:<br><input type=\"text\" name=\"ap_ssid\" value=\"%s\"><br>"
         "bGeigie wifi password:<br><input type=\"text\" name=\"ap_password\" value=\"%s\"><br>"
         "Network wifi ssid:<br><input type=\"text\" name=\"wf_ssid\" value=\"%s\"><br>"
@@ -140,8 +142,8 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         "Use safecast server:<br>"
         "<input type=\"radio\" name=\"devsrv\" value=\"1\" %s>Development<br>"
         "<input type=\"radio\" name=\"devsrv\" value=\"0\" %s>Production<br>"
-        "<input type=\"submit\" value=\"Submit\">"
-        "</form><br>\r\n"
+        "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
+        "</form><br><br>\r\n "
         "%s"
         "</body>\r\n"
         "</html>",
@@ -152,8 +154,7 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         config.get_api_key(),
         config.get_use_dev() ? "checked" : "",
         config.get_use_dev() ? "" : "checked",
-        request.has_param("success") ? "Configurations saved!" : ""
-    );
+        request.has_param("success") ? "Configurations saved!" : "");
     client.write(transmission);
   }
 }
