@@ -6,7 +6,8 @@
 
 
 #define REQUEST_LINE_METHOD_MAX 10
-#define REQUEST_LINE_URI_MAX 1024
+#define REQUEST_LINE_URI_MAX 20
+#define REQUEST_LINE_URI_PARAMS_MAX 1024
 #define REQUEST_LINE_VERSION_MAX 10
 #define HEADER_LINE_MAX 100
 #define CONTENT_MAX 10
@@ -27,9 +28,12 @@ class HttpRequest {
 
   bool get_param_value(const char* key, char* result, size_t result_size);
 
+  const char* get_uri() const;
+
  private:
   char _method[REQUEST_LINE_METHOD_MAX];
   char _uri[REQUEST_LINE_URI_MAX];
+  char _query_params[REQUEST_LINE_URI_PARAMS_MAX];
   char _version[REQUEST_LINE_VERSION_MAX];
   char _headers[HEADER_LINE_MAX][MAX_HEADERS];
   uint8_t _header_count;

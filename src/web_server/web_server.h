@@ -41,7 +41,7 @@ class ConfigWebServer {
   /**
    * Handles request for a client
    */
-  void handle_client_request(WiFiClient& client, HttpRequest& request);
+  void handle_client_request(Stream& client, HttpRequest& request);
 
   WiFiServer server;
   EspConfig& config;

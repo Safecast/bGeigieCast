@@ -3,23 +3,22 @@
 #include "esp_config.h"
 #include "debugger.h"
 
-struct QueryParam {
-  const char* key;
-  uint8_t max_value_size;
-  char* value;
-};
+typedef enum {
+  request_line,
+  header,
+  content
+} RequestParse;
 
 ConfigWebServer::ConfigWebServer(EspConfig& config) : server(SERVER_WIFI_PORT, SERVER_MAX_CLIENTS), config(config) {
 }
 
 bool ConfigWebServer::initialize() {
-  char ssid[32], password[32];
-  if(!config.get_ap_ssid(ssid) || !config.get_ap_password(password)) {
+  if(!config.get_ap_ssid() || !config.get_ap_password()) {
     debug_println("No SSID or password to start config server");
     return false;
   }
 
-  WiFi.softAP(ssid, password);
+  WiFi.softAP(config.get_ap_ssid(), config.get_ap_password());
 
   delay(100);
 
@@ -42,50 +41,45 @@ void ConfigWebServer::handle_requests() {
   WiFiClient client = server.available();   // Listen for incoming clients
 
   if(client) {                             // If a new client connects,
-    String header;
     debug_println("New Client.");          // print a message out in the serial port
-    String currentLine = "";                // make a String to hold incoming data from the client
-    while(client.connected()) {            // loop while the client's connected
-      if(client.available()) {             // if there's bytes to read from the client,
-        char c = client.read();             // read a byte, then
-        debug_print(c);                    // print it out the serial monitor
-        header += c;
-        if(c == '\n') {                    // if the byte is a newline character
-          // if the current line is blank, you got two newline characters in a row.
-          // that's the end of the client HTTP request, so send a response:
-          if(currentLine.length() == 0) {
-            // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
-            // and a content-type so the client knows what's coming, then a blank line:
-            client.println("HTTP/1.1 200 OK");
-            client.println("Content-type:text/html");
-            client.println("Connection: close");
-            client.println();
+    HttpRequest request;
+    RequestParse state = RequestParse::request_line;
 
-            // Display the HTML web page
-            client.println("<!DOCTYPE html><html>");
-            client.println(R"(<head><meta name="viewport" content="width=device-width, initial-scale=1">)");
-            client.println(R"(<link rel="icon" href="data:,">)");
-            // CSS to style the on/off buttons
-            // Feel free to change the background-color and font-size attributes to fit your preferences
-            client.println(
-                "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-            client.println(".button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px;");
-            client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-            client.println(".button2 {background-color: #555555;}</style></head>");
-
-            // Web Page Heading
-            client.println("<body><h1>ESP32 Web Server</h1>");
-
-            // The HTTP response ends with another blank line
-            client.println();
-            // Break out of the while loop
+    String currentLine = "";
+    while(client.connected()) {
+      if(client.available()) {
+        char c = static_cast<char>(client.read());
+        switch(c) {
+          case '\r':
             break;
-          } else { // if you got a newline, then clear currentLine
-            currentLine = "";
+          case '\n': {
+            switch(state) {
+              case request_line:
+                request.set_request_line(currentLine.c_str());
+                state = RequestParse::header;
+                currentLine = "";
+                break;
+              case header:
+                if(currentLine != "") {
+                  request.add_header_line(currentLine.c_str());
+                  currentLine = "";
+                } else {
+                  state = RequestParse::content;
+                }
+                break;
+              case content:
+                break;
+            }
+            break;
           }
-        } else if(c != '\r') {  // if you got anything else but a carriage return character,
-          currentLine += c;      // add it to the end of the currentLine
+          default:
+            currentLine += c;
+            break;
         }
+      }
+      if(state == RequestParse::content) {
+        handle_client_request(client, request);
+        break;
       }
     }
     // Close the connection
@@ -96,4 +90,63 @@ void ConfigWebServer::handle_requests() {
 
 bool ConfigWebServer::is_running() {
   return !!server;
+}
+
+void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request) {
+  char transmission[1024];
+  if(strcmp(request.get_uri(), "/save") == 0) {
+    char value[64];
+    if(request.get_param_value("ssid", value, 64)) {
+      debug_print("set new use ssid: ");
+      debug_print(strlen(value));
+      debug_println(value);
+      config.set_wifi_ssid(value);
+    }
+    value[0] = '\0';
+    if(request.get_param_value("password", value, 64)) {
+      debug_print("set new use password: ");
+      debug_println(value);
+      config.set_wifi_password(value);
+    }
+    value[0] = '\0';
+    if(request.get_param_value("apikey", value, 64)) {
+      debug_print("set new use apikey: ");
+      debug_println(value);
+      config.set_api_key(value);
+    }
+    value[0] = '\0';
+    if(request.get_param_value("devsrv", value, 64)) {
+      debug_print("set new use dev: ");
+      debug_println(value);
+    }
+
+    client.write(
+        "HTTP/1.1 302 Found\r\n"
+        "Location: /\r\n\r\n"
+    );
+  } else {
+    sprintf(transmission,
+            "HTTP/1.0 200\r\n\r\n"
+            "<!DOCTYPE html>\r\n"
+            "<html>\r\n"
+            "<head>\r\n"
+            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
+            "</head>\r\n"
+            "<body>\r\n"
+            "<form action=\"save\" method=\"get\"> "
+            "SSID: <input type=\"text\" name=\"ssid\" value=\"%s\"><br> "
+            "PASSWORD: <input type=\"text\" name=\"password\" value=\"%s\"><br> "
+            "SAFECAST APIKEY: <input type=\"text\" name=\"apikey\" value=\"%s\"><br>"
+            "Use safecast development server:<input name=\"devsrv\" type=\"checkbox\" %s><br>"
+            "<input type=\"submit\" value=\"Submit\">"
+            "</form><br>\r\n"
+            "</body>\r\n"
+            "</html>",
+            config.get_wifi_ssid(),
+            config.get_wifi_password(),
+            config.get_api_key(),
+            config.get_use_dev() ? "checked" : ""
+    );
+    client.write(transmission);
+  }
 }

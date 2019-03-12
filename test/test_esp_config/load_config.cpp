@@ -11,16 +11,10 @@ void test_initial_config(void) {
 
   config.set_all();
 
-  char val_buff[CONFIG_VAL_MAX];
-  config.get_ap_ssid(val_buff);
-  TEST_ASSERT_EQUAL_STRING(val_buff, D_ACCESS_POINT_SSID);
-  config.get_ap_password(val_buff);
-  TEST_ASSERT_EQUAL_STRING(val_buff, D_ACCESS_POINT_PASSWORD);
-  config.get_wifi_ssid(val_buff);
-  TEST_ASSERT_EQUAL_STRING(val_buff, D_WIFI_SSID);
-  config.get_wifi_password(val_buff);
-  TEST_ASSERT_EQUAL_STRING(val_buff, D_WIFI_PASSWORD);
-  config.get_api_key(val_buff);
-  TEST_ASSERT_EQUAL_STRING(val_buff, D_APIKEY);
+  TEST_ASSERT_EQUAL_STRING(config.get_ap_ssid(), D_ACCESS_POINT_SSID);
+  TEST_ASSERT_EQUAL_STRING(config.get_ap_password(), D_ACCESS_POINT_PASSWORD);
+  TEST_ASSERT_EQUAL_STRING(config.get_wifi_ssid(), D_WIFI_SSID);
+  TEST_ASSERT_EQUAL_STRING(config.get_wifi_password(), D_WIFI_PASSWORD);
+  TEST_ASSERT_EQUAL_STRING(config.get_api_key(), D_APIKEY);
   TEST_ASSERT_EQUAL(config.get_use_dev(), D_USE_DEV_SERVER);
 }

@@ -16,11 +16,11 @@ const char* key_use_dev = "use_dev";
 
 EspConfig::EspConfig() :
     _memory(),
-    _ap_ssid(),
-    _ap_password(),
-    _wifi_ssid(),
-    _wifi_password(),
-    _api_key(),
+    _ap_ssid(""),
+    _ap_password(""),
+    _wifi_ssid(""),
+    _wifi_password(""),
+    _api_key(""),
     _use_dev() {
 }
 
@@ -72,76 +72,92 @@ void EspConfig::reset_defaults() {
   set_wifi_password(D_WIFI_PASSWORD);
   set_api_key(D_APIKEY);
   set_use_dev(D_USE_DEV_SERVER);
-  _memory.end();
 }
 
-int EspConfig::get_ap_ssid(char* out) const {
-  strcpy(out, _ap_ssid);
-  return strlen(_ap_ssid);
+const char* EspConfig::get_ap_ssid() const {
+  return _ap_ssid;
 }
 
 void EspConfig::set_ap_ssid(const char* ap_ssid) {
   if(ap_ssid != nullptr && strlen(ap_ssid) < CONFIG_VAL_MAX) {
-    _memory.begin("data");
-    strcpy(_ap_ssid, ap_ssid);
-    _memory.putString(key_ap_ssid, _ap_ssid);
-    _memory.end();
+    if(_memory.begin("data")) {
+      strcpy(_ap_ssid, ap_ssid);
+      _memory.putString(key_ap_ssid, _ap_ssid);
+      _memory.end();
+    }
+  }
+  else {
+    debug_println("unable to save new value for ap_ssid");
   }
 }
 
-int EspConfig::get_ap_password(char* out) const {
-  strcpy(out, _ap_password);
-  return strlen(_ap_password);
+const char* EspConfig::get_ap_password() const {
+  return _ap_password;
 }
 
 void EspConfig::set_ap_password(const char* ap_password) {
   if(ap_password != nullptr && strlen(ap_password) < CONFIG_VAL_MAX) {
-    _memory.begin("data");
-    strcpy(_ap_password, ap_password);
-    _memory.putString(key_ap_password, _ap_password);
-    _memory.end();
+    if(_memory.begin("data")) {
+      strcpy(_ap_password, ap_password);
+      _memory.putString(key_ap_password, _ap_password);
+      _memory.end();
+    }
+  }
+  else {
+    debug_println("unable to save new value for ap_password");
   }
 }
 
-int EspConfig::get_wifi_ssid(char* out) const {
-  strcpy(out, _wifi_ssid);
-  return strlen(_wifi_ssid);
+const char* EspConfig::get_wifi_ssid() const {
+  return _wifi_ssid;
 }
 
 void EspConfig::set_wifi_ssid(const char* wifi_ssid) {
   if(wifi_ssid != nullptr && strlen(wifi_ssid) < CONFIG_VAL_MAX) {
-    _memory.begin("data");
-    strcpy(_wifi_ssid, wifi_ssid);
-    _memory.putString(key_wifi_ssid, _wifi_ssid);
-    _memory.end();
+    if(_memory.begin("data")) {
+      strcpy(_wifi_ssid, wifi_ssid);
+      // TODO: Remove temp log webserver issue
+      debug_print("saving new ssid: ");debug_println(_wifi_ssid);
+      _memory.putString(key_wifi_ssid, _wifi_ssid);
+      _memory.end();
+    }
+    else {
+      debug_println("unable to save new value for _memor");
+    }
   }
 }
 
-int EspConfig::get_wifi_password(char* out) const {
-  strcpy(out, _wifi_password);
-  return strlen(_wifi_password);
+const char* EspConfig::get_wifi_password() const {
+  return _wifi_password;
 }
 
 void EspConfig::set_wifi_password(const char* wifi_password) {
   if(wifi_password != nullptr && strlen(wifi_password) < CONFIG_VAL_MAX) {
-    _memory.begin("data");
-    strcpy(_wifi_password, wifi_password);
-    _memory.putString(key_wifi_password, _wifi_password);
-    _memory.end();
+    if(_memory.begin("data")) {
+      strcpy(_wifi_password, wifi_password);
+      _memory.putString(key_wifi_password, _wifi_password);
+      _memory.end();
+    }
+  }
+  else {
+    debug_println("unable to save new value for wifi_password");
   }
 }
 
-int EspConfig::get_api_key(char* out) const {
-  strcpy(out, _api_key);
-  return strlen(_api_key);
+const char* EspConfig::get_api_key() const {
+  return _api_key;
 }
 
 void EspConfig::set_api_key(const char* api_key) {
   if(api_key != nullptr && strlen(api_key) < CONFIG_VAL_MAX) {
-    _memory.begin("data");
-    strcpy(_api_key, api_key);
-    _memory.putString(key_api_key, _api_key);
-    _memory.end();
+    if(_memory.begin("data")) {
+      strcpy(_api_key, api_key);
+      _memory.putString(key_api_key, _api_key);
+      _memory.end();
+    }
+  }
+  else {
+    debug_println("unable to save new value for api_key");
   }
 }
 
@@ -151,9 +167,13 @@ bool EspConfig::get_use_dev() const {
 
 void EspConfig::set_use_dev(bool use_dev) {
   if(use_dev != _use_dev) {
-    _memory.begin("data");
-    _use_dev = use_dev;
-    _memory.putBool(key_use_dev, use_dev);
-    _memory.end();
+    if(_memory.begin("data")) {
+      _use_dev = use_dev;
+      _memory.putBool(key_use_dev, use_dev);
+      _memory.end();
+    }
+  }
+  else {
+    debug_println("unable to save new value for use_dev");
   }
 }
