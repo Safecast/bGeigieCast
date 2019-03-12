@@ -1,25 +1,24 @@
-#include "ConnectingState.h"
+#include "ReconnectingState.h"
 #include "TestApiState.h"
 #include "ConnectionErrorState.h"
 
-// 10 seconds of wifi connect,  5 is just to low, will sometimes take a bit longer
-#define MILLIS_BEFORE_CONNECTION_FAILURE 10000
+// connection error after 30 seconds of not being able to reconnect
+#define MILLIS_BEFORE_CONNECTION_FAILURE 30000
 
 #define CONNECTING_BLINK_FREQUENCY_MILLIS 500
 
-ConnectingState::ConnectingState(Controller& context): StationaryModeState(context), timer(0) {
+ReconnectingState::ReconnectingState(Controller& context): StationaryModeState(context), timer(0) {
 }
 
-void ConnectingState::entry_action() {
+void ReconnectingState::entry_action() {
   debug_println("Entered state Connecting");
   controller.get_state_led().set_state_led(StateLED::StateColor::stationary_connecting);
   timer = millis();
-  controller.get_api_connector().start_connect();
 }
 
-void ConnectingState::do_activity() {
+void ReconnectingState::do_activity() {
   StationaryModeState::do_activity();
-  if(controller.get_api_connector().is_connected()) {
+  if(!((millis() - timer) % 5000) && controller.get_api_connector().start_connect(false)) {
     controller.schedule_event(Event_enum::e_connected);
   }
   else if (millis() > timer + MILLIS_BEFORE_CONNECTION_FAILURE) {
@@ -29,10 +28,10 @@ void ConnectingState::do_activity() {
   controller.get_state_led().blink(StateLED::StateColor::stationary_connecting, CONNECTING_BLINK_FREQUENCY_MILLIS);
 }
 
-void ConnectingState::exit_action() {
+void ReconnectingState::exit_action() {
 }
 
-void ConnectingState::handle_event(Event_enum event_id) {
+void ReconnectingState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_connected:
       controller.set_state(new TestApiState(controller));
