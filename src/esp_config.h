@@ -24,15 +24,15 @@ class EspConfig {
   void reset_defaults();
 
   // Getters and setters
-  int get_ap_ssid(char* out) const;
+  const char* get_ap_ssid() const;
   void set_ap_ssid(const char* ap_ssid);
-  int get_ap_password(char* out) const;
+  const char* get_ap_password() const;
   void set_ap_password(const char* ap_password);
-  int get_wifi_ssid(char* out) const;
+  const char* get_wifi_ssid() const;
   void set_wifi_ssid(const char* wifi_ssid);
-  int get_wifi_password(char* out) const;
+  const char* get_wifi_password() const;
   void set_wifi_password(const char* wifi_password);
-  int get_api_key(char* out) const;
+  const char* get_api_key() const;
   void set_api_key(const char* api_key);
   bool get_use_dev() const;
   void set_use_dev(bool use_dev);

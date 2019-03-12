@@ -12,17 +12,11 @@ void save_current_config(void) {
 }
 
 void restore_current_config(void) {
-  char temp_buffer[CONFIG_VAL_MAX];
-  saved_config.get_wifi_password(temp_buffer);
-  saved_config.set_wifi_password(temp_buffer);
-  saved_config.get_ap_password(temp_buffer);
-  saved_config.set_ap_password(temp_buffer);
-  saved_config.get_ap_ssid(temp_buffer);
-  saved_config.set_ap_ssid(temp_buffer);
-  saved_config.get_api_key(temp_buffer);
-  saved_config.set_api_key(temp_buffer);
-  saved_config.get_wifi_ssid(temp_buffer);
-  saved_config.set_wifi_ssid(temp_buffer);
+  saved_config.set_wifi_password(saved_config.get_wifi_password());
+  saved_config.set_ap_password(saved_config.get_ap_password());
+  saved_config.set_ap_ssid(saved_config.get_ap_ssid());
+  saved_config.set_api_key(saved_config.get_api_key());
+  saved_config.set_wifi_ssid(saved_config.get_wifi_ssid());
   saved_config.set_use_dev(saved_config.get_use_dev());
 }
 

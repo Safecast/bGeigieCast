@@ -14,13 +14,15 @@ bool ApiConnector::start_connect(bool initial) {
   if(is_connected()) {
     return true;
   }
-  char ssid[32], password[32];
-  if(!config.get_wifi_ssid(ssid)) {
+
+  const char* ssid = config.get_wifi_ssid();
+  if(!ssid) {
     debug_println("No SSID to connect to!");
     return false;
   }
 
-  config.get_wifi_password(password) ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
+  const char* password = config.get_wifi_password();
+  password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
 
   if(initial) {
     merged_reading.reset();
@@ -88,10 +90,8 @@ bool ApiConnector::send_reading(Reading& reading) {
   }
   HTTPClient http;
 
-  char api_key[64];
-  config.get_api_key(api_key);
   char url[100];
-  sprintf(url, "%s?api_key=%s&%s", API_MEASUREMENTS_ENDPOINT, api_key, config.get_use_dev() ? "test=true" : "");
+  sprintf(url, "%s?api_key=%s&%s", API_MEASUREMENTS_ENDPOINT, config.get_api_key(), config.get_use_dev() ? "test=true" : "");
 
   //Specify destination for HTTP request
   http.begin(url);

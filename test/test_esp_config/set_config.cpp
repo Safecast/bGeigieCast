@@ -2,6 +2,7 @@
 
 #include <user_config.h>
 #include <esp_config.h>
+#include <controller.h>
 
 /**
  * Test setting new values to memory
@@ -16,18 +17,14 @@ void test_set_config(void) {
 
   TEST_ASSERT_GREATER_THAN(CONFIG_VAL_MAX, long_string_val);
 
-  char val_buff[CONFIG_VAL_MAX];
-
   // Set new ap ssid
   config.set_ap_ssid(new_string_val);
-  config.get_ap_ssid(val_buff);
-  TEST_ASSERT_EQUAL_STRING(val_buff, new_string_val);
+  TEST_ASSERT_EQUAL_STRING(config.get_ap_ssid(), new_string_val);
 
   // Set ap ssid with invalid value
   config.set_ap_ssid(long_string_val);
-  config.get_ap_ssid(val_buff);
-  TEST_ASSERT_NOT_EQUAL(strcmp(val_buff, long_string_val), 0);
+  TEST_ASSERT_NOT_EQUAL(strcmp(config.get_ap_ssid(), long_string_val), 0);
 
   // Should still return the old, correct value
-  TEST_ASSERT_EQUAL_STRING(val_buff, new_string_val);
+  TEST_ASSERT_EQUAL_STRING(config.get_ap_ssid(), new_string_val);
 }
