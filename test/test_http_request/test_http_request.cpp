@@ -96,6 +96,7 @@ void setup() {
   RUN_TEST(test_param_parse_too_long);
   RUN_TEST(test_param_parse_multiple);
   RUN_TEST(test_param_parse_missing);
+  RUN_TEST(test_param_parse_full);
 
   UNITY_END();
 }
