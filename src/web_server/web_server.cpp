@@ -2,6 +2,7 @@
 #include "user_config.h"
 #include "esp_config.h"
 #include "debugger.h"
+#include "http_responses.h"
 
 typedef enum {
   request_line,
@@ -92,42 +93,20 @@ bool ConfigWebServer::is_running() {
   return !!server;
 }
 
+
 void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request) {
-  if(strcmp(request.get_uri(), "/save") == 0) {
-    debug_println("handle");
-
-    char value[64];
-    if(request.get_param_value("ap_ssid", value, 64)) {
-      config.set_ap_ssid(value);
-    }
-    if(request.get_param_value("ap_password", value, 64)) {
-      config.set_ap_password(value);
-    }
-    if(request.get_param_value("wf_ssid", value, 64)) {
-      config.set_wifi_ssid(value);
-    }
-    if(request.get_param_value("wf_password", value, 64)) {
-      config.set_wifi_password(value);
-    }
-    if(request.get_param_value("apikey", value, 64)) {
-      config.set_api_key(value);
-    }
-    if(request.get_param_value("devsrv", value, 64)) {
-      config.set_use_dev(strcmp(value, "1") == 0);
-    }
-
-    client.write(
-        "HTTP/1.1 302 Found\r\n"
-        "Location: /?success=true\r\n\r\n"
-    );
-  } else {
+  if(request.is_uri("/")) {
     char transmission[2048];
     sprintf(
         transmission,
-        "HTTP/1.0 200\r\n\r\n"
         "<!DOCTYPE html>\r\n"
         "<html>\r\n"
         "<head>\r\n"
+        "<link rel='icon' href='data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAA"
+        "AAgAAAAAAAAAAAAAAAEAAAAAAAAACAhYcA////AA0PEAC+pm4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAIiIiIiIiIiIiIiIiIiIiIiIiMyISESIiIiIzIhIRIiIiIiIiEhEiIiIiIiISESIiIiIiIRIRIiIiIiIRIhEiIiIiERIi"
+        "ESIiIiIQIhESIiIiIiIRESIiIiIiEREiIiIiIiIRIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' type='image/x-png' />\r\n"
         "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
         "<style>html { font-family: Helvetica; margin: 20px auto; text-align: center;} body {text-align: center;} form {display: inline-block; text-align: left; margin: 20px; padding: 20px; background-color: lightgrey;} </style>\r\n"
         "</head>\r\n"
@@ -154,7 +133,37 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         config.get_api_key(),
         config.get_use_dev() ? "checked" : "",
         config.get_use_dev() ? "" : "checked",
-        request.has_param("success") ? "Configurations saved!" : "");
-    client.write(transmission);
+        request.has_param("success") ? "Configurations saved!" : ""
+    );
+    respondSuccess(client, transmission);
+
+  } else if(request.is_uri("/save")) {
+
+    char value[64];
+    if(request.get_param_value("ap_ssid", value, 64)) {
+      config.set_ap_ssid(value);
+    }
+    if(request.get_param_value("ap_password", value, 64)) {
+      config.set_ap_password(value);
+    }
+    if(request.get_param_value("wf_ssid", value, 64)) {
+      config.set_wifi_ssid(value);
+    }
+    if(request.get_param_value("wf_password", value, 64)) {
+      config.set_wifi_password(value);
+    }
+    if(request.get_param_value("apikey", value, 64)) {
+      config.set_api_key(value);
+    }
+    if(request.get_param_value("devsrv", value, 64)) {
+      config.set_use_dev(strcmp(value, "1") == 0);
+    }
+
+    respondRedirect(client, "/?success=true");
+
+  } else {
+
+    respondNotFound(client);
+
   }
 }
