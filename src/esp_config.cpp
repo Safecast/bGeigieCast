@@ -85,9 +85,9 @@ void EspConfig::set_ap_ssid(const char* ap_ssid) {
       _memory.putString(key_ap_ssid, _ap_ssid);
       _memory.end();
     }
-  }
-  else {
-    debug_println("unable to save new value for ap_ssid");
+    else {
+      debug_println("unable to save new value for ap_ssid");
+    }
   }
 }
 
@@ -102,9 +102,9 @@ void EspConfig::set_ap_password(const char* ap_password) {
       _memory.putString(key_ap_password, _ap_password);
       _memory.end();
     }
-  }
-  else {
-    debug_println("unable to save new value for ap_password");
+    else {
+      debug_println("unable to save new value for ap_password");
+    }
   }
 }
 
@@ -120,7 +120,7 @@ void EspConfig::set_wifi_ssid(const char* wifi_ssid) {
       _memory.end();
     }
     else {
-      debug_println("unable to save new value for _memor");
+      debug_println("unable to save new value for wifi_ssid");
     }
   }
 }
@@ -136,9 +136,9 @@ void EspConfig::set_wifi_password(const char* wifi_password) {
       _memory.putString(key_wifi_password, _wifi_password);
       _memory.end();
     }
-  }
-  else {
-    debug_println("unable to save new value for wifi_password");
+    else {
+      debug_println("unable to save new value for wifi_password");
+    }
   }
 }
 
@@ -153,9 +153,9 @@ void EspConfig::set_api_key(const char* api_key) {
       _memory.putString(key_api_key, _api_key);
       _memory.end();
     }
-  }
-  else {
-    debug_println("unable to save new value for api_key");
+    else {
+      debug_println("unable to save new value for api_key");
+    }
   }
 }
 
@@ -170,8 +170,8 @@ void EspConfig::set_use_dev(bool use_dev) {
       _memory.putBool(key_use_dev, use_dev);
       _memory.end();
     }
-  }
-  else {
-    debug_println("unable to save new value for use_dev");
+    else {
+      debug_println("unable to save new value for use_dev");
+    }
   }
 }

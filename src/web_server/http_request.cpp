@@ -33,6 +33,19 @@ bool HttpRequest::has_query_params() {
   return strlen(_query_params) > 0;
 }
 
+bool HttpRequest::has_param(const char* key) {
+  if(has_query_params()) {
+    size_t line_len = strlen(_query_params);
+    size_t key_len = strlen(key);
+    for(size_t i = 0; i < line_len - key_len; ++i) {
+      if(strncmp(_query_params + i, key, key_len) == 0) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 bool HttpRequest::get_param_value(const char* key, char* result, size_t result_size) {
   if(has_query_params()) {
     result[0] = '\0';

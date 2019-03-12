@@ -26,6 +26,7 @@ class HttpRequest {
 
   bool has_query_params();
 
+  bool has_param(const char* key);
   bool get_param_value(const char* key, char* result, size_t result_size);
 
   const char* get_uri() const;
