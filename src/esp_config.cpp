@@ -116,8 +116,6 @@ void EspConfig::set_wifi_ssid(const char* wifi_ssid) {
   if(wifi_ssid != nullptr && strlen(wifi_ssid) < CONFIG_VAL_MAX) {
     if(_memory.begin("data")) {
       strcpy(_wifi_ssid, wifi_ssid);
-      // TODO: Remove temp log webserver issue
-      debug_print("saving new ssid: ");debug_println(_wifi_ssid);
       _memory.putString(key_wifi_ssid, _wifi_ssid);
       _memory.end();
     }

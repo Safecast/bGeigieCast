@@ -35,6 +35,7 @@ bool HttpRequest::has_query_params() {
 
 bool HttpRequest::get_param_value(const char* key, char* result, size_t result_size) {
   if(has_query_params()) {
+    result[0] = '\0';
     size_t line_len = strlen(_query_params);
     size_t key_len = strlen(key);
     const char assignChar = '=';
@@ -50,7 +51,7 @@ bool HttpRequest::get_param_value(const char* key, char* result, size_t result_s
           result[j + 1] = 0;
         }
         // Remove url encoded spaces...
-        for (char* p = strchr(result, '+'); (p = strchr(p, '+')) != nullptr; *p = ' ');
+        for (char* p = result; (p = strchr(p, '+')) != nullptr; *p = ' ');
         return true;
       }
     }

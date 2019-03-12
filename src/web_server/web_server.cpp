@@ -44,8 +44,8 @@ void ConfigWebServer::handle_requests() {
     debug_println("New Client.");          // print a message out in the serial port
     HttpRequest request;
     RequestParse state = RequestParse::request_line;
-
     String currentLine = "";
+
     while(client.connected()) {
       if(client.available()) {
         char c = static_cast<char>(client.read());
@@ -95,29 +95,22 @@ bool ConfigWebServer::is_running() {
 void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request) {
   char transmission[1024];
   if(strcmp(request.get_uri(), "/save") == 0) {
+    debug_println("handle");
+
     char value[64];
     if(request.get_param_value("ssid", value, 64)) {
-      debug_print("set new use ssid: ");
-      debug_print(strlen(value));
-      debug_println(value);
       config.set_wifi_ssid(value);
     }
     value[0] = '\0';
     if(request.get_param_value("password", value, 64)) {
-      debug_print("set new use password: ");
-      debug_println(value);
       config.set_wifi_password(value);
     }
-    value[0] = '\0';
     if(request.get_param_value("apikey", value, 64)) {
-      debug_print("set new use apikey: ");
-      debug_println(value);
       config.set_api_key(value);
     }
     value[0] = '\0';
     if(request.get_param_value("devsrv", value, 64)) {
-      debug_print("set new use dev: ");
-      debug_println(value);
+      config.set_use_dev(strcmp(value, "1") == 0);
     }
 
     client.write(
@@ -137,7 +130,9 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
             "SSID: <input type=\"text\" name=\"ssid\" value=\"%s\"><br> "
             "PASSWORD: <input type=\"text\" name=\"password\" value=\"%s\"><br> "
             "SAFECAST APIKEY: <input type=\"text\" name=\"apikey\" value=\"%s\"><br>"
-            "Use safecast development server:<input name=\"devsrv\" type=\"checkbox\" %s><br>"
+            "Use safecast server:<br>"
+            "<input type=\"radio\" name=\"devsrv\" value=\"1\" %s>Development<br>"
+            "<input type=\"radio\" name=\"devsrv\" value=\"0\" %s>Production<br>"
             "<input type=\"submit\" value=\"Submit\">"
             "</form><br>\r\n"
             "</body>\r\n"
@@ -145,7 +140,8 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
             config.get_wifi_ssid(),
             config.get_wifi_password(),
             config.get_api_key(),
-            config.get_use_dev() ? "checked" : ""
+            config.get_use_dev() ? "checked" : "",
+            config.get_use_dev() ? "" : "checked"
     );
     client.write(transmission);
   }

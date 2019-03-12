@@ -68,6 +68,24 @@ void test_param_parse_missing(void) {
   TEST_ASSERT_FALSE(request.get_param_value("api_key", result, result_size));
 }
 
+
+void test_param_parse_full(void) {
+  const int result_size = 64;
+  const char* line = "GET /save?ssid=Loftwork+COOOP3+Free&password=&apikey=YE_KEY&devsrv=on HTTP/1.1";
+  char result[result_size];
+
+  request.set_request_line(line);
+
+  TEST_ASSERT_TRUE(request.get_param_value("ssid", result, result_size));
+  TEST_ASSERT_EQUAL_STRING("Loftwork COOOP3 Free", result);
+  TEST_ASSERT_TRUE(request.get_param_value("password", result, result_size));
+  TEST_ASSERT_EQUAL_STRING("", result);
+  TEST_ASSERT_TRUE(request.get_param_value("apikey", result, result_size));
+  TEST_ASSERT_EQUAL_STRING("YE_KEY", result);
+  TEST_ASSERT_TRUE(request.get_param_value("devsrv", result, result_size));
+  TEST_ASSERT_EQUAL_STRING("on", result);
+}
+
 void setup() {
   delay(2000);
 
