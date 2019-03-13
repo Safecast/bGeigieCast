@@ -72,6 +72,10 @@ bool HttpRequest::get_param_value(const char* key, char* result, size_t result_s
   return false;
 }
 
+bool HttpRequest::is_uri(const char* uri) const {
+  return strcmp(_uri, uri) == 0;
+}
+
 const char* HttpRequest::get_uri() const {
   return _uri;
 }

@@ -2,6 +2,7 @@
 #include "user_config.h"
 #include "esp_config.h"
 #include "debugger.h"
+#include "http_responses.h"
 
 typedef enum {
   request_line,
@@ -92,9 +93,51 @@ bool ConfigWebServer::is_running() {
   return !!server;
 }
 
+
 void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request) {
-  if(strcmp(request.get_uri(), "/save") == 0) {
-    debug_println("handle");
+  if(request.is_uri("/")) {
+    char transmission[2048];
+    sprintf(
+        transmission,
+        "<!DOCTYPE html>\r\n"
+        "<html>\r\n"
+        "<head>\r\n"
+        "<link rel='icon' href='data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAA"
+        "AAgAAAAAAAAAAAAAAAEAAAAAAAAACAhYcA////AA0PEAC+pm4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAIiIiIiIiIiIiIiIiIiIiIiIiMyISESIiIiIzIhIRIiIiIiIiEhEiIiIiIiISESIiIiIiIRIRIiIiIiIRIhEiIiIiERIi"
+        "ESIiIiIQIhESIiIiIiIRESIiIiIiEREiIiIiIiIRIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' type='image/x-png' />\r\n"
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
+        "<style>html { font-family: Helvetica; margin: 20px auto; text-align: center;} body {text-align: center;} form {display: inline-block; text-align: left; margin: 20px; padding: 20px; background-color: lightgrey;} </style>\r\n"
+        "</head>\r\n"
+        "<body>\r\n"
+        "<strong>Config Page bGeigie-ESP32</strong><br>"
+        "<form action=\"save\" method=\"get\" > "
+        "bGeigie wifi name:<br><input type=\"text\" name=\"ap_ssid\" value=\"%s\"><br>"
+        "bGeigie wifi password:<br><input type=\"text\" name=\"ap_password\" value=\"%s\"><br>"
+        "Network wifi ssid:<br><input type=\"text\" name=\"wf_ssid\" value=\"%s\"><br>"
+        "Network wifi password:<br><input type=\"text\" name=\"wf_password\" value=\"%s\"><br>"
+        "Safecast API key:<br><input type=\"text\" name=\"apikey\" value=\"%s\"><br>"
+        "Use safecast server:<br>"
+        "<input type=\"radio\" name=\"devsrv\" value=\"1\" %s>Development<br>"
+        "<input type=\"radio\" name=\"devsrv\" value=\"0\" %s>Production<br>"
+        "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
+        "</form><br><br>\r\n "
+        "%s"
+        "</body>\r\n"
+        "</html>",
+        config.get_ap_ssid(),
+        config.get_ap_password(),
+        config.get_wifi_ssid(),
+        config.get_wifi_password(),
+        config.get_api_key(),
+        config.get_use_dev() ? "checked" : "",
+        config.get_use_dev() ? "" : "checked",
+        request.has_param("success") ? "Configurations saved!" : ""
+    );
+    respondSuccess(client, transmission);
+
+  } else if(request.is_uri("/save")) {
 
     char value[64];
     if(request.get_param_value("ap_ssid", value, 64)) {
@@ -116,44 +159,11 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
       config.set_use_dev(strcmp(value, "1") == 0);
     }
 
-    client.write(
-        "HTTP/1.1 302 Found\r\n"
-        "Location: /?success=true\r\n\r\n"
-    );
+    respondRedirect(client, "/?success=true");
+
   } else {
-    char transmission[1024];
-    sprintf(
-        transmission,
-        "HTTP/1.0 200\r\n\r\n"
-        "<!DOCTYPE html>\r\n"
-        "<html>\r\n"
-        "<head>\r\n"
-        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
-        "</head>\r\n"
-        "<body>\r\n"
-        "<form action=\"save\" method=\"get\"> "
-        "bGeigie wifi name:<br><input type=\"text\" name=\"ap_ssid\" value=\"%s\"><br>"
-        "bGeigie wifi password:<br><input type=\"text\" name=\"ap_password\" value=\"%s\"><br>"
-        "Network wifi ssid:<br><input type=\"text\" name=\"wf_ssid\" value=\"%s\"><br>"
-        "Network wifi password:<br><input type=\"text\" name=\"wf_password\" value=\"%s\"><br>"
-        "Safecast API key:<br><input type=\"text\" name=\"apikey\" value=\"%s\"><br>"
-        "Use safecast server:<br>"
-        "<input type=\"radio\" name=\"devsrv\" value=\"1\" %s>Development<br>"
-        "<input type=\"radio\" name=\"devsrv\" value=\"0\" %s>Production<br>"
-        "<input type=\"submit\" value=\"Submit\">"
-        "</form><br>\r\n"
-        "%s"
-        "</body>\r\n"
-        "</html>",
-        config.get_ap_ssid(),
-        config.get_ap_password(),
-        config.get_wifi_ssid(),
-        config.get_wifi_password(),
-        config.get_api_key(),
-        config.get_use_dev() ? "checked" : "",
-        config.get_use_dev() ? "" : "checked",
-        request.has_param("success") ? "Configurations saved!" : ""
-    );
-    client.write(transmission);
+
+    respondNotFound(client);
+
   }
 }

@@ -51,6 +51,7 @@ void ApiConnector::process_reading(Reading& reading) {
   merged_reading += reading;
   uint32_t now = millis();
   if(last_send + API_SEND_FREQUENCY <= now) {
+    last_send = now;
     if(is_connected()) {
       while(!missed_readings.empty()) {
         debug_println("Sending previously failed reading to API");
@@ -67,7 +68,6 @@ void ApiConnector::process_reading(Reading& reading) {
     }
 
     merged_reading.reset();
-    last_send = now;
   }
 }
 
@@ -94,7 +94,11 @@ bool ApiConnector::send_reading(Reading& reading) {
   sprintf(url, "%s?api_key=%s&%s", API_MEASUREMENTS_ENDPOINT, config.get_api_key(), config.get_use_dev() ? "test=true" : "");
 
   //Specify destination for HTTP request
-  http.begin(url);
+  if(!http.begin(url)) {
+    debug_println("Unable to begin url connection");
+    save_reading(reading);
+    return false;
+  }
 
   char content_length[5];
 
