@@ -2,8 +2,11 @@
 #include "user_config.h"
 #include "debugger.h"
 
+// Set this to true if we use anode LED
+#define RGB_STATE_LED_REVERSED false
+
 StateLED::StateLED() :
-    RGBLed(RGB_LED_PIN_R, RGB_LED_PIN_G, RGB_LED_PIN_B),
+    RGBLed(RGB_LED_PIN_R, RGB_LED_PIN_G, RGB_LED_PIN_B, RGB_STATE_LED_REVERSED),
     blink_state(false),
     _rgb_off{0, 0, 0},
     _rgb_init{50, 50, 50},

@@ -7,7 +7,7 @@
 #define CHANNEL_FREQUENCY 12800
 #define CHANNEL_RESOLUTION 8
 
-RGBLed::RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b) {
+RGBLed::RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b, bool reversed): _reversed(reversed) {
   // Connect pins to channels
   ledcSetup(CHANNEL_R, CHANNEL_FREQUENCY, CHANNEL_RESOLUTION);
   ledcAttachPin(pin_r, CHANNEL_R);
@@ -29,14 +29,14 @@ void RGBLed::off() {
   set_b(0);
 }
 
-void RGBLed::set_r(uint32_t value){
-  ledcWrite(CHANNEL_R, value);
+void RGBLed::set_r(uint8_t value){
+  ledcWrite(CHANNEL_R, _reversed ? static_cast<uint8_t>(255 - value): value);
 }
 
-void RGBLed::set_g(uint32_t value){
-  ledcWrite(CHANNEL_G, value);
+void RGBLed::set_g(uint8_t value){
+  ledcWrite(CHANNEL_G, _reversed ? static_cast<uint8_t>(255 - value) : value);
 }
 
-void RGBLed::set_b(uint32_t value){
-  ledcWrite(CHANNEL_B, value);
+void RGBLed::set_b(uint8_t value){
+  ledcWrite(CHANNEL_B, _reversed ? static_cast<uint8_t>(255 - value) : value);
 }
