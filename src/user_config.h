@@ -32,8 +32,8 @@
 // Default ESP user configurations
 #define D_ACCESS_POINT_SSID     "bGeigie-ESP32"
 #define D_ACCESS_POINT_PASSWORD "safecast"
-#define D_WIFI_SSID             "Loftwork COOOP3 Free"
-#define D_WIFI_PASSWORD         ""
+#define D_WIFI_SSID             "your wifi ssid"
+#define D_WIFI_PASSWORD         "yourwifipassword"
 #define D_APIKEY                ""
 #define D_USE_DEV_SERVER        true
 

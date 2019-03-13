@@ -11,7 +11,8 @@ void ResetState::entry_action() {
 
 void ResetState::do_activity() {
   controller.get_config().reset_defaults();
-  controller.set_state(new InitializeState(controller));
+  debug_println("\n RESTARTING ESP...\n");
+  ESP.restart();
 }
 
 void ResetState::exit_action() {
