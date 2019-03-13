@@ -186,7 +186,7 @@ void Reading::parse_values() {
 }
 
 bool Reading::correctly_parsed() const {
-  return _validity != ReadingValidity::e_unparsed && _validity != ReadingValidity::e_invalid_string;
+  return _validity != e_unparsed && _validity != e_invalid_string && _device_id > 0;
 }
 
 const char* Reading::get_reading_str() const {

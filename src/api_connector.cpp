@@ -23,7 +23,7 @@ bool ApiConnector::start_connect(bool initial) {
 
   if(initial) {
     const char* password = config.get_wifi_password();
-    debug_print("Connecting to ssid "); debug_print(ssid); debug_println(password);
+    debug_print("Connecting to ssid "); debug_println(ssid);
     password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
     merged_reading.reset();
     last_send = millis();

@@ -35,7 +35,7 @@ void BluetoohConnector::init(uint16_t device_id) {
   BLEDevice::startAdvertising();
   initialized = true;
 
-  debug_println("Bluetooth initialized");
+  debug_print("Bluetooth initialized, device: "); debug_println(deviceName);
 }
 
 void BluetoohConnector::create_ble_profile_service(BLEServer* pServer) {
