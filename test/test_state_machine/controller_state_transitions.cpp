@@ -8,6 +8,7 @@
 #include <state_machine/states/active_states/MobileModeState.h>
 #include <state_machine/states/active_states/StationaryModeState.h>
 #include <state_machine/states/active_states/stationary_mode_states/ConnectionErrorState.h>
+#include <state_machine/states/active_states/stationary_mode_states/ReconnectingState.h>
 #include <state_machine/states/active_states/stationary_mode_states/ConnectingState.h>
 #include <state_machine/states/active_states/stationary_mode_states/ConnectedState.h>
 #include <state_machine/states/active_states/stationary_mode_states/TestApiState.h>
@@ -140,5 +141,36 @@ void controller_state_transitions_connected_error(void) {
   controller.schedule_event(Event_enum::e_connection_lost);
   controller.handle_events();
 
+  TEST_ASSERT_NOT_NULL(dynamic_cast<ReconnectingState*>(controller.get_current_state()));
+
+  controller.schedule_event(Event_enum::e_connection_failed);
+  controller.handle_events();
+
   TEST_ASSERT_NOT_NULL(dynamic_cast<ConnectionErrorState*>(controller.get_current_state()));
+}
+
+/**
+ * Test controller state transition: Connected -> Reconnect -> Connected
+ */
+void controller_state_transitions_connected_reconnect(void) {
+  // Connected -> ConnectionError
+  Controller controller;
+  controller.set_state(new ConnectedState(controller));
+
+  TEST_ASSERT_NOT_NULL(dynamic_cast<ConnectedState*>(controller.get_current_state()));
+
+  controller.schedule_event(Event_enum::e_connection_lost);
+  controller.handle_events();
+
+  TEST_ASSERT_NOT_NULL(dynamic_cast<ReconnectingState*>(controller.get_current_state()));
+
+  controller.schedule_event(Event_enum::e_connected);
+  controller.handle_events();
+
+  TEST_ASSERT_NOT_NULL(dynamic_cast<TestApiState*>(controller.get_current_state()));
+
+  controller.schedule_event(Event_enum::e_API_available);
+  controller.handle_events();
+
+  TEST_ASSERT_NOT_NULL(dynamic_cast<ConnectedState*>(controller.get_current_state()));
 }

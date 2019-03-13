@@ -8,6 +8,7 @@ void controller_state_transitions_mobile_stationary(void);
 void controller_state_transitions_connecting_test_connected(void);
 void controller_state_transitions_connecting_error_connected(void);
 void controller_state_transitions_connected_error(void);
+void controller_state_transitions_connected_reconnect(void);
 
 void setup() {
   delay(2000);
@@ -22,6 +23,7 @@ void setup() {
   RUN_TEST(controller_state_transitions_connecting_test_connected);
   RUN_TEST(controller_state_transitions_connecting_error_connected);
   RUN_TEST(controller_state_transitions_connected_error);
+  RUN_TEST(controller_state_transitions_connected_reconnect);
 
   UNITY_END();
 }
