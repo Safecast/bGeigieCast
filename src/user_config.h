@@ -24,17 +24,23 @@
 #define MAX_MISSED_READINGS 3
 
 // Access point settings
-#define SERVER_WIFI_PORT    80
-#define SERVER_MAX_CLIENTS  4
-#define ACCESS_POINT_IP     {192, 168, 5, 1}
-#define ACCESS_POINT_NMASK  {255, 255, 255, 0}
+#define SERVER_WIFI_PORT 80
+#define SERVER_MAX_CLIENTS 4
+#define ACCESS_POINT_IP   \
+    {                     \
+        192, 168, 100, 10 \
+    }
+#define ACCESS_POINT_NMASK \
+    {                      \
+        255, 255, 255, 0   \
+    }
 
 // Default ESP user configurations
-#define D_ACCESS_POINT_SSID     "bGeigie-ESP32"
+#define D_ACCESS_POINT_SSID "bGeigie-ESP32"
 #define D_ACCESS_POINT_PASSWORD "safecast"
-#define D_WIFI_SSID             "Loftwork COOOP3 Free"
-#define D_WIFI_PASSWORD         ""
-#define D_APIKEY                ""
-#define D_USE_DEV_SERVER        true
+#define D_WIFI_SSID "kittywood"
+#define D_WIFI_PASSWORD "schatjeyuka"
+#define D_APIKEY "q1LKu7RQ8s5pmyxunnDW"
+#define D_USE_DEV_SERVER true
 
 #endif
