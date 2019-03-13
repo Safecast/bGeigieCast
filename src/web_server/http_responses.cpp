@@ -1,7 +1,6 @@
 #include "http_responses.h"
 
 // Responses
-
 void respondSuccess(Stream& client) {
   // Return 204 OK to client
   client.println("HTTP/1.1 204 NO CONTENT");
