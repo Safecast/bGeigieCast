@@ -185,6 +185,10 @@ void Reading::parse_values() {
   _altitude /= 100;
 }
 
+bool Reading::correctly_parsed() const {
+  return _validity != ReadingValidity::e_unparsed && _validity != ReadingValidity::e_invalid_string;
+}
+
 const char* Reading::get_reading_str() const {
   return _reading_str;
 }

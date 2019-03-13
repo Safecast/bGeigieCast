@@ -51,6 +51,12 @@ class Reading {
    */
   void reset();
 
+  /**
+   * Check if the reading was correctly parsed
+   * @return true if not unparsed / invalid string
+   */
+  bool correctly_parsed() const;
+
   const char* get_reading_str() const;
   ReadingValidity get_validity() const;
   uint16_t get_device_id() const;
