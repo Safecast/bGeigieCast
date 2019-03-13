@@ -11,7 +11,7 @@ ReconnectingState::ReconnectingState(Controller& context): StationaryModeState(c
 }
 
 void ReconnectingState::entry_action() {
-  debug_println("Entered state Connecting");
+  debug_println("Entered state Reconnecting");
   controller.get_state_led().set_state_led(StateLED::StateColor::stationary_connecting);
   timer = millis();
 }
