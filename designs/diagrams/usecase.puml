@@ -10,6 +10,7 @@
 rectangle <<subsystem>>\nesp32Controller{
     (Set config)
     (Set esp mode)
+    (Reset)
     (Set\n mobile mode)
     (Set\n stationary mode)
     (Publish to API)
@@ -27,6 +28,7 @@ rectangle <<subsystem>>\nesp32Controller{
 
     user -d- (Set esp mode)
     user -d- (Set config)
+    user -d- (Reset)
     BGN -- (Report data)
 }
 

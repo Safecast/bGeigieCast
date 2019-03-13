@@ -1,17 +1,17 @@
 @startuml
 
 interface espMode<<physical button>>
-interface deviceConfig<<webserver>>
-interface liveData
-interface api
+interface deviceConfig<<HTTP>>
+interface liveData<<BLE>>
+interface api<<HTTP>>
 
 component bGeigieNano\n {
     interface dataReports<<RX/TX>>
     component bGeigieController
 
     component <<subcomponent>>\nESP32\n {
-        interface IBL as "temp IBL"
-        interface IAP as "temp IAP"
+        interface IBL as "bluetoothControl"
+        interface IAP as "APIControl"
         interface serverControl
         component Controller
         component Server

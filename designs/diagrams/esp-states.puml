@@ -1,66 +1,72 @@
 @startuml
 
+
 State Initializing
 Initializing: action: setup ESP32
+State PostInitialize
 
-state On {
-
-    state SetupServer
-    SetupServer: entry: setLedColor(serverSetup)
-    SetupServer: action: startServer
-    state ServerActive
-    ServerActive: entry: setLedColor(serverActive)
-    ServerActive: action: handleClients
-    ServerActive: exit: stopServer
-    State Active
-    Active: action: process readings
-
-
-    state Active {
-        state StationaryMode
-        state MobileMode
-        MobileMode: entry: setLedColor(mobile)
-
-        state StationaryMode {
-            state Connecting
-            Connecting: entry: setLedColor(conn)
-            Connecting: action: connectWifi
-            state ConnectingError
-            ConnectingError: entry: setLedColor(error)
-            ConnectingError: action: connectWifi
-            state ConnectionTest
-            ConnectionTest: action: testAPI
-            state Connected
-            Connected: entry: setLedColor(stationary)
-            Connected: action: sendData
-
-            [*] -> Connecting
-            Connecting -> ConnectionTest : connected
-            ConnectionTest --> Connected : APIAvailable
-            Connected -> Connecting: connectionLost
-            Connecting -u-> ConnectingError : [time > 5s]
-            ConnectingError -d-> ConnectionTest: connected
-        }
+state SetupServer
+SetupServer: entry: setLedColor(serverSetup)
+SetupServer: action: startServer
+state ServerActive
+ServerActive: entry: setLedColor(serverActive)
+ServerActive: action: handleClients
+ServerActive: exit: stopServer
+State Active
+Active: action: process readings
+State Reset
+Reset: reset defaults, restart
 
 
-        MobileMode -d-> StationaryMode : buttonPressed
-        StationaryMode -u-> MobileMode : buttonPressed
+state Active {
+    state StationaryMode
+    state MobileMode
+    MobileMode: entry: setLedColor(mobile)
+
+    state StationaryMode {
+        state Connecting
+        Connecting: entry: setLedColor(conn)
+        Connecting: action: initialConnectWifi
+        state Reconnecting
+        Reconnecting: entry: setLedColor(conn)
+        Reconnecting: action: reconnectWifi
+        state ConnectingError
+        ConnectingError: entry: setLedColor(error)
+        ConnectingError: action: connectWifi
+        state ConnectionTest
+        ConnectionTest: action: testAPI
+        state Connected
+        Connected: entry: setLedColor(stationary)
+        Connected: action: sendData
+
+        [*] -> Connecting
+        Connecting -> ConnectionTest : connected
+        Reconnecting -> ConnectionTest : connected
+        ConnectionTest --> Connected : APIAvailable
+        Connected -> Reconnecting: connectionLost
+        Connecting -> ConnectingError : [time > 5s]
+        Reconnecting -u-> ConnectingError : [time > 5s]
+        ConnectingError -d-> ConnectionTest: connected
     }
 
-    SetupServer -> ServerActive : serverInitialized
-    ServerActive -> MobileMode : buttonPressed
-    ServerActive -> StationaryMode : startStationary
 
-
+    MobileMode -r-> StationaryMode : buttonPressed
+    StationaryMode -l-> MobileMode : buttonPressed
 }
+
+
 [*] -> Initializing
-Initializing -> SetupServer : [button down] controllerInitialized
-Initializing -> MobileMode : controllerInitialized
+Initializing -> PostInitialize : controllerInitialized
+PostInitialize -> SetupServer : buttonPressed
+PostInitialize -d-> MobileMode : [t > 3s]
+SetupServer -d-> ServerActive : serverInitialized
+ServerActive -d-> MobileMode : buttonPressed
+ServerActive -d-> StationaryMode : startStationary
+Active -l-> Reset : buttonLongPressed
+Reset -d-> [*]
+
 
 ''' Layout
-Initializing -[hidden]> On
 MobileMode -[hidden]> StationaryMode
-
-
 
 @enduml
