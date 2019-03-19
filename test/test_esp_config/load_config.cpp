@@ -11,10 +11,11 @@ void test_initial_config(void) {
 
   config.set_all();
 
-  TEST_ASSERT_EQUAL_STRING(config.get_ap_ssid(), D_ACCESS_POINT_SSID);
-  TEST_ASSERT_EQUAL_STRING(config.get_ap_password(), D_ACCESS_POINT_PASSWORD);
-  TEST_ASSERT_EQUAL_STRING(config.get_wifi_ssid(), D_WIFI_SSID);
-  TEST_ASSERT_EQUAL_STRING(config.get_wifi_password(), D_WIFI_PASSWORD);
-  TEST_ASSERT_EQUAL_STRING(config.get_api_key(), D_APIKEY);
-  TEST_ASSERT_EQUAL(config.get_use_dev(), D_USE_DEV_SERVER);
+  TEST_ASSERT_EQUAL_STRING(D_ACCESS_POINT_SSID, config.get_ap_ssid());
+  TEST_ASSERT_EQUAL_STRING(D_ACCESS_POINT_PASSWORD, config.get_ap_password());
+  TEST_ASSERT_EQUAL_STRING(D_WIFI_SSID, config.get_wifi_ssid());
+  TEST_ASSERT_EQUAL_STRING(D_WIFI_PASSWORD, config.get_wifi_password());
+  TEST_ASSERT_EQUAL_STRING(D_APIKEY, config.get_api_key());
+  TEST_ASSERT_EQUAL(D_USE_DEV_SERVER, config.get_use_dev());
+  TEST_ASSERT_EQUAL(D_INIT_STATIONARY, config.is_init_stationary());
 }
