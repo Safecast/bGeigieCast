@@ -14,8 +14,7 @@ void HttpRequest::set_request_line(const char* line) {
     _uri[0] = '\0';
     _version[0] = '\0';
     _query_params[0] = '\0';
-  }
-  else {
+  } else {
     sscanf(full_uri, "%[^?]?%s", _uri, _query_params);
   }
   debug_println(line);
@@ -49,22 +48,29 @@ bool HttpRequest::has_param(const char* key) {
 bool HttpRequest::get_param_value(const char* key, char* result, size_t result_size) {
   if(has_query_params()) {
     result[0] = '\0';
-    size_t line_len = strlen(_query_params);
     size_t key_len = strlen(key);
+
     const char assignChar = '=';
-    for(size_t i = 0; i < line_len - key_len; ++i) {
-      if(strncmp(_query_params + i, key, key_len) == 0 && *(_query_params + i + key_len) == assignChar) {
-        ++i;
-        for(size_t j = 0; j < result_size - 1 && j + i + key_len < line_len; ++j) {
-          const char current = _query_params[i + key_len + j];
-          if(current == '&') {
-            break;
-          }
-          result[j] = current;
-          result[j + 1] = 0;
+
+    auto next_begin = [this](char** begin) {
+      char* next = strchr(*begin, '&');
+      *begin = next && *next == '&' && next - _query_params < strlen(_query_params) - 1 ? next + 1 : nullptr;
+    };
+
+    for(char* begin = _query_params; begin != nullptr; next_begin(&begin)) {
+      if(strncmp(begin, key, key_len) == 0 && *(begin + key_len) == assignChar) {
+        char* begin_value = begin + key_len + 1; // + 1 for the '=' character
+        char* end_value = strchr(begin_value, '&');
+        uint32_t val_len = end_value ? end_value - begin_value : strlen(begin_value);
+        if(val_len > result_size - 1) {
+          debug_println("Request param value exceeding max size");
+          return false;
         }
+        strncpy(result, begin_value, val_len);
+        result[val_len] = '\0';
+
         // Remove url encoded spaces...
-        for (char* p = result; (p = strchr(p, '+')) != nullptr; *p = ' ');
+        for(char* p = result; (p = strchr(p, '+')) != nullptr; *p = ' ') {}
         return true;
       }
     }
