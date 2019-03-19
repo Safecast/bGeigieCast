@@ -36,6 +36,8 @@ class EspConfig {
   void set_api_key(const char* api_key);
   bool get_use_dev() const;
   void set_use_dev(bool use_dev);
+  bool is_init_stationary() const;
+  void set_init_stationary(bool init_stationary);
 
  private:
   Preferences _memory;
@@ -50,6 +52,9 @@ class EspConfig {
   // API config (to connect to the API)
   char _api_key[CONFIG_VAL_MAX];
   bool _use_dev;
+
+  // Flag if stationary or mobile mode is started after init
+  bool _init_stationary;
 
 };
 

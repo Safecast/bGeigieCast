@@ -13,6 +13,7 @@ const char* key_wifi_ssid = "wifi_ssid";
 const char* key_wifi_password = "wifi_password";
 const char* key_api_key = "api_key";
 const char* key_use_dev = "use_dev";
+const char* key_init_stationary = "init_stationary";
 
 EspConfig::EspConfig() :
     _memory(),
@@ -62,6 +63,7 @@ void EspConfig::set_all() {
     strcpy(_api_key, D_APIKEY);
   }
   _use_dev = _memory.getBool(key_use_dev, D_USE_DEV_SERVER);
+  _use_dev = _memory.getBool(key_init_stationary, D_INIT_STATIONARY);
   _memory.end();
 }
 
@@ -172,6 +174,23 @@ void EspConfig::set_use_dev(bool use_dev) {
     }
     else {
       debug_println("unable to save new value for use_dev");
+    }
+  }
+}
+
+bool EspConfig::is_init_stationary() const {
+  return _init_stationary;
+}
+
+void EspConfig::set_init_stationary(bool init_stationary) {
+  if(init_stationary != _init_stationary) {
+    if(_memory.begin("data")) {
+      _init_stationary = init_stationary;
+      _memory.putBool(key_use_dev, key_init_stationary);
+      _memory.end();
+    }
+    else {
+      debug_println("unable to save new value for init_stationary");
     }
   }
 }

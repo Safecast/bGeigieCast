@@ -15,7 +15,7 @@ class Context {
   Context();
   virtual ~Context();
 
-  /**
+  virtual /**
    * Will exit the current one and enter the new one
    * @param state: New state to be set
    */

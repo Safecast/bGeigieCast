@@ -1,4 +1,4 @@
-#include "active_states/MobileModeState.h"
+#include "active_states/stationary_mode_states/ConnectingState.h"
 #include "ServerActiveState.hpp"
 
 ServerActiveState::ServerActiveState(Controller& context): State(context) {
@@ -19,7 +19,7 @@ void ServerActiveState::exit_action() {
 void ServerActiveState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_button_pressed:
-      controller.set_state(new MobileModeState(controller));
+      controller.set_state(new ConnectingState(controller));
       break;
     default:
       State::handle_event(event_id);
