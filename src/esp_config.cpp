@@ -66,7 +66,7 @@ void EspConfig::set_all() {
     strcpy(_api_key, D_APIKEY);
   }
   _use_dev = _memory.getBool(key_use_dev, D_USE_DEV_SERVER);
-  _use_dev = _memory.getBool(key_init_stationary, D_INIT_STATIONARY);
+  _init_stationary = _memory.getBool(key_init_stationary, D_INIT_STATIONARY);
   _memory.end();
 }
 
@@ -74,12 +74,13 @@ void EspConfig::reset_defaults() {
   if(_memory.begin(memory_name)) {
     _memory.clear();
     _memory.end();
-    set_ap_ssid(D_ACCESS_POINT_SSID);
-    set_ap_password(D_ACCESS_POINT_PASSWORD);
-    set_wifi_ssid(D_WIFI_SSID);
-    set_wifi_password(D_WIFI_PASSWORD);
-    set_api_key(D_APIKEY);
-    set_use_dev(D_USE_DEV_SERVER);
+    set_ap_ssid(D_ACCESS_POINT_SSID, true);
+    set_ap_password(D_ACCESS_POINT_PASSWORD, true);
+    set_wifi_ssid(D_WIFI_SSID, true);
+    set_wifi_password(D_WIFI_PASSWORD, true);
+    set_api_key(D_APIKEY, true);
+    set_use_dev(D_USE_DEV_SERVER, true);
+    set_init_stationary(D_INIT_STATIONARY, true);
   }
 }
 
@@ -87,8 +88,8 @@ const char* EspConfig::get_ap_ssid() const {
   return _ap_ssid;
 }
 
-void EspConfig::set_ap_ssid(const char* ap_ssid) {
-  if(ap_ssid != nullptr && strlen(ap_ssid) < CONFIG_VAL_MAX) {
+void EspConfig::set_ap_ssid(const char* ap_ssid, bool force) {
+  if(force || (ap_ssid != nullptr && strlen(ap_ssid) < CONFIG_VAL_MAX)) {
     if(_memory.begin(memory_name)) {
       strcpy(_ap_ssid, ap_ssid);
       _memory.putString(key_ap_ssid, _ap_ssid);
@@ -104,8 +105,8 @@ const char* EspConfig::get_ap_password() const {
   return _ap_password;
 }
 
-void EspConfig::set_ap_password(const char* ap_password) {
-  if(ap_password != nullptr && strlen(ap_password) < CONFIG_VAL_MAX) {
+void EspConfig::set_ap_password(const char* ap_password, bool force) {
+  if(force || (ap_password != nullptr && strlen(ap_password) < CONFIG_VAL_MAX)) {
     if(_memory.begin(memory_name)) {
       strcpy(_ap_password, ap_password);
       _memory.putString(key_ap_password, _ap_password);
@@ -121,8 +122,8 @@ const char* EspConfig::get_wifi_ssid() const {
   return _wifi_ssid;
 }
 
-void EspConfig::set_wifi_ssid(const char* wifi_ssid) {
-  if(wifi_ssid != nullptr && strlen(wifi_ssid) < CONFIG_VAL_MAX) {
+void EspConfig::set_wifi_ssid(const char* wifi_ssid, bool force) {
+  if(force || (wifi_ssid != nullptr && strlen(wifi_ssid) < CONFIG_VAL_MAX)) {
     if(_memory.begin(memory_name)) {
       strcpy(_wifi_ssid, wifi_ssid);
       _memory.putString(key_wifi_ssid, _wifi_ssid);
@@ -138,8 +139,8 @@ const char* EspConfig::get_wifi_password() const {
   return _wifi_password;
 }
 
-void EspConfig::set_wifi_password(const char* wifi_password) {
-  if(wifi_password != nullptr && strlen(wifi_password) < CONFIG_VAL_MAX) {
+void EspConfig::set_wifi_password(const char* wifi_password, bool force) {
+  if(force || (wifi_password != nullptr && strlen(wifi_password) < CONFIG_VAL_MAX)) {
     if(_memory.begin(memory_name)) {
       strcpy(_wifi_password, wifi_password);
       _memory.putString(key_wifi_password, _wifi_password);
@@ -155,8 +156,8 @@ const char* EspConfig::get_api_key() const {
   return _api_key;
 }
 
-void EspConfig::set_api_key(const char* api_key) {
-  if(api_key != nullptr && strlen(api_key) < CONFIG_VAL_MAX) {
+void EspConfig::set_api_key(const char* api_key, bool force) {
+  if(force || (api_key != nullptr && strlen(api_key) < CONFIG_VAL_MAX)) {
     if(_memory.begin(memory_name)) {
       strcpy(_api_key, api_key);
       _memory.putString(key_api_key, _api_key);
@@ -172,8 +173,8 @@ bool EspConfig::get_use_dev() const {
   return _use_dev;
 }
 
-void EspConfig::set_use_dev(bool use_dev) {
-  if(use_dev != _use_dev) {
+void EspConfig::set_use_dev(bool use_dev, bool force) {
+  if(force || (use_dev != _use_dev)) {
     if(_memory.begin(memory_name)) {
       _use_dev = use_dev;
       _memory.putBool(key_use_dev, use_dev);
@@ -189,11 +190,11 @@ bool EspConfig::is_init_stationary() const {
   return _init_stationary;
 }
 
-void EspConfig::set_init_stationary(bool init_stationary) {
-  if(init_stationary != _init_stationary) {
+void EspConfig::set_init_stationary(bool init_stationary, bool force) {
+  if(force || (init_stationary != _init_stationary)) {
     if(_memory.begin(memory_name)) {
       _init_stationary = init_stationary;
-      _memory.putBool(key_use_dev, key_init_stationary);
+      _memory.putBool(key_init_stationary, init_stationary);
       _memory.end();
     }
     else {

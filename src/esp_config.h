@@ -25,19 +25,19 @@ class EspConfig {
 
   // Getters and setters
   const char* get_ap_ssid() const;
-  void set_ap_ssid(const char* ap_ssid);
+  void set_ap_ssid(const char* ap_ssid, bool force = false);
   const char* get_ap_password() const;
-  void set_ap_password(const char* ap_password);
+  void set_ap_password(const char* ap_password, bool force = false);
   const char* get_wifi_ssid() const;
-  void set_wifi_ssid(const char* wifi_ssid);
+  void set_wifi_ssid(const char* wifi_ssid, bool force = false);
   const char* get_wifi_password() const;
-  void set_wifi_password(const char* wifi_password);
+  void set_wifi_password(const char* wifi_password, bool force = false);
   const char* get_api_key() const;
-  void set_api_key(const char* api_key);
+  void set_api_key(const char* api_key, bool force = false);
   bool get_use_dev() const;
-  void set_use_dev(bool use_dev);
+  void set_use_dev(bool use_dev, bool force = false);
   bool is_init_stationary() const;
-  void set_init_stationary(bool init_stationary);
+  void set_init_stationary(bool init_stationary, bool force = false);
 
  private:
   Preferences _memory;
