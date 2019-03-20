@@ -6,7 +6,6 @@
 #include "user_config.h"
 #include "debugger.h"
 
-
 const char* memory_name = "data";
 
 // Keys for config
@@ -25,44 +24,25 @@ EspConfig::EspConfig() :
     _wifi_ssid(""),
     _wifi_password(""),
     _api_key(""),
-    _use_dev() {
+    _use_dev(D_USE_DEV_SERVER),
+    _init_stationary(D_INIT_STATIONARY) {
 }
 
 void EspConfig::set_all() {
-  _memory.begin(memory_name);
+  _memory.begin(memory_name, true);
   if(_memory.getString(key_ap_ssid, _ap_ssid, CONFIG_VAL_MAX) == 0) {
-    debug_print("Key ");
-    debug_print(key_ap_ssid);
-    debug_print(" did not return any value, using default");
-    debug_println(D_ACCESS_POINT_SSID);
     strcpy(_ap_ssid, D_ACCESS_POINT_SSID);
   }
   if(_memory.getString(key_ap_password, _ap_password, CONFIG_VAL_MAX) == 0) {
-    debug_print("Key ");
-    debug_print(key_ap_password);
-    debug_print(" did not return any value, using default");
-    debug_println(D_ACCESS_POINT_PASSWORD);
     strcpy(_ap_password, D_ACCESS_POINT_PASSWORD);
   }
   if(_memory.getString(key_wifi_ssid, _wifi_ssid, CONFIG_VAL_MAX) == 0) {
-    debug_print("Key ");
-    debug_print(key_wifi_ssid);
-    debug_print(" did not return any value, using default");
-    debug_println(D_WIFI_SSID);
     strcpy(_wifi_ssid, D_WIFI_SSID);
   }
   if(_memory.getString(key_wifi_password, _wifi_password, CONFIG_VAL_MAX) == 0) {
-    debug_print("Key ");
-    debug_print(key_wifi_password);
-    debug_print(" did not return any value, using default");
-    debug_println(D_WIFI_PASSWORD);
     strcpy(_wifi_password, D_WIFI_PASSWORD);
   }
   if(_memory.getString(key_api_key, _api_key, CONFIG_VAL_MAX) == 0) {
-    debug_print("Key ");
-    debug_print(key_api_key);
-    debug_print(" did not return any value, using default");
-    debug_println(D_APIKEY);
     strcpy(_api_key, D_APIKEY);
   }
   _use_dev = _memory.getBool(key_use_dev, D_USE_DEV_SERVER);
@@ -94,8 +74,7 @@ void EspConfig::set_ap_ssid(const char* ap_ssid, bool force) {
       strcpy(_ap_ssid, ap_ssid);
       _memory.putString(key_ap_ssid, _ap_ssid);
       _memory.end();
-    }
-    else {
+    } else {
       debug_println("unable to save new value for ap_ssid");
     }
   }
@@ -111,8 +90,7 @@ void EspConfig::set_ap_password(const char* ap_password, bool force) {
       strcpy(_ap_password, ap_password);
       _memory.putString(key_ap_password, _ap_password);
       _memory.end();
-    }
-    else {
+    } else {
       debug_println("unable to save new value for ap_password");
     }
   }
@@ -128,8 +106,7 @@ void EspConfig::set_wifi_ssid(const char* wifi_ssid, bool force) {
       strcpy(_wifi_ssid, wifi_ssid);
       _memory.putString(key_wifi_ssid, _wifi_ssid);
       _memory.end();
-    }
-    else {
+    } else {
       debug_println("unable to save new value for wifi_ssid");
     }
   }
@@ -145,8 +122,7 @@ void EspConfig::set_wifi_password(const char* wifi_password, bool force) {
       strcpy(_wifi_password, wifi_password);
       _memory.putString(key_wifi_password, _wifi_password);
       _memory.end();
-    }
-    else {
+    } else {
       debug_println("unable to save new value for wifi_password");
     }
   }
@@ -162,8 +138,7 @@ void EspConfig::set_api_key(const char* api_key, bool force) {
       strcpy(_api_key, api_key);
       _memory.putString(key_api_key, _api_key);
       _memory.end();
-    }
-    else {
+    } else {
       debug_println("unable to save new value for api_key");
     }
   }
@@ -179,8 +154,7 @@ void EspConfig::set_use_dev(bool use_dev, bool force) {
       _use_dev = use_dev;
       _memory.putBool(key_use_dev, use_dev);
       _memory.end();
-    }
-    else {
+    } else {
       debug_println("unable to save new value for use_dev");
     }
   }
@@ -196,8 +170,7 @@ void EspConfig::set_init_stationary(bool init_stationary, bool force) {
       _init_stationary = init_stationary;
       _memory.putBool(key_init_stationary, init_stationary);
       _memory.end();
-    }
-    else {
+    } else {
       debug_println("unable to save new value for init_stationary");
     }
   }
