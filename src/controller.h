@@ -41,6 +41,8 @@ class Controller : public Context, public ButtonObserver {
    */
   void on_button_pressed(Button* button, uint32_t millis) override;
 
+  void set_state(AbstractState* state) override;
+
   // Getters
   EspConfig& get_config();
   ConfigWebServer& get_ap_server();

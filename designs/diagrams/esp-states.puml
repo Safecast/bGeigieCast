@@ -15,7 +15,7 @@ ServerActive: exit: stopServer
 State Active
 Active: action: process readings
 State Reset
-Reset: reset defaults, restart
+Reset: Action: reset config defaults
 
 
 state Active {
@@ -50,20 +50,20 @@ state Active {
     }
 
 
-    MobileMode -r-> StationaryMode : buttonPressed
-    StationaryMode -l-> MobileMode : buttonPressed
+    MobileMode -r-> StationaryMode : buttonPressed /init=stationary
+    StationaryMode -l-> MobileMode : buttonPressed /init=mobile
 }
 
 
 [*] -> Initializing
 Initializing -> PostInitialize : controllerInitialized
 PostInitialize -> SetupServer : buttonPressed
-PostInitialize -d-> MobileMode : [t > 3s]
+PostInitialize -d-> MobileMode : [t > 3s && init = mobile]
+PostInitialize -d-> StationaryMode : [t > 3s && init = stationary]
 SetupServer -d-> ServerActive : serverInitialized
-ServerActive -d-> MobileMode : buttonPressed
-ServerActive -d-> StationaryMode : startStationary
+ServerActive -d-> StationaryMode : buttonPressed
 Active -l-> Reset : buttonLongPressed
-Reset -d-> [*]
+Reset -d-> [*] : /restart system
 
 
 ''' Layout

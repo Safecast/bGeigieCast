@@ -1,6 +1,7 @@
 #include "PostInitializeState.h"
 #include "SetupServerState.hpp"
 #include "active_states/MobileModeState.h"
+#include "active_states/stationary_mode_states/ConnectingState.h"
 
 #define POST_INIT_DURATION_MILLIS 3000
 
@@ -30,7 +31,10 @@ void PostInitializeState::handle_event(Event_enum event_id) {
       break;
     }
     case e_post_init_time_passed: {
-      controller.set_state(new MobileModeState(controller));
+      if (controller.get_config().is_init_stationary())
+        controller.set_state(new ConnectingState(controller));
+      else
+        controller.set_state(new MobileModeState(controller));
       break;
     }
     default:

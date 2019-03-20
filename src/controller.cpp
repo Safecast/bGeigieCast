@@ -1,6 +1,9 @@
 #include "state_machine/states/InitializeState.h"
+#include "state_machine/states/active_states/MobileModeState.h"
+#include "state_machine/states/active_states/StationaryModeState.h"
 #include "controller.h"
 #include "reading.h"
+
 
 Controller::Controller() :
     Context(),
@@ -16,6 +19,16 @@ Controller::Controller() :
 
 void Controller::setup_state_machine() {
   set_state(new InitializeState(*this));
+}
+
+void Controller::set_state(AbstractState* state) {
+  Context::set_state(state);
+  if(dynamic_cast<StationaryModeState*>(state)) {
+    _config.set_init_stationary(true);
+  }
+  else if(dynamic_cast<MobileModeState*>(state)) {
+    _config.set_init_stationary(false);
+  }
 }
 
 void Controller::initialize() {
