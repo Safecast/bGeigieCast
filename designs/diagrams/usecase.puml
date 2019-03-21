@@ -3,14 +3,14 @@
 
 :bGeigieUser: as user
 :API service: as API<<secondairy>>
-:Bluetooth: as BLU<<secondairy>>
+:Safecast drive: as BLU<<secondairy>>
 :bGeigieController: as BGN<<internal>>
 
 
 rectangle <<subsystem>>\nesp32Controller{
     (Set config)
     (Set esp mode)
-    (Reset)
+    (Reset configurations)
     (Set\n mobile mode)
     (Set\n stationary mode)
     (Publish to API)
@@ -28,7 +28,7 @@ rectangle <<subsystem>>\nesp32Controller{
 
     user -d- (Set esp mode)
     user -d- (Set config)
-    user -d- (Reset)
+    user -d- (Reset configurations)
     BGN -- (Report data)
 }
 

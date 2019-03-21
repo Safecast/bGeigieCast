@@ -1,0 +1,57 @@
+@startuml
+(*)  --> [controller in active state] "Check for new readings"
+if "serial available" then
+    ----> [no data] (*)
+else
+    -r-> [data] "Create reading from data"
+
+    if "mode" then
+        -r-> [fixed] "Save new\naverage"
+
+        if "Last send" then
+            -r-> [> 5 min] "Check network connection"
+
+            if "" then
+                -r-> [connected] "get reading json"
+                --> "Send to api"
+
+                if "" then
+                    --> [reading saved] "check other saved\nreadings to send"
+                else
+                    --> [conn error] "Temporary save\nreading"
+                endif
+
+            else
+                --> [no internet] "Temporary save\nreading"
+
+            endif
+
+            --> "check other saved\nreadings to send"
+
+            if "" then
+                --> [unsend] "get reading json"
+            else
+                --> [none] "Report bluetooth"
+            endif
+
+        else
+            --> [< 5 min] "Report bluetooth"
+        endif
+
+    else
+        --> [mobile] "Report bluetooth"
+    endif
+
+    if "" then
+        --> [BLE not initialized] "Initialize BLE"
+        --> "Set BLE name\nbased on deviceId"
+        --> "Send reading string"
+    else
+        --> [initialized] "Send reading string"
+    endif
+
+    -->(*)
+
+endif
+
+@enduml

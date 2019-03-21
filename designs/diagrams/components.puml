@@ -1,34 +1,34 @@
 @startuml
 
 interface espMode<<physical button>>
-interface deviceConfig<<HTTP>>
+interface deviceConfig<<WiFi HTTP>>
 interface liveData<<BLE>>
-interface api<<HTTP>>
+interface api<<WiFi HTTP>>
 
 component bGeigieNano\n {
-    interface dataReports<<RX/TX>>
+    interface dataReports<<uart2>>
     component bGeigieController
 
-    component <<subcomponent>>\nESP32\n {
+    component <<subcomponent>>\nESP32Bee\n {
         interface IBL as "bluetoothControl"
         interface IAP as "APIControl"
         interface serverControl
         component Controller
-        component Server
+        component ConfigServer
         component ApiConnector
         component Bluetooth
         component EspConfig
 
         ''' For ordering '''
-        Server -[hidden]> EspConfig
+        ConfigServer -[hidden]> EspConfig
         ''''''
 
         Controller -( serverControl
-        serverControl - Server
+        serverControl - ConfigServer
         dataReports - Controller
-        config )-u- Server
+        config )-u- ConfigServer
         config -u- EspConfig
-        deviceConfig -d- Server
+        deviceConfig -d- ConfigServer
         espMode -d- Controller
         IBL )-u- Controller
         IBL -d- Bluetooth
