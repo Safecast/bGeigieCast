@@ -11,7 +11,7 @@
 
 
 /**
- * Test saving 1000000 failed readings
+ * Test saving 10000 failed readings
  */
 void test_readings_saving() {
   StreamString bgeigie_connection;
@@ -37,16 +37,20 @@ void test_readings_saving() {
 
   for(int i = 0; i < 3; ++i) {
     bgeigie_connection += some_reading;
-    controller.process_possible_bgeigie_readings(false, true); // Report to API (which is not connected)
+    controller.run();
+    // Clear bt buffer
+    while(bt_output.available()) {bt_output.read();}
   }
 
   const uint32_t heap_after = ESP.getFreeHeap();
 
   TEST_ASSERT_LESS_OR_EQUAL(initial_heap - (sizeof(Reading) * 3), heap_after);
 
-  for(int i = 0; i < 100000; ++i) {
+  for(int i = 0; i < 10000; ++i) {
     bgeigie_connection += some_reading;
     controller.run();
+    // Clear bt buffer
+    while(bt_output.available()) {bt_output.read();}
   }
 
   uint32_t current_heap = ESP.getFreeHeap();

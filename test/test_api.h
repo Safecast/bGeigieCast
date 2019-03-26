@@ -61,9 +61,17 @@ class TestApiConnector : public IApiConnector {
    * @return: true if the API call was successful
    */
   bool send_reading(Reading& reading) override {
-    char reading_json[1000];
-    reading.as_json(reading_json);
-    output.write((uint8_t*) reading_json, strlen(reading_json));
+    if(connected) {
+
+      char reading_json[1000];
+      reading.as_json(reading_json);
+      output.write((uint8_t*) reading_json, strlen(reading_json));
+      return true;
+    }
+    else {
+      save_reading(reading);
+      return false;
+    }
   }
 
   StreamString& output;
