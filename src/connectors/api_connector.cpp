@@ -1,14 +1,10 @@
 
 #include "api_connector.h"
-#include "debugger.h"
+#include "../debugger.h"
 
 #define API_SEND_FREQUENCY (API_SEND_FREQUENCY_MINUTES * 60 * 1000)
 
-ApiConnector::ApiConnector(IEspConfig& config) :
-    config(config),
-    missed_readings(),
-    last_send(0),
-    merged_reading() {
+ApiConnector::ApiConnector(IEspConfig& config) : IApiConnector(config) {
 }
 
 bool ApiConnector::start_connect(bool initial) {
@@ -48,39 +44,6 @@ bool ApiConnector::test() {
 
 bool ApiConnector::is_connected() {
   return WiFi.status() == WL_CONNECTED;
-}
-
-void ApiConnector::process_reading(Reading& reading) {
-  merged_reading += reading;
-  uint32_t now = millis();
-  if(now - last_send >= API_SEND_FREQUENCY) {
-    last_send = now;
-    if(is_connected()) {
-      while(!missed_readings.empty()) {
-        debug_println("Sending previously failed reading to API");
-        Reading* past_reading = missed_readings.get();
-        send_reading(*past_reading);
-        delete past_reading;
-      }
-      debug_println("Sending latest reading to API");
-      send_reading(reading);
-
-    } else {
-      // Save the reading to send it later
-      save_reading(reading);
-    }
-
-    merged_reading.reset();
-  }
-}
-
-void ApiConnector::save_reading(Reading& reading) {
-  debug_println("Could not upload reading, trying again later");
-  if(missed_readings.get_count() == MAX_MISSED_READINGS) {
-    // Delete oldest reading, else mem leak
-    delete missed_readings.get();
-  }
-  missed_readings.add(new Reading(reading));
 }
 
 bool ApiConnector::send_reading(Reading& reading) {

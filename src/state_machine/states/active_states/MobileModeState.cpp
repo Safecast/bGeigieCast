@@ -6,7 +6,7 @@ MobileModeState::MobileModeState(Controller& context): ActiveState(context) {
 
 void MobileModeState::entry_action() {
   debug_println("Entered state MobileMode");
-  controller.get_state_led().set_state_led(StateLED::StateColor::mobile);
+  controller.get_state_led().set_color(StateLED::StateColor::mobile);
 }
 
 void MobileModeState::do_activity() {

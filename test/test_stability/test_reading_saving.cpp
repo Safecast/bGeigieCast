@@ -7,28 +7,18 @@
 
 #include "../test_config.h"
 
-/**
- * To set the millis
- * @param ms
- */
-void setMillis(unsigned long ms)
-{
-}
 
 /**
  * Test saving 1000000 failed readings
  */
 void test_readings_saving() {
-
-
-  set_millis_fn(fn);
-
-
-  // Init
-  TestEspConfig config;
   StreamString bgeigie_connection;
-  config.set_init_stationary(true, false);
-  Controller controller(config, bgeigie_connection);
+  StreamString api_output;
+  StreamString bt_output;
+  TestEspConfig config;
+  TestApiConnector api_conn(config, api_output);
+  TestBluetoohConnector bt_conn(bt_output);
+  Controller controller(config, bgeigie_connection, api_conn, bt_conn);
 
   controller.set_state(new ConnectionErrorState(controller));
 
@@ -56,7 +46,7 @@ void test_readings_saving() {
   for(int i = 0; i < 100000; ++i) {
     setMillis(millis() + (API_SEND_FREQUENCY_MINUTES * 60 * 1000) + 1);
     bgeigie_connection += some_reading;
-    controller.process_possible_bgeigie_readings(false, true); // Report to API (which is not connected)
+    controller.run();
   }
 
   uint32_t current_heap = ESP.getFreeHeap();

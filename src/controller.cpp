@@ -5,15 +5,15 @@
 #include "reading.h"
 
 
-Controller::Controller(IEspConfig& config, Stream& bGegie_connection_stream) :
+Controller::Controller(IEspConfig& config, Stream& bGegie_connection_stream, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector) :
     Context(),
     ButtonObserver(),
     _config(config),
+    _api_connector(api_connector),
+    _bluetooth(bluetooth_connector),
     _ap_server(config),
-    _api_connector(config),
     _mode_button(MODE_BUTTON_PIN),
     _state_led(),
-    _bluetooth(),
     _bgeigie_connector(bGegie_connection_stream) {
 }
 
@@ -70,12 +70,8 @@ ConfigWebServer& Controller::get_ap_server() {
   return _ap_server;
 }
 
-ApiConnector& Controller::get_api_connector() {
+IApiConnector& Controller::get_api_connector() {
   return _api_connector;
-}
-
-Button& Controller::get_mode_button() {
-  return _mode_button;
 }
 
 StateLED& Controller::get_state_led() {

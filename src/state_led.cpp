@@ -18,7 +18,7 @@ StateLED::StateLED() :
     _rgb_stationary_error{255, 0, 0} {
 }
 
-void StateLED::set_state_led(StateLED::StateColor color) {
+void StateLED::set_color(StateLED::StateColor color) {
   debug_print("Changed LED to "); debug_println(color);
   switch(color) {
     case off:
@@ -47,10 +47,10 @@ void StateLED::set_state_led(StateLED::StateColor color) {
 void StateLED::blink(StateLED::StateColor color, uint32_t frequency) {
   // Blink LED
   if(millis() % frequency > frequency / 2 && !blink_state) {
-    set_state_led(color);
+    set_color(color);
     blink_state = true;
   } else if(millis() % frequency < frequency / 2 && blink_state){
-    set_state_led(StateLED::StateColor::off);
+    set_color(StateLED::StateColor::off);
     blink_state = false;
   }
 }

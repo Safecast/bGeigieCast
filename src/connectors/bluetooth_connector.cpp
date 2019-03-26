@@ -3,10 +3,9 @@
 #include <string.h>
 
 #include "bluetooth_connector.h"
-#include "bluetooth_settings.h"
-#include "debugger.h"
+#include "../debugger.h"
 
-BluetoohConnector::BluetoohConnector() : initialized(false) {
+BluetoohConnector::BluetoohConnector() : IBluetoohConnector() {
 }
 
 void BluetoohConnector::init(uint16_t device_id) {

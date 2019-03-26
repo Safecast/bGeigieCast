@@ -8,7 +8,7 @@ ConnectionErrorState::ConnectionErrorState(Controller& context) : StationaryMode
 
 void ConnectionErrorState::entry_action() {
   debug_println("Entered state ConnectionError");
-  controller.get_state_led().set_state_led(StateLED::StateColor::stationary_error);
+  controller.get_state_led().set_color(StateLED::StateColor::stationary_error);
   timer = millis();
 }
 

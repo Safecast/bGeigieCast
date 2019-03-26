@@ -15,6 +15,8 @@
 #include <state_machine/states/active_states/stationary_mode_states/TestApiState.h>
 
 #include "../test_config.h"
+#include "../test_bluetooth.h"
+#include "../test_api.h"
 
 
 /**
@@ -24,7 +26,11 @@ void controller_state_transitions_init_mobile(void) {
   // Init -> MobileMode
   TestEspConfig config;
   StreamString bgeigie_connection;
-  Controller controller(config, bgeigie_connection);
+  StreamString api_output;
+  StreamString bt_output;
+  TestApiConnector api_conn(config, api_output);
+  TestBluetoohConnector bt_conn(bt_output);
+  Controller controller(config, bgeigie_connection, api_conn, bt_conn);
   
   controller.setup_state_machine();
 
@@ -49,10 +55,16 @@ void controller_state_transitions_init_stationary(void) {
   // Init -> MobileMode
   TestEspConfig config;
   StreamString bgeigie_connection;
+  StreamString api_output;
+  StreamString bt_output;
+  TestApiConnector api_conn(config, api_output);
+  TestBluetoohConnector bt_conn(bt_output);
+
+  Controller controller(config, bgeigie_connection, api_conn, bt_conn);
+
 
   config.set_init_stationary(true, false);
 
-  Controller controller(config, bgeigie_connection);
 
   controller.setup_state_machine();
 
@@ -76,7 +88,11 @@ void controller_state_transitions_init_server(void) {
   // Init -> SetupServer -> ServerActive
   TestEspConfig config;
   StreamString bgeigie_connection;
-  Controller controller(config, bgeigie_connection);
+  StreamString api_output;
+  StreamString bt_output;
+  TestApiConnector api_conn(config, api_output);
+  TestBluetoohConnector bt_conn(bt_output);
+  Controller controller(config, bgeigie_connection, api_conn, bt_conn);
 
   controller.setup_state_machine();
 
@@ -105,7 +121,11 @@ void controller_state_transitions_mobile_stationary(void) {
   // MobileMode -> StationaryMode -> MobileMode
   TestEspConfig config;
   StreamString bgeigie_connection;
-  Controller controller(config, bgeigie_connection);
+  StreamString api_output;
+  StreamString bt_output;
+  TestApiConnector api_conn(config, api_output);
+  TestBluetoohConnector bt_conn(bt_output);
+  Controller controller(config, bgeigie_connection, api_conn, bt_conn);
   
   controller.set_state(new MobileModeState(controller));
 
@@ -129,7 +149,11 @@ void controller_state_transitions_connecting_test_connected(void) {
   // Connecting -> ApiTest -> Connected
   TestEspConfig config;
   StreamString bgeigie_connection;
-  Controller controller(config, bgeigie_connection);
+  StreamString api_output;
+  StreamString bt_output;
+  TestApiConnector api_conn(config, api_output);
+  TestBluetoohConnector bt_conn(bt_output);
+  Controller controller(config, bgeigie_connection, api_conn, bt_conn);
   
   controller.set_state(new ConnectingState(controller));
 
@@ -153,7 +177,11 @@ void controller_state_transitions_connecting_error_connected(void) {
   // Connecting -> ConnectionError -> ApiTest -> Connected
   TestEspConfig config;
   StreamString bgeigie_connection;
-  Controller controller(config, bgeigie_connection);
+  StreamString api_output;
+  StreamString bt_output;
+  TestApiConnector api_conn(config, api_output);
+  TestBluetoohConnector bt_conn(bt_output);
+  Controller controller(config, bgeigie_connection, api_conn, bt_conn);
   
   controller.set_state(new ConnectingState(controller));
 
@@ -182,7 +210,11 @@ void controller_state_transitions_connected_error(void) {
   // Connected -> ConnectionError
   TestEspConfig config;
   StreamString bgeigie_connection;
-  Controller controller(config, bgeigie_connection);
+  StreamString api_output;
+  StreamString bt_output;
+  TestApiConnector api_conn(config, api_output);
+  TestBluetoohConnector bt_conn(bt_output);
+  Controller controller(config, bgeigie_connection, api_conn, bt_conn);
   
   controller.set_state(new ConnectedState(controller));
 
@@ -206,7 +238,11 @@ void controller_state_transitions_connected_reconnect(void) {
   // Connected -> ConnectionError
   TestEspConfig config;
   StreamString bgeigie_connection;
-  Controller controller(config, bgeigie_connection);
+  StreamString api_output;
+  StreamString bt_output;
+  TestApiConnector api_conn(config, api_output);
+  TestBluetoohConnector bt_conn(bt_output);
+  Controller controller(config, bgeigie_connection, api_conn, bt_conn);
   
   controller.set_state(new ConnectedState(controller));
 

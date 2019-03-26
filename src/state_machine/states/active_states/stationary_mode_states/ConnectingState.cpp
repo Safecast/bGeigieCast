@@ -2,8 +2,7 @@
 #include "TestApiState.h"
 #include "ConnectionErrorState.h"
 
-// 10 seconds of wifi connect,  5 is just to low, will sometimes take a bit longer
-#define MILLIS_BEFORE_CONNECTION_FAILURE 10000
+#define MILLIS_BEFORE_CONNECTION_FAILURE 6000
 
 #define CONNECTING_BLINK_FREQUENCY_MILLIS 500
 
@@ -12,9 +11,9 @@ ConnectingState::ConnectingState(Controller& context): StationaryModeState(conte
 
 void ConnectingState::entry_action() {
   debug_println("Entered state Connecting");
-  controller.get_state_led().set_state_led(StateLED::StateColor::stationary_connecting);
+  controller.get_state_led().set_color(StateLED::StateColor::stationary_connecting);
   state_entry_moment = millis();
-  controller.get_api_connector().start_connect();
+  controller.get_api_connector().start_connect(true);
 }
 
 void ConnectingState::do_activity() {

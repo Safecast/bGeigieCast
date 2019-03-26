@@ -5,6 +5,9 @@
 #include <configurations/i_esp_config.h>
 #include <user_config.h>
 
+/**
+ * Test class to inject in the test controller
+ */
 class TestEspConfig : public IEspConfig {
  public:
   TestEspConfig() = default;

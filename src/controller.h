@@ -6,9 +6,9 @@
 
 #include "state_machine/context.h"
 #include "web_server/web_server.h"
-#include "api_connector.h"
-#include "bgeigie_connector.h"
-#include "bluetooth_connector.h"
+#include "connectors/bgeigie_connector.h"
+#include "connectors/i_api_connector.h"
+#include "connectors/i_bluetooth_connector.h"
 #include "state_led.h"
 
 /**
@@ -16,7 +16,7 @@
  */
 class Controller : public Context, public ButtonObserver {
  public:
-  Controller(IEspConfig& config, Stream& bGegie_connection);
+  Controller(IEspConfig& config, Stream& bGegie_connection, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector);
   virtual ~Controller() = default;
 
   /**
@@ -46,16 +46,15 @@ class Controller : public Context, public ButtonObserver {
   // Getters
   IEspConfig& get_config();
   ConfigWebServer& get_ap_server();
-  ApiConnector& get_api_connector();
-  Button& get_mode_button();
+  IApiConnector& get_api_connector();
   StateLED& get_state_led();
  private:
   IEspConfig& _config;
+  IApiConnector& _api_connector;
+  IBluetoohConnector& _bluetooth;
   ConfigWebServer _ap_server;
-  ApiConnector _api_connector;
   Button _mode_button;
   StateLED _state_led;
-  BluetoohConnector _bluetooth;
   BGeigieConnector _bgeigie_connector;
 
 

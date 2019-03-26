@@ -10,7 +10,7 @@ PostInitializeState::PostInitializeState(Controller& context) : State(context), 
 
 void PostInitializeState::entry_action() {
   debug_println("Entered state PostInitialize");
-  controller.get_state_led().set_state_led(StateLED::StateColor::init);
+  controller.get_state_led().set_color(StateLED::StateColor::init);
   timer = millis();
 }
 

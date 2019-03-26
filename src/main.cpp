@@ -37,13 +37,17 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
  */
 
 
+#include "connectors/bluetooth_connector.h"
+#include "connectors/api_connector.h"
 #include "debugger.h"
 #include "controller.h"
 
 #ifndef UNIT_TEST
 
 EspConfig config;
-Controller controller(config, Serial2);
+ApiConnector api_conn(config);
+BluetoohConnector bt_conn;
+Controller controller(config, Serial2, api_conn, bt_conn);
 
 void setup() {
   debug_begin(SERIAL_BAUD);
