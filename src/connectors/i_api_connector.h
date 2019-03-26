@@ -8,7 +8,7 @@
 #include "../reading.h"
 
 /**
- * Connects over WiFi to the API to send readings
+ * Abstract class to be used in controller as a Api connector
  */
 class IApiConnector {
  public:
@@ -47,6 +47,10 @@ class IApiConnector {
 
  protected:
 
+  /**
+   * Check if enough time has passed to send the latest reading to api
+   * @return
+   */
   virtual bool time_to_send();
 
   /**

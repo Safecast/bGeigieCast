@@ -10,4 +10,8 @@ void test_dms_to_dd(void) {
   float dms = 3015.50;
   float dd = dms_to_dd(dms);
   TEST_ASSERT_EQUAL_FLOAT(30.26388, dd);
+
+  dms = -3015.50;
+  dd = dms_to_dd(dms);
+  TEST_ASSERT_EQUAL_FLOAT(-30.26388, dd);
 }
