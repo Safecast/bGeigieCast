@@ -6,7 +6,7 @@ ConnectedState::ConnectedState(Controller& context): StationaryModeState(context
 
 void ConnectedState::entry_action() {
   debug_println("Entered state Connected");
-  controller.get_state_led().set_state_led(StateLED::StateColor::stationary_active);
+  controller.get_state_led().set_color(StateLED::StateColor::stationary_active);
 }
 
 void ConnectedState::do_activity() {

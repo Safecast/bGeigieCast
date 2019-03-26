@@ -39,8 +39,8 @@ void test_param_parse_too_long(void) {
 
   request.set_request_line(line);
 
-  TEST_ASSERT_TRUE(request.get_param_value("password", result, result_size));
-  TEST_ASSERT_EQUAL_STRING("toolongpa", result);
+  TEST_ASSERT_FALSE(request.get_param_value("password", result, result_size));
+  TEST_ASSERT_EQUAL_STRING("", result);
 }
 
 void test_param_parse_multiple(void) {

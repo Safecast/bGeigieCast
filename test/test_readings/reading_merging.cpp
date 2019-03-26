@@ -20,9 +20,9 @@ void reading_merging_new(void) {
   TEST_ASSERT_EQUAL(63, r.get_cpb());
   TEST_ASSERT_EQUAL(33895, r.get_total_count());
   TEST_ASSERT_EQUAL_INT8('A', r.get_geiger_status());
-  TEST_ASSERT_EQUAL_FLOAT(56.4177, r.get_latitude());
-  TEST_ASSERT_EQUAL_FLOAT(14.1188, r.get_longitude());
-  TEST_ASSERT_EQUAL_FLOAT(98.6120, r.get_altitude());
+  TEST_ASSERT_EQUAL_FLOAT(56.7047, r.get_latitude());
+  TEST_ASSERT_EQUAL_FLOAT(14.2078, r.get_longitude());
+  TEST_ASSERT_EQUAL_FLOAT(9861.2, r.get_altitude());
   TEST_ASSERT_EQUAL_INT8('A', r.get_gps_status());
   TEST_ASSERT_EQUAL(109, r.get_sat_count());
   TEST_ASSERT_EQUAL_FLOAT(9, r.get_precision());
@@ -54,11 +54,11 @@ void reading_merging_normal(void) {
   // Best geiger status
   TEST_ASSERT_EQUAL_INT8('A', r1.get_geiger_status());
   // Average latitude
-  TEST_ASSERT_EQUAL_FLOAT(55.4178, r1.get_latitude());
+  TEST_ASSERT_EQUAL_FLOAT(55.7047, r1.get_latitude());
   // Average longitude
-  TEST_ASSERT_EQUAL_FLOAT(13.6191, r1.get_longitude());
+  TEST_ASSERT_EQUAL_FLOAT(13.7086, r1.get_longitude());
   // Average altitude
-  TEST_ASSERT_EQUAL_FLOAT(98.4120, r1.get_altitude());
+  TEST_ASSERT_EQUAL_FLOAT(9841.2, r1.get_altitude());
   // Best gps status
   TEST_ASSERT_EQUAL_INT8('A', r1.get_gps_status());
   // Average satellite count
@@ -101,11 +101,11 @@ void reading_merging_multiple(void) {
   // Best geiger status
   TEST_ASSERT_EQUAL_INT8('A', r1.get_geiger_status());
   // Average latitude
-  TEST_ASSERT_EQUAL_FLOAT(56.0925, r1.get_latitude());
+  TEST_ASSERT_EQUAL_FLOAT(56.329, r1.get_latitude());
   // Average longitude
-  TEST_ASSERT_EQUAL_FLOAT(13.9385, r1.get_longitude());
+  TEST_ASSERT_EQUAL_FLOAT(14.2402, r1.get_longitude());
   // Average altitude
-  TEST_ASSERT_EQUAL_FLOAT(97.1108, r1.get_altitude());
+  TEST_ASSERT_EQUAL_FLOAT(9711.08, r1.get_altitude());
   // Best gps status
   TEST_ASSERT_EQUAL_INT8('A', r1.get_gps_status());
   // Average satellite count

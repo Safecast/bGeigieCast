@@ -3,14 +3,14 @@
 
 #include <Arduino.h>
 
-#include "reading.h"
+#include "../reading.h"
 
 /**
  * Connect the system to the bGeigieNano to read sensor data
  */
 class BGeigieConnector {
  public:
-  explicit BGeigieConnector(HardwareSerial& _serial_connection);
+  explicit BGeigieConnector(Stream& _serial_connection);
   virtual ~BGeigieConnector() = default;
 
   /**
@@ -21,7 +21,7 @@ class BGeigieConnector {
   bool get_reading(Reading** out);
 
  private:
-  HardwareSerial& _serial_connection;
+  Stream& _serial_connection;
 };
 
 #endif //BGEIGIE_POINTCAST_BGEIGIE_CONNECTOR_H

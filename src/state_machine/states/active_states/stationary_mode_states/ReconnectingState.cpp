@@ -7,21 +7,21 @@
 
 #define CONNECTING_BLINK_FREQUENCY_MILLIS 500
 
-ReconnectingState::ReconnectingState(Controller& context): StationaryModeState(context), timer(0) {
+ReconnectingState::ReconnectingState(Controller& context): StationaryModeState(context), state_entry_moment(0) {
 }
 
 void ReconnectingState::entry_action() {
   debug_println("Entered state Reconnecting");
-  controller.get_state_led().set_state_led(StateLED::StateColor::stationary_connecting);
-  timer = millis();
+  controller.get_state_led().set_color(StateLED::StateColor::stationary_connecting);
+  state_entry_moment = millis();
 }
 
 void ReconnectingState::do_activity() {
   StationaryModeState::do_activity();
-  if(!((millis() - timer) % 5000) && controller.get_api_connector().start_connect(false)) {
+  if(!((millis() - state_entry_moment) % 5000) && controller.get_api_connector().start_connect(false)) {
     controller.schedule_event(Event_enum::e_connected);
   }
-  else if (millis() > timer + MILLIS_BEFORE_CONNECTION_FAILURE) {
+  else if (millis() - state_entry_moment > MILLIS_BEFORE_CONNECTION_FAILURE) {
     controller.schedule_event(e_connection_failed);
   }
 

@@ -20,7 +20,7 @@ class StateLED : private RGBLed{
   StateLED();
   virtual ~StateLED() = default;
 
-  void set_state_led(StateColor);
+  void set_color(StateColor color);
 
   void blink(StateColor color, uint32_t frequency);
 

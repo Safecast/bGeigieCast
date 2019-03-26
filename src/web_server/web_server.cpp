@@ -1,6 +1,6 @@
 #include "web_server.h"
 #include "user_config.h"
-#include "esp_config.h"
+#include "configurations/esp_config.h"
 #include "debugger.h"
 #include "http_responses.h"
 
@@ -10,7 +10,7 @@ typedef enum {
   content
 } RequestParse;
 
-ConfigWebServer::ConfigWebServer(EspConfig& config) : server(SERVER_WIFI_PORT, SERVER_MAX_CLIENTS), config(config) {
+ConfigWebServer::ConfigWebServer(IEspConfig& config) : server(SERVER_WIFI_PORT, SERVER_MAX_CLIENTS), config(config) {
 }
 
 bool ConfigWebServer::initialize() {
@@ -141,22 +141,22 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
 
     char value[64];
     if(request.get_param_value("ap_ssid", value, 64)) {
-      config.set_ap_ssid(value);
+      config.set_ap_ssid(value, false);
     }
     if(request.get_param_value("ap_password", value, 64)) {
-      config.set_ap_password(value);
+      config.set_ap_password(value, false);
     }
     if(request.get_param_value("wf_ssid", value, 64)) {
-      config.set_wifi_ssid(value);
+      config.set_wifi_ssid(value, false);
     }
     if(request.get_param_value("wf_password", value, 64)) {
-      config.set_wifi_password(value);
+      config.set_wifi_password(value, false);
     }
     if(request.get_param_value("apikey", value, 64)) {
-      config.set_api_key(value);
+      config.set_api_key(value, false);
     }
     if(request.get_param_value("devsrv", value, 64)) {
-      config.set_use_dev(strcmp(value, "1") == 0);
+      config.set_use_dev(strcmp(value, "1") == 0, false);
     }
 
     respondRedirect(client, "/?success=true");

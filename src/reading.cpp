@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <HardwareSerial.h>
 
+#include <dms_dd.h>
+
 #include "reading.h"
 #include "reading_parser/nsscanf.h"
 
@@ -144,8 +146,8 @@ void Reading::reset() {
 }
 
 void Reading::parse_values() {
-  char NorS;
-  char WorE;
+  char NorS, WorE;
+  float lat_dms, long_dms;
 
   int parse_result = nsscanf(
       _reading_str,
@@ -156,9 +158,9 @@ void Reading::parse_values() {
       &_cpb,
       &_total_count,
       &_geiger_status,
-      &_latitude,
+      &lat_dms,
       &NorS,
-      &_longitude,
+      &long_dms,
       &WorE,
       &_altitude,
       &_gps_status,
@@ -177,12 +179,11 @@ void Reading::parse_values() {
     _validity = ReadingValidity::e_valid;
   }
 
+
+  _latitude = dms_to_dd(lat_dms);
+  _longitude = dms_to_dd(long_dms);
   if(NorS == 'S') { _latitude *= -1; }
   if(WorE == 'W') { _longitude *= -1; }
-
-  _latitude /= 100;
-  _longitude /= 100;
-  _altitude /= 100;
 }
 
 bool Reading::correctly_parsed() const {
