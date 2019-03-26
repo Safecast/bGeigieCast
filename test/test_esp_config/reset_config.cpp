@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <unity.h>
 
 #include "../test_config.h"
@@ -10,9 +9,6 @@ void test_reset_config(void) {
   TestEspConfig config;
 
   config.reset_defaults();
-
-  Serial.print("ap: ");
-  Serial.print(config.get_ap_ssid());
 
   TEST_ASSERT_EQUAL_STRING(D_ACCESS_POINT_SSID, config.get_ap_ssid());
   TEST_ASSERT_EQUAL_STRING(D_ACCESS_POINT_PASSWORD, config.get_ap_password());

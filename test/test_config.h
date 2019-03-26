@@ -31,25 +31,25 @@ class TestEspConfig : public IEspConfig {
 
   virtual void set_ap_password(const char* ap_password, bool force) {
     if(force || (ap_password != nullptr && strlen(ap_password) < CONFIG_VAL_MAX)) {
-      strcpy(_ap_ssid, ap_password);
+      strcpy(_ap_password, ap_password);
     }
   }
 
   virtual void set_wifi_ssid(const char* wifi_ssid, bool force) {
     if(force || (wifi_ssid != nullptr && strlen(wifi_ssid) < CONFIG_VAL_MAX)) {
-      strcpy(_ap_ssid, wifi_ssid);
+      strcpy(_wifi_ssid, wifi_ssid);
     }
   }
 
   virtual void set_wifi_password(const char* wifi_password, bool force) {
     if(force || (wifi_password != nullptr && strlen(wifi_password) < CONFIG_VAL_MAX)) {
-      strcpy(_ap_ssid, wifi_password);
+      strcpy(_wifi_password, wifi_password);
     }
   }
 
   virtual void set_api_key(const char* api_key, bool force) {
     if(force || (api_key != nullptr && strlen(api_key) < CONFIG_VAL_MAX)) {
-      strcpy(_ap_ssid, api_key);
+      strcpy(_api_key, api_key);
     }
   }
 
