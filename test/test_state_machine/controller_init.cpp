@@ -19,7 +19,7 @@ void controller_init(void) {
   StreamString bt_output;
   TestApiConnector api_conn(config, api_output);
   TestBluetoohConnector bt_conn(bt_output);
-  Controller controller(config, bgeigie_connection, api_conn, bt_conn); 
+  Controller controller(config, bgeigie_connection, api_conn, bt_conn);
 
   TEST_ASSERT_EQUAL(controller.get_current_state(), nullptr);
 

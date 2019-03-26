@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <HardwareSerial.h>
 
+#include <dms_dd.h>
+
 #include "reading.h"
 #include "reading_parser/nsscanf.h"
 
@@ -177,11 +179,15 @@ void Reading::parse_values() {
     _validity = ReadingValidity::e_valid;
   }
 
+
   if(NorS == 'S') { _latitude *= -1; }
   if(WorE == 'W') { _longitude *= -1; }
 
-  _latitude /= 100;
-  _longitude /= 100;
+
+
+  _latitude = dms_to_dd(_latitude);
+  _longitude = dms_to_dd(_longitude);
+  _latitude = dms_to_dd(_latitude);
   _altitude /= 100;
 }
 

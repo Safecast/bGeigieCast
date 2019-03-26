@@ -6,6 +6,8 @@
 #include <state_machine/states/active_states/stationary_mode_states/ConnectionErrorState.h>
 
 #include "../test_config.h"
+#include "../test_bluetooth.h"
+#include "../test_api.h"
 
 
 /**
@@ -34,7 +36,6 @@ void test_readings_saving() {
   const uint32_t initial_heap = ESP.getFreeHeap();
 
   for(int i = 0; i < 3; ++i) {
-    setMillis(millis() + (API_SEND_FREQUENCY_MINUTES * 60 * 1000) + 1);
     bgeigie_connection += some_reading;
     controller.process_possible_bgeigie_readings(false, true); // Report to API (which is not connected)
   }
@@ -44,7 +45,6 @@ void test_readings_saving() {
   TEST_ASSERT_LESS_OR_EQUAL(initial_heap - (sizeof(Reading) * 3), heap_after);
 
   for(int i = 0; i < 100000; ++i) {
-    setMillis(millis() + (API_SEND_FREQUENCY_MINUTES * 60 * 1000) + 1);
     bgeigie_connection += some_reading;
     controller.run();
   }

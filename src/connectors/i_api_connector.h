@@ -63,10 +63,10 @@ class IApiConnector {
   virtual void save_reading(Reading& reading) final;
 
   IEspConfig& config;
-  Reading merged_reading;
-  uint32_t last_send;
-
   CircularBuffer<Reading*, MAX_MISSED_READINGS> missed_readings;
+  uint32_t last_send;
+  Reading merged_reading;
+
 };
 
 #endif //BGEIGIE_POINTCAST_I_APICONNECTOR_H
