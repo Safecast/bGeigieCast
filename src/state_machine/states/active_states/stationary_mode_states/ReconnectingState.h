@@ -15,6 +15,6 @@ class ReconnectingState: public StationaryModeState {
   void handle_event(Event_enum event_id) override;
 
  private:
-  uint32_t timer;
+  uint32_t state_entry_moment;
 };
 #endif //BGEIGIE_POINTCAST_RECONNECTINGSTATE_H

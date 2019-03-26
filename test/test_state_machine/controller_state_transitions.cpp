@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <StreamString.h>
 #include <unity.h>
 #include <controller.h>
 #include <state_machine/states/InitializeState.h>
@@ -13,12 +14,18 @@
 #include <state_machine/states/active_states/stationary_mode_states/ConnectedState.h>
 #include <state_machine/states/active_states/stationary_mode_states/TestApiState.h>
 
+#include "../test_config.h"
+
+
 /**
  * Test controller state transition: Init -> MobileMode
  */
 void controller_state_transitions_init_mobile(void) {
   // Init -> MobileMode
-  Controller controller;
+  TestEspConfig config;
+  StreamString bgeigie_connection;
+  Controller controller(config, bgeigie_connection);
+  
   controller.setup_state_machine();
 
   TEST_ASSERT_NOT_NULL(dynamic_cast<InitializeState*>(controller.get_current_state()));
@@ -31,7 +38,35 @@ void controller_state_transitions_init_mobile(void) {
   controller.schedule_event(Event_enum::e_post_init_time_passed);
   controller.handle_events();
 
-//  TEST_ASSERT_NOT_NULL(dynamic_cast<MobileModeState*>(controller.get_current_state()));
+  TEST_ASSERT_NOT_NULL(dynamic_cast<MobileModeState*>(controller.get_current_state()));
+}
+
+
+/**
+ * Test controller state transition: Init -> Stationary (from mem)
+ */
+void controller_state_transitions_init_stationary(void) {
+  // Init -> MobileMode
+  TestEspConfig config;
+  StreamString bgeigie_connection;
+
+  config.set_init_stationary(true, false);
+
+  Controller controller(config, bgeigie_connection);
+
+  controller.setup_state_machine();
+
+  TEST_ASSERT_NOT_NULL(dynamic_cast<InitializeState*>(controller.get_current_state()));
+
+  controller.schedule_event(Event_enum::e_controller_initialized);
+  controller.handle_events();
+
+  TEST_ASSERT_NOT_NULL(dynamic_cast<PostInitializeState*>(controller.get_current_state()));
+
+  controller.schedule_event(Event_enum::e_post_init_time_passed);
+  controller.handle_events();
+
+  TEST_ASSERT_NOT_NULL(dynamic_cast<StationaryModeState*>(controller.get_current_state()));
 }
 
 /**
@@ -39,7 +74,10 @@ void controller_state_transitions_init_mobile(void) {
  */
 void controller_state_transitions_init_server(void) {
   // Init -> SetupServer -> ServerActive
-  Controller controller;
+  TestEspConfig config;
+  StreamString bgeigie_connection;
+  Controller controller(config, bgeigie_connection);
+
   controller.setup_state_machine();
 
   TEST_ASSERT_NOT_NULL(dynamic_cast<InitializeState*>(controller.get_current_state()));
@@ -65,7 +103,10 @@ void controller_state_transitions_init_server(void) {
  */
 void controller_state_transitions_mobile_stationary(void) {
   // MobileMode -> StationaryMode -> MobileMode
-  Controller controller;
+  TestEspConfig config;
+  StreamString bgeigie_connection;
+  Controller controller(config, bgeigie_connection);
+  
   controller.set_state(new MobileModeState(controller));
 
   TEST_ASSERT_NOT_NULL(dynamic_cast<MobileModeState*>(controller.get_current_state()));
@@ -86,7 +127,10 @@ void controller_state_transitions_mobile_stationary(void) {
  */
 void controller_state_transitions_connecting_test_connected(void) {
   // Connecting -> ApiTest -> Connected
-  Controller controller;
+  TestEspConfig config;
+  StreamString bgeigie_connection;
+  Controller controller(config, bgeigie_connection);
+  
   controller.set_state(new ConnectingState(controller));
 
   TEST_ASSERT_NOT_NULL(dynamic_cast<ConnectingState*>(controller.get_current_state()));
@@ -107,7 +151,10 @@ void controller_state_transitions_connecting_test_connected(void) {
  */
 void controller_state_transitions_connecting_error_connected(void) {
   // Connecting -> ConnectionError -> ApiTest -> Connected
-  Controller controller;
+  TestEspConfig config;
+  StreamString bgeigie_connection;
+  Controller controller(config, bgeigie_connection);
+  
   controller.set_state(new ConnectingState(controller));
 
   TEST_ASSERT_NOT_NULL(dynamic_cast<ConnectingState*>(controller.get_current_state()));
@@ -133,7 +180,10 @@ void controller_state_transitions_connecting_error_connected(void) {
  */
 void controller_state_transitions_connected_error(void) {
   // Connected -> ConnectionError
-  Controller controller;
+  TestEspConfig config;
+  StreamString bgeigie_connection;
+  Controller controller(config, bgeigie_connection);
+  
   controller.set_state(new ConnectedState(controller));
 
   TEST_ASSERT_NOT_NULL(dynamic_cast<ConnectedState*>(controller.get_current_state()));
@@ -154,7 +204,10 @@ void controller_state_transitions_connected_error(void) {
  */
 void controller_state_transitions_connected_reconnect(void) {
   // Connected -> ConnectionError
-  Controller controller;
+  TestEspConfig config;
+  StreamString bgeigie_connection;
+  Controller controller(config, bgeigie_connection);
+  
   controller.set_state(new ConnectedState(controller));
 
   TEST_ASSERT_NOT_NULL(dynamic_cast<ConnectedState*>(controller.get_current_state()));

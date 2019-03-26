@@ -2,13 +2,12 @@
 #include "user_config.h"
 #include "debugger.h"
 
-BGeigieConnector::BGeigieConnector(HardwareSerial& serial_connection) : _serial_connection(serial_connection) {
-  _serial_connection.begin(BGEIGIE_CONNECTION_BAUD);
+BGeigieConnector::BGeigieConnector(Stream& serial_connection) : _serial_connection(serial_connection) {
 }
 
 bool BGeigieConnector::get_reading(Reading** out) {
   if(_serial_connection.available() > 0) {
-    String str = _serial_connection.readString();
+    String str = _serial_connection.readStringUntil('\n');
     *out = new Reading(str.c_str());
     return true;
   }

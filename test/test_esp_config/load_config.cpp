@@ -1,13 +1,12 @@
 #include <unity.h>
 
-#include <user_config.h>
-#include <esp_config.h>
+#include "../test_config.h"
 
 /**
  * Test setting all config from memory
  */
 void test_initial_config(void) {
-  EspConfig config;
+  TestEspConfig config;
 
   config.set_all();
 

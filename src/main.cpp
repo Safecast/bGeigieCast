@@ -42,10 +42,15 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
 #ifndef UNIT_TEST
 
-Controller controller;
+EspConfig config;
+Controller controller(config, Serial2);
 
 void setup() {
   debug_begin(SERIAL_BAUD);
+
+  // Start serial connection to bGeigie controller
+  Serial2.begin(BGEIGIE_CONNECTION_BAUD);
+
   controller.setup_state_machine();
 }
 

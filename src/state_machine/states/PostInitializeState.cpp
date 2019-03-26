@@ -15,7 +15,7 @@ void PostInitializeState::entry_action() {
 }
 
 void PostInitializeState::do_activity() {
-  if(millis() > timer + POST_INIT_DURATION_MILLIS) {
+  if(millis() - timer > POST_INIT_DURATION_MILLIS) {
     controller.schedule_event(e_post_init_time_passed);
   }
 }

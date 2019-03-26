@@ -3,7 +3,7 @@
 
 #include <WiFi.h>
 
-#include "esp_config.h"
+#include "configurations/esp_config.h"
 #include "http_request.h"
 
 /**
@@ -12,7 +12,7 @@
  */
 class ConfigWebServer {
  public:
-  explicit ConfigWebServer(EspConfig& config);
+  explicit ConfigWebServer(IEspConfig& config);
   virtual ~ConfigWebServer() = default;
 
   /**
@@ -44,7 +44,7 @@ class ConfigWebServer {
   void handle_client_request(Stream& client, HttpRequest& request);
 
   WiFiServer server;
-  EspConfig& config;
+  IEspConfig& config;
 
 };
 

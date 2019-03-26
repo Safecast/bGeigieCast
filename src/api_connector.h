@@ -7,7 +7,7 @@
 #include <circular_buffer.h>
 
 #include "user_config.h"
-#include "esp_config.h"
+#include "configurations/esp_config.h"
 #include "reading.h"
 
 /**
@@ -15,7 +15,7 @@
  */
 class ApiConnector {
  public:
-  explicit ApiConnector(EspConfig& config);
+  explicit ApiConnector(IEspConfig& config);
   virtual ~ApiConnector() = default;
 
   /**
@@ -62,7 +62,7 @@ class ApiConnector {
    */
   bool send_reading(Reading& reading);
 
-  EspConfig& config;
+  IEspConfig& config;
   CircularBuffer<Reading*, MAX_MISSED_READINGS> missed_readings;
 
   uint32_t last_send;

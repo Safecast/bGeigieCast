@@ -3,6 +3,7 @@
 
 void controller_init(void);
 void controller_state_transitions_init_mobile(void);
+void controller_state_transitions_init_stationary(void);
 void controller_state_transitions_init_server(void);
 void controller_state_transitions_mobile_stationary(void);
 void controller_state_transitions_connecting_test_connected(void);
@@ -18,6 +19,7 @@ void setup() {
   RUN_TEST(controller_init);
 
   RUN_TEST(controller_state_transitions_init_mobile);
+  RUN_TEST(controller_state_transitions_init_stationary);
   RUN_TEST(controller_state_transitions_init_server);
   RUN_TEST(controller_state_transitions_mobile_stationary);
   RUN_TEST(controller_state_transitions_connecting_test_connected);

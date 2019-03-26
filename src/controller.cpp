@@ -5,16 +5,16 @@
 #include "reading.h"
 
 
-Controller::Controller() :
+Controller::Controller(IEspConfig& config, Stream& bGegie_connection_stream) :
     Context(),
     ButtonObserver(),
-    _config(),
-    _ap_server(_config),
-    _api_connector(_config),
+    _config(config),
+    _ap_server(config),
+    _api_connector(config),
     _mode_button(MODE_BUTTON_PIN),
     _state_led(),
     _bluetooth(),
-    _bgeigie_connector(Serial2) {
+    _bgeigie_connector(bGegie_connection_stream) {
 }
 
 void Controller::setup_state_machine() {
@@ -24,16 +24,17 @@ void Controller::setup_state_machine() {
 void Controller::set_state(AbstractState* state) {
   Context::set_state(state);
   if(dynamic_cast<StationaryModeState*>(state)) {
-    _config.set_init_stationary(true);
+    _config.set_init_stationary(true, false);
   }
   else if(dynamic_cast<MobileModeState*>(state)) {
-    _config.set_init_stationary(false);
+    _config.set_init_stationary(false, false);
   }
 }
 
 void Controller::initialize() {
   _mode_button.set_observer(this);
   _config.set_all();
+
   schedule_event(Event_enum::e_controller_initialized);
 }
 
@@ -61,7 +62,7 @@ void Controller::process_possible_bgeigie_readings(bool report_bluetooth, bool r
   delete reading;
 }
 
-EspConfig& Controller::get_config() {
+IEspConfig& Controller::get_config() {
   return _config;
 }
 

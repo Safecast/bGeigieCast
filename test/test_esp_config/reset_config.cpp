@@ -1,15 +1,18 @@
+#include <Arduino.h>
 #include <unity.h>
 
-#include <user_config.h>
-#include <esp_config.h>
+#include "../test_config.h"
 
 /**
  * Test resetting all config from memory
  */
 void test_reset_config(void) {
-  EspConfig config;
+  TestEspConfig config;
 
   config.reset_defaults();
+
+  Serial.print("ap: ");
+  Serial.print(config.get_ap_ssid());
 
   TEST_ASSERT_EQUAL_STRING(D_ACCESS_POINT_SSID, config.get_ap_ssid());
   TEST_ASSERT_EQUAL_STRING(D_ACCESS_POINT_PASSWORD, config.get_ap_password());

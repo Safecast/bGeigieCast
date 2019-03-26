@@ -16,7 +16,7 @@
  */
 class Controller : public Context, public ButtonObserver {
  public:
-  Controller();
+  Controller(IEspConfig& config, Stream& bGegie_connection);
   virtual ~Controller() = default;
 
   /**
@@ -44,13 +44,13 @@ class Controller : public Context, public ButtonObserver {
   void set_state(AbstractState* state) override;
 
   // Getters
-  EspConfig& get_config();
+  IEspConfig& get_config();
   ConfigWebServer& get_ap_server();
   ApiConnector& get_api_connector();
   Button& get_mode_button();
   StateLED& get_state_led();
  private:
-  EspConfig _config;
+  IEspConfig& _config;
   ConfigWebServer _ap_server;
   ApiConnector _api_connector;
   Button _mode_button;

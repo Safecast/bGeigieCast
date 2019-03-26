@@ -1,13 +1,19 @@
 #include <unity.h>
+#include <Arduino.h>
+#include <StreamString.h>
 #include <controller.h>
 #include <state_machine/states/InitializeState.h>
 #include <state_machine/states/PostInitializeState.h>
+
+#include "../test_config.h"
 
 /**
  * Test controller initial state transition
  */
 void controller_init(void) {
-  Controller controller;
+  TestEspConfig config;
+  StreamString bgeigie_connection;
+  Controller controller(config, bgeigie_connection);
 
   TEST_ASSERT_EQUAL(controller.get_current_state(), nullptr);
 
