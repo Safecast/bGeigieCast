@@ -20,6 +20,8 @@ class TestEspConfig : public IEspConfig {
     strcpy(_wifi_password, D_WIFI_PASSWORD);
     strcpy(_api_key, D_APIKEY);
     _use_dev = D_USE_DEV_SERVER;
+    _led_color_blind = D_LED_COLOR_BLIND;
+    _led_color_intensity = D_LED_COLOR_INTENSITY;
     _init_stationary = D_INIT_STATIONARY;
   }
 
@@ -56,6 +58,18 @@ class TestEspConfig : public IEspConfig {
   virtual void set_use_dev(bool use_dev, bool force) {
     if(force || (use_dev != _use_dev)) {
       _use_dev = use_dev;
+    }
+  }
+
+  virtual void set_led_color_blind(bool led_color_blind, bool force) {
+    if(force || (led_color_blind != _led_color_blind)) {
+      _led_color_blind = led_color_blind;
+    }
+  }
+
+  virtual void set_led_color_intensity(uint8_t led_color_intensity, bool force) {
+    if(force || (led_color_intensity != _led_color_intensity)) {
+      _led_color_intensity = led_color_intensity;
     }
   }
 
