@@ -6,9 +6,10 @@
 // Set this to true if we use anode LED
 #define RGB_STATE_LED_REVERSED false
 
-StateLED::StateLED() :
+StateLED::StateLED(IEspConfig& config) :
     RGBLed(RGB_LED_PIN_R, RGB_LED_PIN_G, RGB_LED_PIN_B, RGB_STATE_LED_REVERSED),
-    blink_state(false),
+    _config(config),
+    _blink_state(false),
     _rgb_off{0, 0, 0},
     _rgb_init{50, 50, 50},
     _rgb_config{255, 0, 255},
@@ -46,11 +47,15 @@ void StateLED::set_color(StateLED::StateColor color) {
 }
 void StateLED::blink(StateLED::StateColor color, uint32_t frequency) {
   // Blink LED
-  if(millis() % frequency > frequency / 2 && !blink_state) {
+  if(millis() % frequency > frequency / 2 && !_blink_state) {
     set_color(color);
-    blink_state = true;
-  } else if(millis() % frequency < frequency / 2 && blink_state){
+    _blink_state = true;
+  } else if(millis() % frequency < frequency / 2 && _blink_state){
     set_color(StateLED::StateColor::off);
-    blink_state = false;
+    _blink_state = false;
   }
+}
+
+uint8_t StateLED::get_intensity() const {
+  return _config.get_led_color_intensity();
 }

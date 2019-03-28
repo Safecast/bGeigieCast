@@ -138,8 +138,8 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         config.get_use_dev() ? "checked" : "",
         config.get_use_dev() ? "" : "checked",
         config.get_led_color_intensity(),
-        config.is_led_color_blind() ? "checked" : "",
         config.is_led_color_blind() ? "" : "checked",
+        config.is_led_color_blind() ? "checked" : "",
         request.has_param("success") ? "Configurations saved!" : ""
     );
     respondSuccess(client, transmission);

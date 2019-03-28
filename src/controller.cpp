@@ -13,7 +13,7 @@ Controller::Controller(IEspConfig& config, Stream& bGegie_connection_stream, IAp
     _bluetooth(bluetooth_connector),
     _ap_server(config),
     _mode_button(MODE_BUTTON_PIN),
-    _state_led(),
+    _state_led(config),
     _bgeigie_connector(bGegie_connection_stream) {
 }
 

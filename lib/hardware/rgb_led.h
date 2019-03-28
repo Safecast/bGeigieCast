@@ -28,8 +28,15 @@ class RGBLed {
   void set_r(uint8_t value);
   void set_g(uint8_t value);
   void set_b(uint8_t value);
+
+  virtual void set_intensity(uint8_t intensity);
+  virtual uint8_t get_intensity() const;
  private:
+
+  void set(uint8_t channel, uint8_t value);
+
   bool _reversed;
+  uint8_t _intensity;
 };
 
 #endif //BGEIGIE_POINTCAST_ESP_LED_H
