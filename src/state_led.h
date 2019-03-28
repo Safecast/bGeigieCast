@@ -16,9 +16,12 @@ class StateLED : private RGBLed{
     mobile,
     stationary_connecting,
     stationary_active,
-    stationary_error
+    stationary_error,
+    COUNT
   } StateColor;
-  StateLED(IEspConfig& config);
+
+
+  explicit StateLED(IEspConfig& config);
   virtual ~StateLED() = default;
 
   void set_color(StateColor color);
@@ -26,19 +29,16 @@ class StateLED : private RGBLed{
   void blink(StateColor color, uint32_t frequency);
 
  private:
+  typedef struct {
+    RGB normal;
+    RGB color_blind;
+  } ColorType;
 
   uint8_t get_intensity() const override;
 
   IEspConfig& _config;
-
   bool _blink_state;
-  RGB _rgb_off;
-  RGB _rgb_init;
-  RGB _rgb_config;
-  RGB _rgb_mobile;
-  RGB _rgb_stationary_connecting;
-  RGB _rgb_stationary_active;
-  RGB _rgb_stationary_error;
+  ColorType _colorTypes[StateColor::COUNT];
 };
 
 #endif //BGEIGIE_POINTCAST_STATE_LED_H
