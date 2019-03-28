@@ -36,9 +36,9 @@ class StateLED : private RGBLed{
 
   uint8_t get_intensity() const override;
 
-  IEspConfig& _config;
+  const IEspConfig& _config;
   bool _blink_state;
-  ColorType _colorTypes[StateColor::COUNT];
+  const ColorType _colorTypes[StateColor::COUNT];
 };
 
 #endif //BGEIGIE_POINTCAST_STATE_LED_H

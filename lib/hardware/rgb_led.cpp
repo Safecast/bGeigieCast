@@ -17,7 +17,7 @@ RGBLed::RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b, bool reversed) : _re
   ledcAttachPin(pin_b, CHANNEL_B);
 }
 
-void RGBLed::set(RGB& values) {
+void RGBLed::set(const RGB& values) {
   set_r(values.r);
   set_g(values.g);
   set_b(values.b);
@@ -38,18 +38,18 @@ uint8_t RGBLed::get_intensity() const {
 }
 
 void RGBLed::set_r(uint8_t value) {
-  set(CHANNEL_R, value);
+  set_channel(CHANNEL_R, value);
 }
 
 void RGBLed::set_g(uint8_t value) {
-  set(CHANNEL_G, value);
+  set_channel(CHANNEL_G, value);
 }
 
 void RGBLed::set_b(uint8_t value) {
-  set(CHANNEL_B, value);
+  set_channel(CHANNEL_B, value);
 }
 
-void RGBLed::set(uint8_t channel, uint8_t value) {
+void RGBLed::set_channel(uint8_t channel, uint8_t value) {
   uint8_t intensed_value = static_cast<uint8_t>((static_cast<float>(get_intensity()) / 255) * value);
   ledcWrite(channel, _reversed ? static_cast<uint8_t>(255 - intensed_value) : intensed_value);
 }
