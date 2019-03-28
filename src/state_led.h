@@ -2,6 +2,7 @@
 #define BGEIGIE_POINTCAST_STATE_LED_H
 
 #include <rgb_led.h>
+#include "configurations/i_esp_config.h"
 
 /**
  * Controls the LED to visualize the current state
@@ -15,9 +16,12 @@ class StateLED : private RGBLed{
     mobile,
     stationary_connecting,
     stationary_active,
-    stationary_error
+    stationary_error,
+    COUNT
   } StateColor;
-  StateLED();
+
+
+  explicit StateLED(IEspConfig& config);
   virtual ~StateLED() = default;
 
   void set_color(StateColor color);
@@ -25,14 +29,16 @@ class StateLED : private RGBLed{
   void blink(StateColor color, uint32_t frequency);
 
  private:
-  bool blink_state;
-  RGB _rgb_off;
-  RGB _rgb_init;
-  RGB _rgb_config;
-  RGB _rgb_mobile;
-  RGB _rgb_stationary_connecting;
-  RGB _rgb_stationary_active;
-  RGB _rgb_stationary_error;
+  typedef struct {
+    RGB normal;
+    RGB color_blind;
+  } ColorType;
+
+  uint8_t get_intensity() const override;
+
+  const IEspConfig& _config;
+  bool _blink_state;
+  const ColorType _colorTypes[StateColor::COUNT];
 };
 
 #endif //BGEIGIE_POINTCAST_STATE_LED_H

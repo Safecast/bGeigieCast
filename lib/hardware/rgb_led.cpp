@@ -7,7 +7,7 @@
 #define CHANNEL_FREQUENCY 12800
 #define CHANNEL_RESOLUTION 8
 
-RGBLed::RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b, bool reversed): _reversed(reversed) {
+RGBLed::RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b, bool reversed) : _reversed(reversed), _intensity(255) {
   // Connect pins to channels
   ledcSetup(CHANNEL_R, CHANNEL_FREQUENCY, CHANNEL_RESOLUTION);
   ledcAttachPin(pin_r, CHANNEL_R);
@@ -17,7 +17,7 @@ RGBLed::RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b, bool reversed): _rev
   ledcAttachPin(pin_b, CHANNEL_B);
 }
 
-void RGBLed::set(RGB& values) {
+void RGBLed::set(const RGB& values) {
   set_r(values.r);
   set_g(values.g);
   set_b(values.b);
@@ -29,14 +29,27 @@ void RGBLed::off() {
   set_b(0);
 }
 
-void RGBLed::set_r(uint8_t value){
-  ledcWrite(CHANNEL_R, _reversed ? static_cast<uint8_t>(255 - value): value);
+void RGBLed::set_intensity(uint8_t intensity) {
+  _intensity = intensity;
 }
 
-void RGBLed::set_g(uint8_t value){
-  ledcWrite(CHANNEL_G, _reversed ? static_cast<uint8_t>(255 - value) : value);
+uint8_t RGBLed::get_intensity() const {
+  return _intensity;
 }
 
-void RGBLed::set_b(uint8_t value){
-  ledcWrite(CHANNEL_B, _reversed ? static_cast<uint8_t>(255 - value) : value);
+void RGBLed::set_r(uint8_t value) {
+  set_channel(CHANNEL_R, value);
+}
+
+void RGBLed::set_g(uint8_t value) {
+  set_channel(CHANNEL_G, value);
+}
+
+void RGBLed::set_b(uint8_t value) {
+  set_channel(CHANNEL_B, value);
+}
+
+void RGBLed::set_channel(uint8_t channel, uint8_t value) {
+  uint8_t intensed_value = static_cast<uint8_t>((static_cast<float>(get_intensity()) / 255) * value);
+  ledcWrite(channel, _reversed ? static_cast<uint8_t>(255 - intensed_value) : intensed_value);
 }

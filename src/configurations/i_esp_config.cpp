@@ -8,6 +8,8 @@ IEspConfig::IEspConfig() :
     _wifi_password(""),
     _api_key(""),
     _use_dev(D_USE_DEV_SERVER),
+    _led_color_blind(D_LED_COLOR_BLIND),
+    _led_color_intensity(D_LED_COLOR_INTENSITY),
     _init_stationary(D_INIT_STATIONARY) {
 
 }
@@ -20,6 +22,8 @@ void IEspConfig::reset_defaults() {
     set_wifi_password(D_WIFI_PASSWORD, true);
     set_api_key(D_APIKEY, true);
     set_use_dev(D_USE_DEV_SERVER, true);
+    set_led_color_blind(D_LED_COLOR_BLIND, true);
+    set_led_color_intensity(D_LED_COLOR_INTENSITY, true);
     set_init_stationary(D_INIT_STATIONARY, true);
   }
 }
@@ -46,6 +50,14 @@ const char* IEspConfig::get_api_key() const {
 
 bool IEspConfig::is_init_stationary() const {
   return _init_stationary;
+}
+
+bool IEspConfig::is_led_color_blind() const {
+  return _led_color_blind;
+}
+
+uint8_t IEspConfig::get_led_color_intensity() const {
+  return _led_color_intensity;
 }
 
 bool IEspConfig::get_use_dev() const {
