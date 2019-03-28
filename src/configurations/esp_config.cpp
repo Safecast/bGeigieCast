@@ -15,7 +15,7 @@ const char* key_wifi_password = "wifi_password";
 const char* key_api_key = "api_key";
 const char* key_use_dev = "use_dev";
 const char* key_led_color_blind = "led_color_blind";
-const char* key_led_color_intensity = "led_color_intensity";
+const char* key_led_color_intensity = "led_intensity";
 const char* key_init_stationary = "init_stationary";
 
 EspConfig::EspConfig() :
