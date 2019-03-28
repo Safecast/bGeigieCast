@@ -121,6 +121,10 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         "Use safecast server:<br>"
         "<input type=\"radio\" name=\"devsrv\" value=\"1\" %s>Development<br>"
         "<input type=\"radio\" name=\"devsrv\" value=\"0\" %s>Production<br>"
+        "LED intensity:<br><input type=\"number\" min=\"0\" max=\"255\" name=\"led_intensity\" value=\"%d\"><br>"
+        "LED Colors:<br>"
+        "<input type=\"radio\" name=\"led_color\" value=\"0\" %s>Default<br>"
+        "<input type=\"radio\" name=\"led_color\" value=\"1\" %s>Color blind<br>"
         "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
         "</form><br><br>\r\n "
         "%s"
@@ -133,6 +137,9 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         config.get_api_key(),
         config.get_use_dev() ? "checked" : "",
         config.get_use_dev() ? "" : "checked",
+        config.get_led_color_intensity(),
+        config.is_led_color_blind() ? "checked" : "",
+        config.is_led_color_blind() ? "" : "checked",
         request.has_param("success") ? "Configurations saved!" : ""
     );
     respondSuccess(client, transmission);
@@ -157,6 +164,12 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
     }
     if(request.get_param_value("devsrv", value, 64)) {
       config.set_use_dev(strcmp(value, "1") == 0, false);
+    }
+    if(request.get_param_value("led_intensity", value, 64)) {
+      config.set_led_color_intensity(static_cast<uint8_t>(strtoul(value, nullptr, 10)), false);
+    }
+    if(request.get_param_value("led_color", value, 64)) {
+      config.set_led_color_blind(strcmp(value, "1") == 0, false);
     }
 
     respondRedirect(client, "/?success=true");

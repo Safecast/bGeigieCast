@@ -36,6 +36,8 @@
 #define D_WIFI_PASSWORD         "yourwifipassword"
 #define D_APIKEY                ""
 #define D_USE_DEV_SERVER        true
+#define D_LED_COLOR_BLIND       false
+#define D_LED_COLOR_INTENSITY   200
 #define D_INIT_STATIONARY       false
 
 
