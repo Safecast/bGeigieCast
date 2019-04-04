@@ -4,7 +4,7 @@
 #include "debugger.h"
 
 // Set this to true if we use anode LED
-#define RGB_STATE_LED_REVERSED false
+#define RGB_STATE_LED_REVERSED true
 
 StateLED::StateLED(IEspConfig& config) :
     RGBLed(RGB_LED_PIN_R, RGB_LED_PIN_G, RGB_LED_PIN_B, RGB_STATE_LED_REVERSED),

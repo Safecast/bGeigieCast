@@ -29,13 +29,12 @@
 #define ACCESS_POINT_IP     {192, 168, 5, 1}
 #define ACCESS_POINT_NMASK  {255, 255, 255, 0}
 
-/** Default ESP configurations **/
-#define D_ACCESS_POINT_SSID     "bGeigie-ESP32"
+#define D_ACCESS_POINT_SSID "bGeigie-ESP32"
 #define D_ACCESS_POINT_PASSWORD "safecast"
-#define D_WIFI_SSID             "your wifi ssid"
-#define D_WIFI_PASSWORD         "yourwifipassword"
-#define D_APIKEY                ""
-#define D_USE_DEV_SERVER        true
+#define D_WIFI_SSID "kittywood"
+#define D_WIFI_PASSWORD "schatjeyuka"
+#define D_APIKEY "q1LKu7RQ8s5pmyxunnDW"
+#define D_USE_DEV_SERVER true
 #define D_LED_COLOR_BLIND       false
 #define D_LED_COLOR_INTENSITY   200
 #define D_INIT_STATIONARY       false
