@@ -12,8 +12,10 @@ component bGeigieNano\n {
     component <<subcomponent>>\nESP32Bee\n {
         interface IBL as "bluetoothControl"
         interface IAP as "APIControl"
+        interface reporterControl
         interface serverControl
         component Controller
+        component Reporter
         component ConfigServer
         component ApiConnector
         component Bluetooth
@@ -30,11 +32,13 @@ component bGeigieNano\n {
         config -u- EspConfig
         deviceConfig -d- ConfigServer
         espMode -d- Controller
-        IBL )-u- Controller
+        Controller -d- reporterControl
+        Reporter -r- reporterControl
+        IBL )-u- Reporter
         IBL -d- Bluetooth
-        IAP )-u- Controller
+        IAP )-u- Reporter
         IAP -d- ApiConnector
-        ApiConnector -u-( config
+        ApiConnector -u--( config
 
         liveData -u- Bluetooth
         api )-u- ApiConnector
