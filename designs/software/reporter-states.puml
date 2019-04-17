@@ -1,0 +1,40 @@
+@startuml
+
+
+state Idle
+state GetReading
+GetReading : bGeigieConn.getReading()
+state ReportReading {
+    state InitBluetooth
+    InitBluetooth: action: initBluetooth()
+    state PublishToBluetooth
+    PublishToBluetooth: action: bluetoothConnection.write(reading)
+    state Connecting
+    Connecting: entry: setWifiSettings
+    Connecting: action: connectWifi
+    state ConnectionTest
+    ConnectionTest: action: testApiAvailable
+    state PublishToApi
+    PublishToApi: action: http.send(reading)
+
+    [*] -> InitBluetooth
+    InitBluetooth -> PublishToBluetooth : bluetoothInitialized
+    PublishToBluetooth ---> [*] : readingReportedBT
+    PublishToBluetooth ---> Connecting: [in(FixedMode)] readingReportedBT
+
+    Connecting -l-> ConnectionTest : connected
+    Connecting ---> [*] : connectionError /SCHEDULE(apiReportFailed)
+    ConnectionTest --> PublishToApi : APIAvailable
+    ConnectionTest ---> [*] : apiUnavailable /SCHEDULE(apiReportFailed)   .
+    PublishToApi -> [*] : apiPostFailed /SCHEDULE(apiReportFailed)
+    PublishToApi -> [*] : readingReportedAPI /SCHEDULE(apiReportSuccess)
+
+}
+
+[*] -> Idle
+Idle -> GetReading : expectingNewReading
+GetReading --> ReportReading : readingReceived
+ReportReading -u-> Idle 
+
+
+@enduml
