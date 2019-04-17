@@ -19,10 +19,16 @@ state ConfigMode {
     ConfigServerActive: entry: setLedColor(serverActive)
     ConfigServerActive: action: handleClients()
     ConfigServerActive: exit: stopServer()
+
+    [*] --> SetupConfigServer
+    SetupConfigServer --> ConfigServerActive : serverInitialized
+    ConfigServerActive --> [*]
 }
 
 state Active {
 
+    state InitActive
+    InitActive: action: mode = getSavedMode()
     state MobileMode
     MobileMode: entry: reporter.prepare(bluetooth)
 
@@ -42,9 +48,9 @@ state Active {
     }
     FixedMode: entry: reporter.prepare(api, bluetooth)
 
-
-    [*] --> MobileMode : [mode==mobile]
-    [*] -> FixedMode : [mode==fixed]
+    [*] --> InitActive
+    InitActive --> MobileMode : [mode==mobile]
+    InitActive -> FixedMode : [mode==fixed]
     MobileMode -r-> FixedMode : buttonPressed
     FixedMode -l-> MobileMode : buttonPressed
 
@@ -55,10 +61,9 @@ Active: action: reporter.run(); sleep()
 
 [*] -> Initializing
 Initializing -> PostInitialize : controllerInitialized
-PostInitialize -> SetupConfigServer : buttonPressed
+PostInitialize -> ConfigMode : buttonPressed
 PostInitialize -d-> Active : [t > 3s]
-SetupConfigServer -d-> ConfigServerActive : serverInitialized
-ConfigServerActive -d-> Active: buttonPressed
+ConfigMode -d-> Active: buttonPressed
 Active --> Reset : buttonLongPressed
 Reset --> [*] 
 

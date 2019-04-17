@@ -27,18 +27,18 @@ component bGeigieNano\n {
 
         Controller -( serverControl
         serverControl - ConfigServer
-        dataReports )- Controller
+        dataReports )- Reporter
         config )-u- ConfigServer
-        config -u- EspConfig
+        config - EspConfig
         deviceConfig -d- ConfigServer
         espMode -d- Controller
-        Controller -d- reporterControl
+        Controller -l-( reporterControl
         Reporter -r- reporterControl
         IBL )-u- Reporter
         IBL -d- Bluetooth
         IAP )-u- Reporter
         IAP -d- ApiConnector
-        ApiConnector -u--( config
+        ApiConnector -u-( config
 
         liveData -u- Bluetooth
         api )-u- ApiConnector

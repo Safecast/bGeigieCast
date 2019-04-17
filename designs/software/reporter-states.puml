@@ -1,10 +1,9 @@
 @startuml
 
 
-state WaitForReading
-WaitForReading: action: bGeigieConn.peek()
+state Idle
 state GetReading
-GetReading : bGeigieConn.parseReading()
+GetReading : bGeigieConn.getReading()
 state ReportReading {
     state InitBluetooth
     InitBluetooth: action: initBluetooth()
@@ -32,10 +31,10 @@ state ReportReading {
 
 }
 
-[*] -> WaitForReading
-WaitForReading -> GetReading : expectingNewReading
+[*] -> Idle
+Idle -> GetReading : expectingNewReading
 GetReading --> ReportReading : readingReceived
-ReportReading -u-> WaitForReading : readingReported
+ReportReading -u-> Idle 
 
 
 @enduml
