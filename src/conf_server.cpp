@@ -1,6 +1,6 @@
 #include "conf_server.h"
 #include "user_config.h"
-#include "configurations/esp_config.h"
+#include "esp_config.h"
 #include "debugger.h"
 #include "http_responses.h"
 

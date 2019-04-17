@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <HardwareSerial.h>
 
-#include <dms_dd.h>
+#include "dms_dd.h"
 
 #include "reading.h"
-#include "reading_parser/nsscanf.h"
+#include "reading_parser.h"
 
 Reading::Reading() :
     _reading_str(""),

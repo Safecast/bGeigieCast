@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#include "../reading.h"
+#include "reading.h"
 
 /**
  * Connect the system to the bGeigieNano to read sensor data

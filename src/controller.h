@@ -1,14 +1,13 @@
 #ifndef BGEIGIE_POINTCAST_CONTROLLER_HPP
 #define BGEIGIE_POINTCAST_CONTROLLER_HPP
 
-#include <button.h>
-#include <button_observer.h>
-
-#include "state_machine/sm_context.h"
-#include "web_server/conf_server.h"
-#include "connectors/bgeigie_connector.h"
-#include "connectors/i_api_connector.h"
-#include "connectors/i_bluetooth_connector.h"
+#include "button.h"
+#include "button_observer.h"
+#include "sm_context.h"
+#include "conf_server.h"
+#include "bgeigie_connector.h"
+#include "i_api_connector.h"
+#include "i_bluetooth_connector.h"
 #include "state_led.h"
 #include "reporter.h"
 

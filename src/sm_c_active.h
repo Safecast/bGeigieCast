@@ -3,7 +3,6 @@
 
 #include "sm_c_state.h"
 
-
 class ActiveState: public ControllerState {
  public:
   explicit ActiveState(Controller& context);

@@ -1,8 +1,8 @@
 #ifndef BGEIGIE_POINTCAST_STATE_LED_H
 #define BGEIGIE_POINTCAST_STATE_LED_H
 
-#include <rgb_led.h>
-#include "configurations/i_esp_config.h"
+#include "rgb_led.h"
+#include "i_esp_config.h"
 
 /**
  * Controls the LED to visualize the current state

@@ -1,7 +1,7 @@
 #ifndef BGEIGIECAST_SM_R_STATE_H
 #define BGEIGIECAST_SM_R_STATE_H
 
-#include "../reporter.h"
+#include "reporter.h"
 #include "sm_state.h"
 
 /**

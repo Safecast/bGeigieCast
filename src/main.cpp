@@ -38,8 +38,8 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
 
 #include <driver/uart.h>
-#include "connectors/bluetooth_connector.h"
-#include "connectors/api_connector.h"
+#include "bluetooth_connector.h"
+#include "api_connector.h"
 #include "debugger.h"
 #include "controller.h"
 

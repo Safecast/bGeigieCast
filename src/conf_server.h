@@ -3,7 +3,7 @@
 
 #include <WiFi.h>
 
-#include "configurations/esp_config.h"
+#include "esp_config.h"
 #include "http_request.h"
 
 /**

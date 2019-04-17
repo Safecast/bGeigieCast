@@ -1,8 +1,8 @@
 #ifndef BGEIGIE_POINTCAST_STATE_HPP
 #define BGEIGIE_POINTCAST_STATE_HPP
 
-#include "../debugger.h"
-#include "../controller.h"
+#include "debugger.h"
+#include "controller.h"
 
 
 /**

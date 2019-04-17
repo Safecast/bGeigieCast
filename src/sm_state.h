@@ -2,7 +2,7 @@
 #define BGEIGIE_POINTCAST_ABSTRACT_STATE_HPP
 
 #include "sm_events.h"
-#include "../debugger.h"
+#include "debugger.h"
 
 
 typedef enum {

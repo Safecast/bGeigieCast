@@ -2,6 +2,7 @@
 #define BGEIGIE_POINTCAST_I_ESP_CONFIG_H
 
 #include <cstdint>
+
 #define CONFIG_VAL_MAX 32
 
 /**

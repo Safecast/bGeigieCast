@@ -1,11 +1,11 @@
 #ifndef BGEIGIE_POINTCAST_I_APICONNECTOR_H
 #define BGEIGIE_POINTCAST_I_APICONNECTOR_H
 
-#include <circular_buffer.h>
 
-#include "../user_config.h"
-#include "../configurations/i_esp_config.h"
-#include "../reading.h"
+#include "circular_buffer.h"
+#include "user_config.h"
+#include "i_esp_config.h"
+#include "reading.h"
 
 /**
  * Abstract class to be used in controller as a Api connector

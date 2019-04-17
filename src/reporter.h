@@ -1,11 +1,12 @@
 #ifndef BGEIGIE_POINTCAST_REPORTER_H
 #define BGEIGIE_POINTCAST_REPORTER_H
 
-#include <connectors/i_bluetooth_connector.h>
-#include <connectors/i_api_connector.h>
 #include <Stream.h>
-#include <connectors/bgeigie_connector.h>
-#include "state_machine/sm_context.h"
+
+#include "i_bluetooth_connector.h"
+#include "i_api_connector.h"
+#include "bgeigie_connector.h"
+#include "sm_context.h"
 
 /**
  * The reporter will receive instructions to get and report readings from the bgeigie to the api / bluetooth

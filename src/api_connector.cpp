@@ -1,6 +1,6 @@
 
 #include "api_connector.h"
-#include "../debugger.h"
+#include "debugger.h"
 
 #define API_SEND_FREQUENCY (API_SEND_FREQUENCY_MINUTES * 60 * 1000)
 

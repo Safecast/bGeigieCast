@@ -1,4 +1,4 @@
-#include "state_machine/sm_c_init.h"
+#include "sm_c_init.h"
 #include "controller.h"
 #include "reading.h"
 

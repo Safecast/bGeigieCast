@@ -18,7 +18,7 @@
 #define DEBUG_BEGIN(baud) DEBUG_STREAM.begin(baud)
 #define DEBUG_PRINT(val) DEBUG_STREAM.print(val)
 #define DEBUG_PRINTLN(val) DEBUG_STREAM.println(val)
-#define DEBUG_PRINTF(format, ...) DEBUG_STREAM.println(format, ...)
+#define DEBUG_PRINTF(format, ...) DEBUG_STREAM.printf(format, ...)
 #define DEBUG_FLUSH() DEBUG_STREAM.flush()
 
 #else

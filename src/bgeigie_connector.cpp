@@ -1,6 +1,6 @@
 #include "bgeigie_connector.h"
-#include "../user_config.h"
-#include "../debugger.h"
+#include "user_config.h"
+#include "debugger.h"
 
 BGeigieConnector::BGeigieConnector(Stream& serial_connection) : _serial_connection(serial_connection) {
 }

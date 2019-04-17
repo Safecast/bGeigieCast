@@ -5,7 +5,7 @@
 
 #include "i_bluetooth_connector.h"
 #include "bluetooth_settings.h"
-#include "../reading.h"
+#include "reading.h"
 
 /**
  * Setups up bluetooth endpoint for the device, allowing it to send readings over bluetooth

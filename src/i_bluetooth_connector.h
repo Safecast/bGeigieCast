@@ -2,7 +2,7 @@
 #define BGEIGIE_POINTCAST_I_BLUETOOTH_CONNECTOR_H
 
 #include "stdint.h"
-#include "../reading.h"
+#include "reading.h"
 
 /**
  * Abstract bluetooth connector to inject
