@@ -34,7 +34,7 @@ void BluetoohConnector::init(uint16_t device_id) {
   BLEDevice::startAdvertising();
   initialized = true;
 
-  debug_print("Bluetooth initialized, device: "); debug_println(deviceName);
+  DEBUG_PRINT("Bluetooth initialized, device: "); DEBUG_PRINTLN(deviceName);
 }
 
 void BluetoohConnector::create_ble_profile_service(BLEServer* pServer) {
@@ -160,7 +160,7 @@ void BluetoohConnector::send_reading(Reading& reading) {
   if(!initialized) {
     init(reading.get_device_id());
   }
-  debug_println("Sending reading over Bluetooth");
+  DEBUG_PRINTLN("Sending reading over Bluetooth");
   const char* reading_str = reading.get_reading_str();
   size_t size = strlen(reading_str);
 

@@ -1,11 +1,11 @@
 #ifndef BGEIGIE_POINTCAST_SERVERACTIVESTATE_HPP
 #define BGEIGIE_POINTCAST_SERVERACTIVESTATE_HPP
 
-#include "sm_c_state.h"
+#include "sm_c_conf.h"
 
-class ServerActiveState: public State {
+class ServerActiveState: public ConfigModeState {
  public:
-  ServerActiveState(Controller& context);
+  explicit ServerActiveState(Controller& context);
   virtual ~ServerActiveState() = default;
 
   void entry_action() override;

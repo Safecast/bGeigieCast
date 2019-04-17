@@ -3,10 +3,14 @@
 
 #include "sm_c_state.h"
 
-class ActiveState__: public State {
+
+class ActiveState: public ControllerState {
  public:
-  ActiveState__(Controller& context);
-  virtual ~ActiveState__() = default;
+  explicit ActiveState(Controller& context);
+  virtual ~ActiveState() = default;
+
+  void do_activity() override;
+
   void handle_event(Event_enum event_id) override;
 };
 

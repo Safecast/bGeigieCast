@@ -9,7 +9,7 @@
 
 Reading::Reading() :
     _reading_str(""),
-    _validity(e_unparsed),
+    _validity(k_reading_unparsed),
     _average_of(0),
     _device_id(0),
     _iso_timestr(""),
@@ -28,7 +28,7 @@ Reading::Reading() :
 
 Reading::Reading(const char* reading_str) :
     _reading_str(""),
-    _validity(e_unparsed),
+    _validity(k_reading_unparsed),
     _average_of(1),
     _device_id(0),
     _iso_timestr(""),
@@ -69,7 +69,7 @@ Reading::Reading(const Reading& copy) :
 }
 
 Reading& Reading::operator+=(const Reading& o) {
-  if(o._validity == e_unparsed || o._validity == e_invalid_string) {
+  if(o._validity == k_reading_unparsed || o._validity == k_reading_invalid_string) {
     return *this;
   }
   if(_average_of == 0) {
@@ -119,11 +119,11 @@ Reading& Reading::operator+=(const Reading& o) {
 }
 
 bool Reading::as_json(char* out) {
-  if(_validity != ReadingValidity::e_valid) {
+  if(_validity != ReadingValidity::k_reading_valid) {
     return false;
   }
 
-  uint32_t device_id = _device_id + 60000; // Stationary bGeigie sensors in 60k-70k range
+  uint32_t device_id = _device_id + 60000; // Fixed bGeigie sensors in 60k-70k range
   sprintf(
       out,
       "{\"captured_at\":\"%s\","
@@ -170,13 +170,13 @@ void Reading::parse_values() {
   );
 
   if(parse_result != 15) { // 15 values to be parsed
-    _validity = ReadingValidity::e_invalid_string;
+    _validity = ReadingValidity::k_reading_invalid_string;
   } else if(_gps_status != 'A') {
-    _validity = ReadingValidity::e_invalid_gps;
+    _validity = ReadingValidity::k_reading_invalid_gps;
   } else if(_geiger_status != 'A') {
-    _validity = ReadingValidity::e_invalid_sensor;
+    _validity = ReadingValidity::k_reading_invalid_sensor;
   } else {
-    _validity = ReadingValidity::e_valid;
+    _validity = ReadingValidity::k_reading_valid;
   }
 
 
@@ -187,7 +187,7 @@ void Reading::parse_values() {
 }
 
 bool Reading::correctly_parsed() const {
-  return _validity != e_unparsed && _validity != e_invalid_string && _device_id > 0;
+  return _validity != k_reading_unparsed && _validity != k_reading_invalid_string && _device_id > 0;
 }
 
 const char* Reading::get_reading_str() const {

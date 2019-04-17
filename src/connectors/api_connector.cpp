@@ -14,13 +14,13 @@ bool ApiConnector::start_connect(bool initial) {
 
   const char* ssid = config.get_wifi_ssid();
   if(!ssid) {
-    debug_println("No SSID to connect to!");
+    DEBUG_PRINTLN("No SSID to connect to!");
     return false;
   }
 
   if(initial) {
     const char* password = config.get_wifi_password();
-    debug_print("Connecting to ssid "); debug_println(ssid);
+    DEBUG_PRINT("Connecting to ssid "); DEBUG_PRINTLN(ssid);
     password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
     merged_reading.reset();
     last_send = millis();
@@ -51,7 +51,7 @@ bool ApiConnector::send_reading(Reading& reading) {
   char json_str[200];
   if(!reading.as_json(json_str)) {
     // This whole reading is invalid
-    debug_println("Unable to send reading, its not valid at all!");
+    DEBUG_PRINTLN("Unable to send reading, its not valid at all!");
     return false;
   }
   HTTPClient http;
@@ -65,7 +65,7 @@ bool ApiConnector::send_reading(Reading& reading) {
 
   //Specify destination for HTTP request
   if(!http.begin(url)) {
-    debug_println("Unable to begin url connection");
+    DEBUG_PRINTLN("Unable to begin url connection");
     save_reading(reading);
     return false;
   }
@@ -79,20 +79,20 @@ bool ApiConnector::send_reading(Reading& reading) {
   http.addHeader("User-Agent", HEADER_API_USER_AGENT);
   http.addHeader("Content-Length", content_length);
 
-  debug_println(url);
-  debug_println(json_str);
+  DEBUG_PRINTLN(url);
+  DEBUG_PRINTLN(json_str);
 
   int httpResponseCode = http.POST(json_str);   //Send the actual POST request
 
   if(httpResponseCode > 0) {
     String response = http.getString();
-    debug_print(httpResponseCode);
-    debug_println(response);
+    DEBUG_PRINT(httpResponseCode);
+    DEBUG_PRINTLN(response);
 
     http.end();  //Free resources
     return true;
   } else {
-    debug_println("Error on sending POST");
+    DEBUG_PRINTLN("Error on sending POST");
     // Failed to send
     save_reading(reading);
 

@@ -14,9 +14,9 @@ class StateLED : private RGBLed{
     init,
     config,
     mobile,
-    stationary_connecting,
-    stationary_active,
-    stationary_error,
+    fixed_connecting,
+    fixed_active,
+    fixed_error,
     COUNT
   } StateColor;
 

@@ -3,12 +3,12 @@
 
 #define MAX_EVENTS 10
 
-#include "abstract_state.h"
+#include "sm_state.h"
 #include <circular_buffer.h>
 
 
 /**
- * Context, will be inherited by the controller so it can run the state machine
+ * Context, something which will control a set of states and runs a state machine
  */
 class Context {
  public:
@@ -24,7 +24,7 @@ class Context {
    * Will exit the current one and enter the new one
    * @param state: New state to be set
    */
-  virtual void set_state(AbstractState* state);
+  virtual void set_state(State* state);
 
   /**
    * Run the state machine once, will handle scheduled events and run the do activity from the state
@@ -41,7 +41,7 @@ class Context {
    * Get current state
    * @return
    */
-  AbstractState* get_current_state() const;
+  State* get_current_state() const;
 
   /**
    * Clear all events in the event queue
@@ -54,7 +54,7 @@ class Context {
   void handle_events();
  private:
 
-  AbstractState* _current_state;
+  State* _current_state;
   CircularBuffer<Event_enum, MAX_EVENTS, Event_enum::e_undefined> _event_queue;
 };
 

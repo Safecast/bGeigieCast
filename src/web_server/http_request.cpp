@@ -17,7 +17,7 @@ void HttpRequest::set_request_line(const char* line) {
   } else {
     sscanf(full_uri, "%[^?]?%s", _uri, _query_params);
   }
-  debug_println(line);
+  DEBUG_PRINTLN(line);
 }
 
 void HttpRequest::add_header_line(const char* line) {
@@ -63,7 +63,7 @@ bool HttpRequest::get_param_value(const char* key, char* result, size_t result_s
         char* end_value = strchr(begin_value, '&');
         uint32_t val_len = end_value ? end_value - begin_value : strlen(begin_value);
         if(val_len > result_size - 1) {
-          debug_println("Request param value exceeding max size");
+          DEBUG_PRINTLN("Request param value exceeding max size");
           return false;
         }
         strncpy(result, begin_value, val_len);

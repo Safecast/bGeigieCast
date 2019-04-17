@@ -3,9 +3,9 @@
 
 #include "sm_c_state.h"
 
-class ResetState : public State {
+class ResetState : public ControllerState {
  public:
-  ResetState(Controller& context);
+  explicit ResetState(Controller& context);
   virtual ~ResetState() = default;
 
   void entry_action() override;

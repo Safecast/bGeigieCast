@@ -1,12 +1,12 @@
 #ifndef BGEIGIE_POINTCAST_STATIONARYMODESTATE_H
 #define BGEIGIE_POINTCAST_STATIONARYMODESTATE_H
 
-#include "../ActiveState__.h"
+#include "sm_c_active.h"
 
-class StationaryModeState__: public ActiveState__ {
+class FixedModeState: public ActiveState {
  public:
-  StationaryModeState__(Controller& context);
-  virtual ~StationaryModeState__() = default;
+  explicit FixedModeState(Controller& context);
+  virtual ~FixedModeState() = default;
 
   void do_activity() override;
 

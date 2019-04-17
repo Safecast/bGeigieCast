@@ -22,6 +22,11 @@ class Button {
   virtual ~Button();
 
   /**
+   * Installs the button in the interrupt service
+   */
+  void activate();
+
+  /**
    * Let the button know that the state has changed
    * @param state: LOW / HIGH reading from the button
    * @return: true if event was handled (false if ignored)

@@ -10,7 +10,7 @@ IEspConfig::IEspConfig() :
     _use_dev(D_USE_DEV_SERVER),
     _led_color_blind(D_LED_COLOR_BLIND),
     _led_color_intensity(D_LED_COLOR_INTENSITY),
-    _init_stationary(D_INIT_STATIONARY) {
+    _saved_state(D_SAVED_STATE) {
 
 }
 
@@ -24,7 +24,7 @@ void IEspConfig::reset_defaults() {
     set_use_dev(D_USE_DEV_SERVER, true);
     set_led_color_blind(D_LED_COLOR_BLIND, true);
     set_led_color_intensity(D_LED_COLOR_INTENSITY, true);
-    set_init_stationary(D_INIT_STATIONARY, true);
+    set_saved_state(D_SAVED_STATE, true);
   }
 }
 
@@ -48,8 +48,8 @@ const char* IEspConfig::get_api_key() const {
   return _api_key;
 }
 
-bool IEspConfig::is_init_stationary() const {
-  return _init_stationary;
+uint8_t IEspConfig::get_saved_state() const {
+  return _saved_state;
 }
 
 bool IEspConfig::is_led_color_blind() const {

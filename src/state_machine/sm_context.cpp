@@ -11,7 +11,7 @@ Context::~Context() {
   }
 }
 
-void Context::set_state(AbstractState* state) {
+void Context::set_state(State* state) {
   if(_current_state) {
     _current_state->exit_action();
     delete _current_state;
@@ -24,7 +24,7 @@ void Context::set_state(AbstractState* state) {
 
 void Context::run() {
   if(!_current_state) {
-    debug_println("Trying to run state machine with no active state");
+    DEBUG_PRINTLN("Trying to run state machine with no active state");
     return;
   }
   _current_state->do_activity();
@@ -35,7 +35,7 @@ void Context::schedule_event(Event_enum event_id) {
   _event_queue.add(event_id);
 }
 
-AbstractState* Context::get_current_state() const {
+State* Context::get_current_state() const {
   return _current_state;
 }
 

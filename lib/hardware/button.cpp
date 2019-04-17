@@ -15,30 +15,21 @@ Button::Button(uint8_t pin, uint8_t pull_type) :
     _pin(pin),
     _pull_type_mode(pull_type == PULLDOWN ? HIGH : LOW),
     _observer(nullptr),
-    _current_state(false),
+    _current_state(digitalRead(_pin) == _pull_type_mode),
     _last_state_change(0),
     _on_button_down_fn(nullptr),
     _on_button_release_fn(nullptr),
     _on_button_pressed_fn(nullptr) {
-
-  gpio_config_t io_conf;
-  io_conf.intr_type = GPIO_INTR_DISABLE;
-  io_conf.mode = GPIO_MODE_INPUT;
-  io_conf.pin_bit_mask = 1ULL << pin;
-  io_conf.pull_down_en = pull_type == PULLDOWN ? GPIO_PULLDOWN_ENABLE : GPIO_PULLDOWN_DISABLE;
-  io_conf.pull_up_en = pull_type == PULLUP ? GPIO_PULLUP_ENABLE : GPIO_PULLUP_DISABLE;
-  gpio_config(&io_conf);
-
-  gpio_set_intr_type((gpio_num_t) pin, GPIO_INTR_ANYEDGE);
-  gpio_install_isr_service(ESP_INTR_FLAG_LEVEL1);
-  gpio_isr_handler_add((gpio_num_t) pin, buttonTrigger, this);
-  _current_state = digitalRead(_pin) == _pull_type_mode;
 }
 
 Button::~Button() {
   gpio_reset_pin((gpio_num_t) _pin);
   gpio_isr_handler_remove((gpio_num_t) _pin);
-  gpio_uninstall_isr_service();
+}
+
+void Button::activate() {
+  gpio_set_intr_type((gpio_num_t) _pin, GPIO_INTR_ANYEDGE);
+  gpio_isr_handler_add((gpio_num_t) _pin, buttonTrigger, this);
 }
 
 void Button::set_observer(ButtonObserver* observer) {
@@ -50,12 +41,12 @@ bool Button::currently_pressed() const {
 }
 
 bool Button::state_changed(int state) {
-  bool read_state = state == _pull_type_mode;
-  if(_last_state_change + DEBOUNCE_TIME_MILLIS > millis() || read_state == _current_state) {
+  _current_state = state == _pull_type_mode;
+  if(_last_state_change + DEBOUNCE_TIME_MILLIS > millis()) {
     return false;
   }
+
   uint32_t time = (uint32_t) (esp_timer_get_time() / 1000);
-  _current_state = read_state;
 
   if(_current_state) {
     if(_observer) { _observer->on_button_down(this); }

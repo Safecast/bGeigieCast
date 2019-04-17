@@ -1,19 +1,16 @@
-#include "ConnectedState.h"
-#include "ReconnectingState.h"
+#include "sm_c_active_f_conn.h"
+#include "sm_c_active_f_disconn.h"
 
-ConnectedState::ConnectedState(Controller& context): StationaryModeState(context) {
+ConnectedState::ConnectedState(Controller& context): FixedModeState(context) {
 }
 
 void ConnectedState::entry_action() {
-  debug_println("Entered state Connected");
-  controller.get_state_led().set_color(StateLED::StateColor::stationary_active);
+  DEBUG_PRINTLN("Entered state Connected");
+  controller.get_state_led().set_color(StateLED::StateColor::fixed_active);
 }
 
 void ConnectedState::do_activity() {
-  StationaryModeState::do_activity();
-  if(!controller.get_api_connector().is_connected()){
-    controller.schedule_event(Event_enum::e_connection_lost);
-  }
+  FixedModeState::do_activity();
 }
 
 void ConnectedState::exit_action() {
@@ -21,11 +18,11 @@ void ConnectedState::exit_action() {
 
 void ConnectedState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_connection_lost:
-      controller.set_state(new ReconnectingState(controller));
+    case e_api_report_failed:
+      controller.set_state(new DisconnectedState(controller));
       break;
     default:
-      StationaryModeState::handle_event(event_id);
+      FixedModeState::handle_event(event_id);
       break;
   }
 }

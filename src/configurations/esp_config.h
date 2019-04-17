@@ -26,7 +26,7 @@ class EspConfig : public IEspConfig {
   void set_use_dev(bool use_dev, bool force) override;
   void set_led_color_blind(bool led_color_blind, bool force) override;
   void set_led_color_intensity(uint8_t led_color_intensity, bool force) override;
-  void set_init_stationary(bool init_stationary, bool force) override;
+  void set_saved_state(uint8_t init_fixed, bool force) override;
 
  protected:
   bool clear() override;

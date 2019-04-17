@@ -1,13 +1,13 @@
 #ifndef BGEIGIE_POINTCAST_CONNECTINGSTATE_H
 #define BGEIGIE_POINTCAST_CONNECTINGSTATE_H
 
-#include "../StationaryModeState.h"
+#include "sm_c_active_fixed.h"
 
 
-class ConnectingState: public StationaryModeState {
+class DisconnectedState: public FixedModeState {
  public:
-  ConnectingState(Controller& context);
-  virtual ~ConnectingState() = default;
+  explicit DisconnectedState(Controller& context);
+  virtual ~DisconnectedState() = default;
 
   void entry_action() override;
   void do_activity() override;

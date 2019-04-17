@@ -1,11 +1,11 @@
 #ifndef BGEIGIE_POINTCAST_SETUPSERVERSTATE_HPP
 #define BGEIGIE_POINTCAST_SETUPSERVERSTATE_HPP
 
-#include "sm_c_state.h"
+#include "sm_c_conf.h"
 
-class SetupServerState: public State {
+class SetupServerState: public ConfigModeState {
  public:
-  SetupServerState(Controller& context);
+  explicit SetupServerState(Controller& context);
   virtual ~SetupServerState() = default;
 
   void entry_action() override;

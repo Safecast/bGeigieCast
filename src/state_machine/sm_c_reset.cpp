@@ -1,24 +1,22 @@
-#include "ResetState__.hpp"
-#include "InitializeState__.h"
+#include "sm_c_reset.h"
+#include "sm_c_init.h"
 
-ResetState__::ResetState__(Controller& context) : State(context) {
-
-}
-
-void ResetState__::entry_action() {
-  debug_println("Entered state Reset");
-}
-
-void ResetState__::do_activity() {
-  controller.get_config().reset_defaults();
-  debug_println("\n RESTARTING ESP...\n");
-  ESP.restart();
-}
-
-void ResetState__::exit_action() {
+ResetState::ResetState(Controller& context) : ControllerState(context) {
 
 }
 
-void ResetState__::handle_event(Event_enum event_id) {
-  State::handle_event(event_id);
+void ResetState::entry_action() {
+  DEBUG_PRINTLN("Entered state Reset");
+}
+
+void ResetState::do_activity() {
+  controller.reset_system();
+}
+
+void ResetState::exit_action() {
+
+}
+
+void ResetState::handle_event(Event_enum event_id) {
+  ControllerState::handle_event(event_id);
 }

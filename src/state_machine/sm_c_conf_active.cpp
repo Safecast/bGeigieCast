@@ -1,28 +1,29 @@
-#include "active_states/stationary_mode_states/ConnectingState__.h"
-#include "ServerActiveState__.hpp"
+#include "sm_c_conf_active.h"
+#include "sm_c_active_f_disconn.h"
+#include "sm_c_active_init.h"
 
-ServerActiveState__::ServerActiveState__(Controller& context): State(context) {
+ServerActiveState::ServerActiveState(Controller& context) : ConfigModeState(context) {
 }
 
-void ServerActiveState__::entry_action() {
-  debug_println("Entered state ServerActive");
+void ServerActiveState::entry_action() {
+  DEBUG_PRINTLN("Entered state ServerActive");
 }
 
-void ServerActiveState__::do_activity() {
+void ServerActiveState::do_activity() {
   controller.get_ap_server().handle_requests();
 }
 
-void ServerActiveState__::exit_action() {
+void ServerActiveState::exit_action() {
   controller.get_ap_server().stop();
 }
 
-void ServerActiveState__::handle_event(Event_enum event_id) {
+void ServerActiveState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_button_pressed:
-      controller.set_state(new ConnectingState__(controller));
+      controller.set_state(new InitActiveState(controller));
       break;
     default:
-      State::handle_event(event_id);
+      ConfigModeState::handle_event(event_id);
       break;
   }
 }

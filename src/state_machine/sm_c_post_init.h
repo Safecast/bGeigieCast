@@ -3,10 +3,10 @@
 
 #include "sm_c_state.h"
 
-class PostInitializeState__: public State {
+class PostInitializeState: public ControllerState {
  public:
-  PostInitializeState__(Controller& context);
-  virtual ~PostInitializeState__() = default;
+  explicit PostInitializeState(Controller& context);
+  virtual ~PostInitializeState() = default;
 
   void entry_action() override;
   void do_activity() override;

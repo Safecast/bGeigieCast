@@ -38,7 +38,7 @@
 #define D_USE_DEV_SERVER        true
 #define D_LED_COLOR_BLIND       false
 #define D_LED_COLOR_INTENSITY   75
-#define D_INIT_STATIONARY       false
+#define D_SAVED_STATE           0
 
 
 #endif

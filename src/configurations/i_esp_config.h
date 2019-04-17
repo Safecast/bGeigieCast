@@ -31,7 +31,7 @@ class IEspConfig {
   virtual bool get_use_dev() const final;
   virtual bool is_led_color_blind() const final;
   virtual uint8_t get_led_color_intensity() const final;
-  virtual bool is_init_stationary() const final;
+  virtual uint8_t get_saved_state() const final;
 
   virtual void set_ap_ssid(const char* ap_ssid, bool force) = 0;
   virtual void set_ap_password(const char* ap_password, bool force) = 0;
@@ -41,7 +41,7 @@ class IEspConfig {
   virtual void set_use_dev(bool use_dev, bool force) = 0;
   virtual void set_led_color_blind(bool led_color_blind, bool force) = 0;
   virtual void set_led_color_intensity(uint8_t led_color_intensity, bool force) = 0;
-  virtual void set_init_stationary(bool init_stationary, bool force) = 0;
+  virtual void set_saved_state(uint8_t saved_state, bool force) = 0;
 
 
  protected:
@@ -67,8 +67,8 @@ class IEspConfig {
   bool _led_color_blind;
   uint8_t _led_color_intensity;
 
-  // Flag if stationary or mobile mode is started after init
-  bool _init_stationary;
+  // Flag if fixed or mobile mode is started after init
+  uint8_t _saved_state;
 };
 
 #endif //BGEIGIE_POINTCAST_I_ESP_CONFIG_H

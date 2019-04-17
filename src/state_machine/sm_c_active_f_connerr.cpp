@@ -1,24 +1,19 @@
-#include "ConnectionErrorState.h"
-#include "TestApiState.h"
+#include "sm_c_active_f_connerr.h"
+#include "sm_c_active_f_conn.h"
 
 #define BLINK_FREQUENCY_MILLIS 4000
 
-ConnectionErrorState::ConnectionErrorState(Controller& context) : StationaryModeState(context), timer(0), blink_state(false) {
+ConnectionErrorState::ConnectionErrorState(Controller& context) : FixedModeState(context), timer(0), blink_state(false) {
 }
 
 void ConnectionErrorState::entry_action() {
-  debug_println("Entered state ConnectionError");
-  controller.get_state_led().set_color(StateLED::StateColor::stationary_error);
+  DEBUG_PRINTLN("Entered state ConnectionError");
+  controller.get_state_led().set_color(StateLED::StateColor::fixed_error);
   timer = millis();
 }
 
 void ConnectionErrorState::do_activity() {
-  StationaryModeState::do_activity();
-  if(!((millis() - timer) % 5000) && controller.get_api_connector().start_connect(false)) {
-    controller.schedule_event(Event_enum::e_connected);
-  }
-
-  controller.get_state_led().blink(StateLED::StateColor::stationary_error, BLINK_FREQUENCY_MILLIS);
+  FixedModeState::do_activity();
 }
 
 void ConnectionErrorState::exit_action() {
@@ -26,11 +21,11 @@ void ConnectionErrorState::exit_action() {
 
 void ConnectionErrorState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_connected:
-      controller.set_state(new TestApiState(controller));
+    case e_api_report_success:
+      controller.set_state(new ConnectedState(controller));
       break;
     default:
-      StationaryModeState::handle_event(event_id);
+      FixedModeState::handle_event(event_id);
       break;
   }
 }

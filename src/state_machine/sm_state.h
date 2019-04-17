@@ -1,15 +1,23 @@
 #ifndef BGEIGIE_POINTCAST_ABSTRACT_STATE_HPP
 #define BGEIGIE_POINTCAST_ABSTRACT_STATE_HPP
 
-#include "sm_c_events.h"
+#include "sm_events.h"
+#include "../debugger.h"
+
+
+typedef enum {
+  k_savable_MobileMode = 0,
+  k_savable_FixedMode = 1
+} SavableState;
+
 
 /**
  * Abstract state for the state machine pattern
  */
-class AbstractState {
+class State {
  public:
-  AbstractState() = default;;
-  virtual ~AbstractState() = default;
+  State() = default;;
+  virtual ~State() = default;
 
   /**
    * Action when entering this state
@@ -30,7 +38,10 @@ class AbstractState {
    * Handle event
    * @param event_id
    */
-  virtual void handle_event(Event_enum event_id) = 0;
+  virtual void handle_event(Event_enum event_id)  {
+    DEBUG_PRINT("State machine: Unhandled event with id: ");
+    DEBUG_PRINTLN(event_id);
+  }
 };
 
 

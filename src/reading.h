@@ -6,11 +6,11 @@
 #define READING_STR_MAX 100
 
 typedef enum {
-  e_unparsed,
-  e_valid,
-  e_invalid_string,
-  e_invalid_sensor,
-  e_invalid_gps,
+  k_reading_unparsed,
+  k_reading_valid,
+  k_reading_invalid_string,
+  k_reading_invalid_sensor,
+  k_reading_invalid_gps,
 } ReadingValidity;
 
 /**
@@ -41,7 +41,7 @@ class Reading {
   /**
    * Get this reading as a json object in string
    * @param out: output param
-   * @param stationary: if the device is in stationary mode, it will add 60000 to the device id
+   * @param fixed: if the device is in fixed mode, it will add 60000 to the device id
    * @return: succes / not
    */
   bool as_json(char* out);

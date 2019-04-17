@@ -1,21 +1,20 @@
-#include "StationaryModeState__.h"
-#include "MobileModeState__.h"
+#include "sm_c_active_fixed.h"
+#include "sm_c_active_mobile.h"
 
-StationaryModeState__::StationaryModeState__(Controller& context) : ActiveState__(context) {
+FixedModeState::FixedModeState(Controller& context) : ActiveState(context) {
 }
 
-void StationaryModeState__::do_activity() {
-  controller.process_possible_bgeigie_readings(true, true);
+void FixedModeState::do_activity() {
+  ActiveState::do_activity();
 }
 
-void StationaryModeState__::handle_event(Event_enum event_id) {
+void FixedModeState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_button_pressed:
-      controller.get_api_connector().stop();
-      controller.set_state(new MobileModeState__(controller));
+      controller.set_state(new MobileModeState(controller));
       break;
     default:
-      ActiveState__::handle_event(event_id);
+      ActiveState::handle_event(event_id);
       break;
   }
 }

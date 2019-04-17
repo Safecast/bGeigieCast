@@ -18,12 +18,12 @@ void IApiConnector::process_reading(Reading& reading) {
     last_send = millis();
     if(is_connected()) {
       while(!missed_readings.empty()) {
-        debug_println("Sending previously failed reading to API");
+        DEBUG_PRINTLN("Sending previously failed reading to API");
         Reading* past_reading = missed_readings.get();
         send_reading(*past_reading);
         delete past_reading;
       }
-      debug_println("Sending latest reading to API");
+      DEBUG_PRINTLN("Sending latest reading to API");
       send_reading(reading);
 
     } else {
@@ -40,7 +40,7 @@ bool IApiConnector::time_to_send() {
 }
 
 void IApiConnector::save_reading(Reading& reading) {
-  debug_println("Could not upload reading, trying again later");
+  DEBUG_PRINTLN("Could not upload reading, trying again later");
   if(missed_readings.get_count() == MAX_MISSED_READINGS) {
     // Delete oldest reading, else mem leak
     delete missed_readings.get();

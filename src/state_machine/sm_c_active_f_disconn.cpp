@@ -1,46 +1,33 @@
-#include "ConnectingState.h"
-#include "TestApiState.h"
-#include "ConnectionErrorState.h"
+#include "sm_c_active_f_disconn.h"
+#include "sm_c_active_f_connerr.h"
+#include "sm_c_active_f_conn.h"
 
-#define MILLIS_BEFORE_CONNECTION_FAILURE 6000
-
-#define CONNECTING_BLINK_FREQUENCY_MILLIS 2100
-
-ConnectingState::ConnectingState(Controller& context): StationaryModeState(context), state_entry_moment(0) {
+DisconnectedState::DisconnectedState(Controller& context): FixedModeState(context), state_entry_moment(0) {
 }
 
-void ConnectingState::entry_action() {
-  debug_println("Entered state Connecting");
-  controller.get_state_led().set_color(StateLED::StateColor::stationary_connecting);
-  state_entry_moment = millis();
-  controller.get_api_connector().start_connect(true);
+void DisconnectedState::entry_action() {
+  DEBUG_PRINTLN("Entered state FixedMode, Disconnected");
+  controller.save_state(k_savable_FixedMode);
+  controller.get_state_led().set_color(StateLED::StateColor::fixed_connecting);
 }
 
-void ConnectingState::do_activity() {
-  StationaryModeState::do_activity();
-  if(controller.get_api_connector().is_connected()) {
-    controller.schedule_event(Event_enum::e_connected);
-  }
-  else if (millis() - state_entry_moment > MILLIS_BEFORE_CONNECTION_FAILURE) {
-    controller.schedule_event(e_connection_failed);
-  }
-
-  controller.get_state_led().blink(StateLED::StateColor::stationary_connecting, CONNECTING_BLINK_FREQUENCY_MILLIS);
+void DisconnectedState::do_activity() {
+  FixedModeState::do_activity();
 }
 
-void ConnectingState::exit_action() {
+void DisconnectedState::exit_action() {
 }
 
-void ConnectingState::handle_event(Event_enum event_id) {
+void DisconnectedState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_connected:
-      controller.set_state(new TestApiState(controller));
+    case e_api_report_success:
+      controller.set_state(new ConnectedState(controller));
       break;
-    case e_connection_failed:
+    case e_api_report_failed:
       controller.set_state(new ConnectionErrorState(controller));
       break;
     default:
-      StationaryModeState::handle_event(event_id);
+      FixedModeState::handle_event(event_id);
       break;
   }
 }

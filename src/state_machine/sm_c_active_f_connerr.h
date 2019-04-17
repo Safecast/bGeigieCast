@@ -1,11 +1,11 @@
 #ifndef BGEIGIE_POINTCAST_CONNECTIONERRORSTATE_HPP
 #define BGEIGIE_POINTCAST_CONNECTIONERRORSTATE_HPP
 
-#include "../StationaryModeState.h"
+#include "sm_c_active_fixed.h"
 
-class ConnectionErrorState: public StationaryModeState {
+class ConnectionErrorState: public FixedModeState {
  public:
-  ConnectionErrorState(Controller& context);
+  explicit ConnectionErrorState(Controller& context);
   virtual ~ConnectionErrorState() = default;
 
   void entry_action() override;

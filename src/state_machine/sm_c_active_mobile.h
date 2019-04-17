@@ -1,12 +1,12 @@
 #ifndef BGEIGIE_POINTCAST_MOBILEMODESTATE_H
 #define BGEIGIE_POINTCAST_MOBILEMODESTATE_H
 
-#include "../ActiveState__.h"
+#include "sm_c_active.h"
 
-class MobileModeState__: public ActiveState__ {
+class MobileModeState: public ActiveState {
  public:
-  MobileModeState__(Controller& context);
-  virtual ~MobileModeState__() = default;
+  explicit MobileModeState(Controller& context);
+  virtual ~MobileModeState() = default;
 
   void entry_action() override;
   void do_activity() override;

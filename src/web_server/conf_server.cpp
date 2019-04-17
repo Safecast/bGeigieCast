@@ -1,4 +1,4 @@
-#include "web_server.h"
+#include "conf_server.h"
 #include "user_config.h"
 #include "configurations/esp_config.h"
 #include "debugger.h"
@@ -15,7 +15,7 @@ ConfigWebServer::ConfigWebServer(IEspConfig& config) : server(SERVER_WIFI_PORT, 
 
 bool ConfigWebServer::initialize() {
   if(!config.get_ap_ssid() || !config.get_ap_password()) {
-    debug_println("No SSID or password to start config server");
+    DEBUG_PRINTLN("No SSID or password to start config server");
     return false;
   }
 
@@ -42,7 +42,7 @@ void ConfigWebServer::handle_requests() {
   WiFiClient client = server.available();   // Listen for incoming clients
 
   if(client) {                             // If a new client connects,
-    debug_println("New Client.");          // print a message out in the serial port
+    DEBUG_PRINTLN("New Client.");          // print a message out in the serial port
     HttpRequest request;
     RequestParse state = RequestParse::request_line;
     String currentLine = "";
@@ -85,7 +85,7 @@ void ConfigWebServer::handle_requests() {
     }
     // Close the connection
     client.stop();
-    debug_println("Client disconnected.");
+    DEBUG_PRINTLN("Client disconnected.");
   }
 }
 

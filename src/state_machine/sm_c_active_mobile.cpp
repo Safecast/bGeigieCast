@@ -1,28 +1,28 @@
-#include "MobileModeState__.h"
-#include "stationary_mode_states/ConnectingState__.h"
+#include "sm_c_active_mobile.h"
+#include "sm_c_active_f_disconn.h"
 
-MobileModeState__::MobileModeState__(Controller& context): ActiveState__(context) {
+MobileModeState::MobileModeState(Controller& context): ActiveState(context) {
 }
 
-void MobileModeState__::entry_action() {
-  debug_println("Entered state MobileMode");
+void MobileModeState::entry_action() {
+  DEBUG_PRINTLN("Entered state MobileMode");
+  controller.save_state(k_savable_MobileMode);
   controller.get_state_led().set_color(StateLED::StateColor::mobile);
 }
 
-void MobileModeState__::do_activity() {
-  controller.process_possible_bgeigie_readings(true, false);
+void MobileModeState::do_activity() {
 }
 
-void MobileModeState__::exit_action() {
+void MobileModeState::exit_action() {
 }
 
-void MobileModeState__::handle_event(Event_enum event_id) {
+void MobileModeState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_button_pressed:
-      controller.set_state(new ConnectingState__(controller));
+      controller.set_state(new DisconnectedState(controller));
       break;
     default:
-      ActiveState__::handle_event(event_id);
+      ActiveState::handle_event(event_id);
       break;
   }
 }

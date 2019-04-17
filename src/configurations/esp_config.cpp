@@ -16,7 +16,7 @@ const char* key_api_key = "api_key";
 const char* key_use_dev = "use_dev";
 const char* key_led_color_blind = "led_color_blind";
 const char* key_led_color_intensity = "led_intensity";
-const char* key_init_stationary = "init_stationary";
+const char* key_saved_state = "saved_state";
 
 EspConfig::EspConfig() :
     IEspConfig::IEspConfig(),
@@ -43,7 +43,7 @@ void EspConfig::set_all() {
   _use_dev = _memory.getBool(key_use_dev, D_USE_DEV_SERVER);
   _led_color_blind = _memory.getBool(key_led_color_blind, D_LED_COLOR_BLIND);
   _led_color_intensity = _memory.getUChar(key_led_color_intensity, D_LED_COLOR_INTENSITY);
-  _init_stationary = _memory.getBool(key_init_stationary, D_INIT_STATIONARY);
+  _saved_state = _memory.getBool(key_saved_state, D_SAVED_STATE);
   _memory.end();
 }
 
@@ -63,7 +63,7 @@ void EspConfig::set_ap_ssid(const char* ap_ssid, bool force) {
       _memory.putString(key_ap_ssid, _ap_ssid);
       _memory.end();
     } else {
-      debug_println("unable to save new value for ap_ssid");
+      DEBUG_PRINTLN("unable to save new value for ap_ssid");
     }
   }
 }
@@ -75,7 +75,7 @@ void EspConfig::set_ap_password(const char* ap_password, bool force) {
       _memory.putString(key_ap_password, _ap_password);
       _memory.end();
     } else {
-      debug_println("unable to save new value for ap_password");
+      DEBUG_PRINTLN("unable to save new value for ap_password");
     }
   }
 }
@@ -87,7 +87,7 @@ void EspConfig::set_wifi_ssid(const char* wifi_ssid, bool force) {
       _memory.putString(key_wifi_ssid, _wifi_ssid);
       _memory.end();
     } else {
-      debug_println("unable to save new value for wifi_ssid");
+      DEBUG_PRINTLN("unable to save new value for wifi_ssid");
     }
   }
 }
@@ -99,7 +99,7 @@ void EspConfig::set_wifi_password(const char* wifi_password, bool force) {
       _memory.putString(key_wifi_password, _wifi_password);
       _memory.end();
     } else {
-      debug_println("unable to save new value for wifi_password");
+      DEBUG_PRINTLN("unable to save new value for wifi_password");
     }
   }
 }
@@ -111,7 +111,7 @@ void EspConfig::set_api_key(const char* api_key, bool force) {
       _memory.putString(key_api_key, _api_key);
       _memory.end();
     } else {
-      debug_println("unable to save new value for api_key");
+      DEBUG_PRINTLN("unable to save new value for api_key");
     }
   }
 }
@@ -123,7 +123,7 @@ void EspConfig::set_use_dev(bool use_dev, bool force) {
       _memory.putBool(key_use_dev, use_dev);
       _memory.end();
     } else {
-      debug_println("unable to save new value for use_dev");
+      DEBUG_PRINTLN("unable to save new value for use_dev");
     }
   }
 }
@@ -135,7 +135,7 @@ void EspConfig::set_led_color_blind(bool led_color_blind, bool force) {
       _memory.putBool(key_led_color_blind, led_color_blind);
       _memory.end();
     } else {
-      debug_println("unable to save new value for key_led_color_blind");
+      DEBUG_PRINTLN("unable to save new value for key_led_color_blind");
     }
   }
 }
@@ -147,20 +147,20 @@ void EspConfig::set_led_color_intensity(uint8_t led_color_intensity, bool force)
       _memory.putUChar(key_led_color_intensity, led_color_intensity);
       _memory.end();
     } else {
-      debug_println("unable to save new value for key_led_color_intensity");
+      DEBUG_PRINTLN("unable to save new value for key_led_color_intensity");
     }
   }
 
 }
 
-void EspConfig::set_init_stationary(bool init_stationary, bool force) {
-  if(force || (init_stationary != _init_stationary)) {
+void EspConfig::set_saved_state(uint8_t saved_state, bool force) {
+  if(force || (saved_state != _saved_state)) {
     if(_memory.begin(memory_name)) {
-      _init_stationary = init_stationary;
-      _memory.putBool(key_init_stationary, init_stationary);
+      _saved_state = saved_state;
+      _memory.putUChar(key_saved_state, saved_state);
       _memory.end();
     } else {
-      debug_println("unable to save new value for init_stationary");
+      DEBUG_PRINTLN("unable to save new value for init_fixed");
     }
   }
 }
