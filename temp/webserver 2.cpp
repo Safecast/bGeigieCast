@@ -5,8 +5,8 @@
 #include <WiFi.h>
 
 // Please change to Wi-Fi to use and its password
-const char *ssid = "kittywood";
-const char *password = "schatjeyuka";
+const char *ssid = "";
+const char *password = "";
 
 // use port 80
 WiFiServer server(80);

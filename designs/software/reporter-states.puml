@@ -9,32 +9,25 @@ state ReportReading {
     InitBluetooth: action: initBluetooth()
     state PublishToBluetooth
     PublishToBluetooth: action: bluetoothConnection.write(reading)
-    state Connecting
-    Connecting: entry: setWifiSettings
-    Connecting: action: connectWifi
-    state ConnectionTest
-    ConnectionTest: action: testApiAvailable
-    state PublishToApi
-    PublishToApi: action: http.send(reading)
+    state ReportToApi
+    ReportToApi: entry: apiConnector.set(reading)
+    ReportToApi: action: apiConnector.run()
+    state ReportDone
+    ReportDone: entry: callbackController(status)
 
-    [*] -> InitBluetooth
-    InitBluetooth -> PublishToBluetooth : bluetoothInitialized
-    PublishToBluetooth ---> [*] : readingReportedBT
-    PublishToBluetooth ---> Connecting: [in(FixedMode)] readingReportedBT
+    [*] --> InitBluetooth
+    InitBluetooth --> PublishToBluetooth : bluetoothInitialized
+    PublishToBluetooth --> ReportDone : readingReportedBT /status = success
+    PublishToBluetooth -> ReportToApi: [in(FixedMode)] readingReportedBT
 
-    Connecting -l-> ConnectionTest : connected
-    Connecting ---> [*] : connectionError /SCHEDULE(apiReportFailed)
-    ConnectionTest --> PublishToApi : APIAvailable
-    ConnectionTest ---> [*] : apiUnavailable /SCHEDULE(apiReportFailed)   .
-    PublishToApi -> [*] : apiPostFailed /SCHEDULE(apiReportFailed)
-    PublishToApi -> [*] : readingReportedAPI /SCHEDULE(apiReportSuccess)
-
+    ReportToApi --> ReportDone : readingReportedAPI /status = apiResult
+    ReportDone --> [*]
 }
 
 [*] -> Idle
-Idle -> GetReading : expectingNewReading
+Idle -> GetReading : readingExpected
 GetReading --> ReportReading : readingReceived
-ReportReading -u-> Idle 
+ReportReading -u-> Idle : readingReported
 
 
 @enduml
