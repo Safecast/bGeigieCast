@@ -68,6 +68,28 @@ Reading::Reading(const Reading& copy) :
   strcpy(_iso_timestr, copy._iso_timestr);
 }
 
+Reading& Reading::operator=(const Reading& other) {
+  if(&other != this) {
+    _validity = other._validity;
+    _average_of = other._average_of;
+    _device_id = other._device_id;
+    _cpm = other._cpm;
+    _cpb = other._cpb;
+    _total_count = other._total_count;
+    _geiger_status = other._geiger_status;
+    _latitude = other._latitude;
+    _longitude = other._longitude;
+    _altitude = other._altitude;
+    _gps_status = other._gps_status;
+    _sat_count = other._sat_count;
+    _precision = other._precision;
+    _checksum = other._checksum;
+    strcpy(_reading_str, other._reading_str);
+    strcpy(_iso_timestr, other._iso_timestr);
+  }
+  return *this;
+}
+
 Reading& Reading::operator+=(const Reading& o) {
   if(o._validity == k_reading_unparsed || o._validity == k_reading_invalid_string) {
     return *this;
@@ -178,7 +200,6 @@ void Reading::parse_values() {
   } else {
     _validity = ReadingValidity::k_reading_valid;
   }
-
 
   _latitude = dms_to_dd(lat_dms);
   _longitude = dms_to_dd(long_dms);

@@ -10,7 +10,7 @@ void FixedModeState::do_activity() {
 
 void FixedModeState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_button_pressed:
+    case e_c_button_pressed:
       controller.set_state(new MobileModeState(controller));
       break;
     default:

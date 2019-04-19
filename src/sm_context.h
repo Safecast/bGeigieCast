@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_CONTEXT_H
-#define BGEIGIE_POINTCAST_CONTEXT_H
+#ifndef BGEIGIECAST_CONTEXT_H
+#define BGEIGIECAST_CONTEXT_H
 
 #define MAX_EVENTS 10
 
@@ -14,11 +14,6 @@ class Context {
  public:
   Context();
   virtual ~Context();
-
-  /**
-   * Set initial state for the state machine
-   */
-  virtual void setup_state_machine() = 0;
 
   /**
    * Will exit the current one and enter the new one
@@ -58,4 +53,4 @@ class Context {
   CircularBuffer<Event_enum, MAX_EVENTS, Event_enum::e_undefined> _event_queue;
 };
 
-#endif //BGEIGIE_POINTCAST_CONTEXT_H
+#endif //BGEIGIECAST_CONTEXT_H

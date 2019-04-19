@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_ESP_CONFIG_H
-#define BGEIGIE_POINTCAST_ESP_CONFIG_H
+#ifndef BGEIGIECAST_ESP_CONFIG_H
+#define BGEIGIECAST_ESP_CONFIG_H
 
 #include <Preferences.h>
 #include "i_esp_config.h"
@@ -38,4 +38,4 @@ class EspConfig : public IEspConfig {
 
 
 
-#endif //BGEIGIE_POINTCAST_ESP_CONFIG_H
+#endif //BGEIGIECAST_ESP_CONFIG_H

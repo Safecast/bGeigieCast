@@ -1,11 +1,11 @@
 #ifndef BGEIGIECAST_SM_R_RR_TEST_CONNECTION_H
 #define BGEIGIECAST_SM_R_RR_TEST_CONNECTION_H
 
-#include "sm_r_report_reading.h"
+#include "sm_a_state.h"
 
-class TestConnectionState : public ReportReadingState {
+class TestConnectionState : public ApiReporterState {
  public:
-  explicit TestConnectionState(Reporter& context);
+  explicit TestConnectionState(IApiConnector& context, Reading* reading);
   virtual ~TestConnectionState() = default;
 
   void entry_action() override;

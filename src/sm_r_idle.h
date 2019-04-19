@@ -3,10 +3,10 @@
 
 #include "sm_r_state.h"
 
-class IdleState : public ReporterState {
+class ReporterIdleState : public ReporterState {
  public:
-  explicit IdleState(Reporter& context);
-  virtual ~IdleState() = default;
+  explicit ReporterIdleState(Reporter& context);
+  virtual ~ReporterIdleState() = default;
 
   void entry_action() override;
   void do_activity() override;

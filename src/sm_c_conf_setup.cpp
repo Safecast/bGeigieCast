@@ -11,7 +11,7 @@ void SetupServerState::entry_action() {
 
 void SetupServerState::do_activity() {
   if(controller.get_ap_server().initialize()) {
-    controller.schedule_event(Event_enum::e_server_initialized);
+    controller.schedule_event(Event_enum::e_c_server_initialized);
   }
 }
 
@@ -20,7 +20,7 @@ void SetupServerState::exit_action() {
 
 void SetupServerState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_server_initialized:
+    case e_c_server_initialized:
       controller.set_state(new ServerActiveState(controller));
       break;
     default:

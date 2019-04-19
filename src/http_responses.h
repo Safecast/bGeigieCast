@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_HTTP_RESPONSES_H
-#define BGEIGIE_POINTCAST_HTTP_RESPONSES_H
+#ifndef BGEIGIECAST_HTTP_RESPONSES_H
+#define BGEIGIECAST_HTTP_RESPONSES_H
 
 #include <Stream.h>
 
@@ -12,4 +12,4 @@ void respondBadRequest(Stream& client);
 void respondNotFound(Stream& client);
 
 
-#endif //BGEIGIE_POINTCAST_HTTP_RESPONSES_H
+#endif //BGEIGIECAST_HTTP_RESPONSES_H

@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_CONTROLLER_HPP
-#define BGEIGIE_POINTCAST_CONTROLLER_HPP
+#ifndef BGEIGIECAST_CONTROLLER_HPP
+#define BGEIGIECAST_CONTROLLER_HPP
 
 #include "button.h"
 #include "button_observer.h"
@@ -24,7 +24,7 @@ class Controller : public Context, public ButtonObserver {
   /**
    * Set initial state for the state machine,
    */
-  void setup_state_machine() override;
+  void setup_state_machine();
 
   /**
    * Initialize the controller and all of its components
@@ -77,4 +77,4 @@ class Controller : public Context, public ButtonObserver {
 
 };
 
-#endif //BGEIGIE_POINTCAST_CONTROLLER_HPP
+#endif //BGEIGIECAST_CONTROLLER_HPP

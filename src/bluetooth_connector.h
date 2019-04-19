@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_BLUETOOTH_CONNECTOR_H
-#define BGEIGIE_POINTCAST_BLUETOOTH_CONNECTOR_H
+#ifndef BGEIGIECAST_BLUETOOTH_CONNECTOR_H
+#define BGEIGIECAST_BLUETOOTH_CONNECTOR_H
 
 #include <BLEDevice.h>
 
@@ -25,7 +25,7 @@ class BluetoohConnector : public IBluetoohConnector {
    * Send a new reading over bluetooth
    * @param reading : reading object to send
    */
-  void send_reading(Reading& reading) override;
+  void send_reading(Reading* reading) override;
  private:
   void create_ble_profile_service(BLEServer* pServer);
   void create_ble_device_service(BLEServer* pServer);
@@ -36,4 +36,4 @@ class BluetoohConnector : public IBluetoohConnector {
 
 };
 
-#endif //BGEIGIE_POINTCAST_BLUETOOTH_CONNECTOR_H
+#endif //BGEIGIECAST_BLUETOOTH_CONNECTOR_H

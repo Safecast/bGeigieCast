@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_I_ESP_CONFIG_H
-#define BGEIGIE_POINTCAST_I_ESP_CONFIG_H
+#ifndef BGEIGIECAST_I_ESP_CONFIG_H
+#define BGEIGIECAST_I_ESP_CONFIG_H
 
 #include <cstdint>
 
@@ -72,4 +72,4 @@ class IEspConfig {
   uint8_t _saved_state;
 };
 
-#endif //BGEIGIE_POINTCAST_I_ESP_CONFIG_H
+#endif //BGEIGIECAST_I_ESP_CONFIG_H

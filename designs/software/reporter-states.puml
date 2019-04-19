@@ -9,29 +9,19 @@ state ReportReading {
     InitBluetooth: action: initBluetooth()
     state PublishToBluetooth
     PublishToBluetooth: action: bluetoothConnection.write(reading)
-    state Connecting
-    Connecting: entry: setWifiSettings
-    Connecting: action: connectWifi
-    state ConnectionTest
-    ConnectionTest: action: testApiAvailable
-    state PublishToApi
-    PublishToApi: action: http.send(reading)
-    state ReportComplete
-    ReportComplete: action: callbackController(succes / not)
+    state ReportToApi
+    ReportToApi: entry: apiConnector.set(reading)
+    ReportToApi: action: apiConnector.run()
+    state ReportDone
+    ReportDone: entry: callbackController(status)
 
-    [*] -> InitBluetooth
+    [*] --> InitBluetooth
     InitBluetooth --> PublishToBluetooth : bluetoothInitialized
-    PublishToBluetooth ---> ReportComplete : readingReportedBT
-    PublishToBluetooth -> Connecting: [in(FixedMode)] readingReportedBT
+    PublishToBluetooth --> ReportDone : readingReportedBT /status = success
+    PublishToBluetooth -> ReportToApi: [in(FixedMode)] readingReportedBT
 
-    Connecting --> ConnectionTest : connected
-    Connecting --> ReportComplete : connectionError
-    ConnectionTest -> PublishToApi : APIAvailable
-    ConnectionTest --> ReportComplete : apiUnavailable
-    PublishToApi --> ReportComplete : apiPostFailed
-    PublishToApi -> ReportComplete : readingReportedAPI
-
-    ReportComplete --> [*]
+    ReportToApi --> ReportDone : readingReportedAPI /status = apiResult
+    ReportDone --> [*]
 }
 
 [*] -> Idle

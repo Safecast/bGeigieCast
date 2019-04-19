@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_BUTTONOBSERVER_H
-#define BGEIGIE_POINTCAST_BUTTONOBSERVER_H
+#ifndef BGEIGIECAST_BUTTONOBSERVER_H
+#define BGEIGIECAST_BUTTONOBSERVER_H
 
 class Button;
 
@@ -38,4 +38,4 @@ class ButtonObserver {
   virtual void on_button_pressed(Button* button, uint32_t millis) {/*no implementation*/};
 };
 
-#endif //BGEIGIE_POINTCAST_BUTTONOBSERVER_H
+#endif //BGEIGIECAST_BUTTONOBSERVER_H

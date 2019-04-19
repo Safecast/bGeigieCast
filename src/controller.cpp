@@ -24,15 +24,15 @@ void Controller::initialize() {
   _config.set_all();
   _reporter.setup_state_machine();
 
-  schedule_event(Event_enum::e_controller_initialized);
+  schedule_event(Event_enum::e_c_controller_initialized);
 }
 
 void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
   if(button->get_pin() == MODE_BUTTON_PIN) {
     if(millis_pressed > 4000) {
-      schedule_event(Event_enum::e_button_long_pressed);
+      schedule_event(Event_enum::e_c_button_long_pressed);
     } else {
-      schedule_event(Event_enum::e_button_pressed);
+      schedule_event(Event_enum::e_c_button_pressed);
     }
   }
 }

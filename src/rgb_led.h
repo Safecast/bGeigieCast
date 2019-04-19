@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_ESP_LED_H
-#define BGEIGIE_POINTCAST_ESP_LED_H
+#ifndef BGEIGIECAST_ESP_LED_H
+#define BGEIGIECAST_ESP_LED_H
 
 #include <Arduino.h>
 
@@ -39,4 +39,4 @@ class RGBLed {
   uint8_t _intensity;
 };
 
-#endif //BGEIGIE_POINTCAST_ESP_LED_H
+#endif //BGEIGIECAST_ESP_LED_H

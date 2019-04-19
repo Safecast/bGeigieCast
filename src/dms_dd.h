@@ -1,7 +1,7 @@
-#ifndef BGEIGIE_POINTCAST_DMS_DD_H
-#define BGEIGIE_POINTCAST_DMS_DD_H
+#ifndef BGEIGIECAST_DMS_DD_H
+#define BGEIGIECAST_DMS_DD_H
 
 
 float dms_to_dd(float dms);
 
-#endif //BGEIGIE_POINTCAST_DMS_DD_H
+#endif //BGEIGIECAST_DMS_DD_H

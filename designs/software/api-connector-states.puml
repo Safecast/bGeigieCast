@@ -1,0 +1,44 @@
+@startuml
+
+
+state Process
+Process: entry: t = time since last send
+Process: action: merge(reading)
+state Connecting
+Connecting: entry: setWifiConfig
+Connecting: action: connectWifi
+state ConnectionTest
+ConnectionTest: action: testApiAvailable
+state PublishToApi
+PublishToApi: action: http.send(reading)
+state ReportFailed
+ReportFailed: action: save(reading)
+state PublishSavedToApi
+PublishSavedToApi: action: http.send(reading)
+state ReportSavedFailed
+ReportSavedFailed: action: save(reading)
+state ReportDone
+ReportDone: entry: callbackReporter(status)
+
+[*] -> Process
+Process --> ReportDone: notReporting /status = skipped
+Process -> Connecting : [t > 5m]
+Process -> Connecting : [t > 1m && emergency]
+Connecting --> ConnectionTest : connected
+Connecting --> ReportFailed : connectionError
+ConnectionTest --> PublishToApi : APIAvailable
+ConnectionTest -l-> ReportFailed : apiUnavailable
+PublishToApi -u-> ReportFailed : apiPostFailed
+PublishToApi -> PublishSavedToApi : [savedReadings > 0]\nreadingReportedApi\n/reading=getNextSaved()
+PublishSavedToApi --> PublishSavedToApi : [savedReadings > 0]\nreadingReportedApi\n/reading=getNextSaved()
+PublishSavedToApi --> ReportSavedFailed : apiPostFailed
+
+PublishToApi --> ReportDone: readingReportedApi\n/status = success
+PublishSavedToApi --> ReportDone: readingReportedApi\n/status = success\n/delete reading
+ReportFailed --> ReportDone: readingSaved\n/status = failed
+ReportSavedFailed -l-> ReportDone: readingSaved\n/status = failed\n/delete reading
+
+ReportDone --> [*]
+
+
+@enduml

@@ -10,7 +10,7 @@ void ActiveState::do_activity() {
 
 void ActiveState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_button_long_pressed:
+    case e_c_button_long_pressed:
       controller.set_state(new ResetState(controller));
       break;
     default:

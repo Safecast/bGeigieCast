@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_STATE_LED_H
-#define BGEIGIE_POINTCAST_STATE_LED_H
+#ifndef BGEIGIECAST_STATE_LED_H
+#define BGEIGIECAST_STATE_LED_H
 
 #include "rgb_led.h"
 #include "i_esp_config.h"
@@ -41,4 +41,4 @@ class StateLED : private RGBLed{
   const ColorType _colorTypes[StateColor::COUNT];
 };
 
-#endif //BGEIGIE_POINTCAST_STATE_LED_H
+#endif //BGEIGIECAST_STATE_LED_H

@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_I_BLUETOOTH_CONNECTOR_H
-#define BGEIGIE_POINTCAST_I_BLUETOOTH_CONNECTOR_H
+#ifndef BGEIGIECAST_I_BLUETOOTH_CONNECTOR_H
+#define BGEIGIECAST_I_BLUETOOTH_CONNECTOR_H
 
 #include "stdint.h"
 #include "reading.h"
@@ -23,9 +23,9 @@ class IBluetoohConnector {
    * Send a new reading over bluetooth
    * @param reading : reading object to send
    */
-  virtual void send_reading(Reading& reading) = 0;
+  virtual void send_reading(Reading* reading) = 0;
  protected:
   bool initialized;
 };
 
-#endif //BGEIGIE_POINTCAST_I_BLUETOOTH_CONNECTOR_H
+#endif //BGEIGIECAST_I_BLUETOOTH_CONNECTOR_H

@@ -12,15 +12,23 @@ IApiConnector::IApiConnector(IEspConfig& config) :
     merged_reading() {
 }
 
-void IApiConnector::process_reading(Reading& reading) {
-  merged_reading += reading;
+uint32_t IApiConnector::time_since_last_send() const {
+  return millis() - last_send;
+}
+
+bool IApiConnector::time_to_send() const {
+  return time_since_last_send() > API_SEND_FREQUENCY;
+}
+
+void IApiConnector::process_reading(Reading* reading) {
+  merged_reading += *reading;
   if(time_to_send()) {
     last_send = millis();
     if(is_connected()) {
       while(!missed_readings.empty()) {
         DEBUG_PRINTLN("Sending previously failed reading to API");
         Reading* past_reading = missed_readings.get();
-        send_reading(*past_reading);
+        send_reading(past_reading);
         delete past_reading;
       }
       DEBUG_PRINTLN("Sending latest reading to API");
@@ -35,15 +43,11 @@ void IApiConnector::process_reading(Reading& reading) {
   }
 }
 
-bool IApiConnector::time_to_send() {
-  return (millis() - last_send >= API_SEND_FREQUENCY);
-}
-
-void IApiConnector::save_reading(Reading& reading) {
+void IApiConnector::save_reading(Reading* reading) {
   DEBUG_PRINTLN("Could not upload reading, trying again later");
   if(missed_readings.get_count() == MAX_MISSED_READINGS) {
     // Delete oldest reading, else mem leak
     delete missed_readings.get();
   }
-  missed_readings.add(new Reading(reading));
+  missed_readings.add(new Reading(*reading));
 }

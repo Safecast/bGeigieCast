@@ -20,7 +20,7 @@ void InitializeState::exit_action() {
 
 void InitializeState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_controller_initialized: {
+    case e_c_controller_initialized: {
       controller.set_state(new PostInitializeState(controller));
       break;
     }

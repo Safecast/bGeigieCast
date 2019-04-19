@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_SERVER_H
-#define BGEIGIE_POINTCAST_SERVER_H
+#ifndef BGEIGIECAST_SERVER_H
+#define BGEIGIECAST_SERVER_H
 
 #include <WiFi.h>
 
@@ -48,4 +48,4 @@ class ConfigWebServer {
 
 };
 
-#endif //BGEIGIE_POINTCAST_SERVER_H
+#endif //BGEIGIECAST_SERVER_H

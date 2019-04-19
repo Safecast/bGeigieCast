@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_ABSTRACT_STATE_HPP
-#define BGEIGIE_POINTCAST_ABSTRACT_STATE_HPP
+#ifndef BGEIGIECAST_ABSTRACT_STATE_HPP
+#define BGEIGIECAST_ABSTRACT_STATE_HPP
 
 #include "sm_events.h"
 #include "debugger.h"
@@ -45,4 +45,4 @@ class State {
 };
 
 
-#endif //BGEIGIE_POINTCAST_STATE_HPP
+#endif //BGEIGIECAST_STATE_HPP

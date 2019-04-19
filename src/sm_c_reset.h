@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_RESETSTATE_HPP
-#define BGEIGIE_POINTCAST_RESETSTATE_HPP
+#ifndef BGEIGIECAST_RESETSTATE_HPP
+#define BGEIGIECAST_RESETSTATE_HPP
 
 #include "sm_c_state.h"
 
@@ -16,4 +16,4 @@ class ResetState : public ControllerState {
 
 };
 
-#endif //BGEIGIE_POINTCAST_RESETSTATE_HPP
+#endif //BGEIGIECAST_RESETSTATE_HPP

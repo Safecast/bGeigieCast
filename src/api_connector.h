@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_APICONNECTOR_H
-#define BGEIGIE_POINTCAST_APICONNECTOR_H
+#ifndef BGEIGIECAST_APICONNECTOR_H
+#define BGEIGIECAST_APICONNECTOR_H
 
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -11,6 +11,7 @@
  */
 class ApiConnector : public IApiConnector {
  public:
+
   explicit ApiConnector(IEspConfig& config);
   virtual ~ApiConnector() = default;
 
@@ -45,7 +46,7 @@ class ApiConnector : public IApiConnector {
    * @param reading: reading to send
    * @return: true if the API call was successful
    */
-  bool send_reading(Reading& reading) override;
+  bool send_reading(Reading* reading) override;
 };
 
-#endif //BGEIGIE_POINTCAST_APICONNECTOR_H
+#endif //BGEIGIECAST_APICONNECTOR_H

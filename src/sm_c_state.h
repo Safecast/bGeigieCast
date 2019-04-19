@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_STATE_HPP
-#define BGEIGIE_POINTCAST_STATE_HPP
+#ifndef BGEIGIECAST_STATE_HPP
+#define BGEIGIECAST_STATE_HPP
 
 #include "debugger.h"
 #include "controller.h"
@@ -16,4 +16,4 @@ class ControllerState: public State {
   Controller& controller;
 };
 
-#endif //BGEIGIE_POINTCAST_STATE_HPP
+#endif //BGEIGIECAST_STATE_HPP

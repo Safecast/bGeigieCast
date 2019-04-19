@@ -1,11 +1,11 @@
 #ifndef BGEIGIECAST_SM_R_RR_CONNECTING_WIFI_H
 #define BGEIGIECAST_SM_R_RR_CONNECTING_WIFI_H
 
-#include "sm_r_report_reading.h"
+#include "sm_a_state.h"
 
-class ConnectWiFiState : public ReportReadingState {
+class ConnectWiFiState : public ApiReporterState {
  public:
-  explicit ConnectWiFiState(Reporter& context);
+  explicit ConnectWiFiState(IApiConnector& context, Reading* reading);
   virtual ~ConnectWiFiState() = default;
 
   void entry_action() override;

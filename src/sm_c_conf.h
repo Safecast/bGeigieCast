@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_CONFSTATE_HPP
-#define BGEIGIE_POINTCAST_CONFSTATE_HPP
+#ifndef BGEIGIECAST_CONFSTATE_HPP
+#define BGEIGIECAST_CONFSTATE_HPP
 
 #include "sm_c_state.h"
 
@@ -13,4 +13,4 @@ class ConfigModeState: public ControllerState {
 
 };
 
-#endif //BGEIGIE_POINTCAST_CONFSTATE_HPP
+#endif //BGEIGIECAST_CONFSTATE_HPP

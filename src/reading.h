@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_READING_H
-#define BGEIGIE_POINTCAST_READING_H
+#ifndef BGEIGIECAST_READING_H
+#define BGEIGIECAST_READING_H
 
 #include <stdint.h>
 
@@ -30,7 +30,7 @@ class Reading {
   explicit Reading(const char* reading_str);
   virtual ~Reading() = default;
   Reading(const Reading& copy);
-  Reading operator=(const Reading& copy) = delete;
+  Reading& operator=(const Reading& other);
 
   /**
    * Merge another reading with this one, takes the averages of all
@@ -100,4 +100,4 @@ class Reading {
 
 };
 
-#endif //BGEIGIE_POINTCAST_READING_H
+#endif //BGEIGIECAST_READING_H

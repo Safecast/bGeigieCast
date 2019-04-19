@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_HTTP_REQUEST_H
-#define BGEIGIE_POINTCAST_HTTP_REQUEST_H
+#ifndef BGEIGIECAST_HTTP_REQUEST_H
+#define BGEIGIECAST_HTTP_REQUEST_H
 
 #include <stdint.h>
 #include <stddef.h>
@@ -41,4 +41,4 @@ class HttpRequest {
   uint8_t _header_count;
 };
 
-#endif //BGEIGIE_POINTCAST_HTTP_REQUEST_H
+#endif //BGEIGIECAST_HTTP_REQUEST_H

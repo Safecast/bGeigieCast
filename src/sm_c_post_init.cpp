@@ -17,7 +17,7 @@ void PostInitializeState::entry_action() {
 
 void PostInitializeState::do_activity() {
   if(millis() - timer > POST_INIT_DURATION_MILLIS) {
-    controller.schedule_event(e_post_init_time_passed);
+    controller.schedule_event(e_c_post_init_time_passed);
   }
 }
 
@@ -26,10 +26,10 @@ void PostInitializeState::exit_action() {
 
 void PostInitializeState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_button_pressed:
+    case e_c_button_pressed:
       controller.set_state(new SetupServerState(controller));
       break;
-    case e_post_init_time_passed:
+    case e_c_post_init_time_passed:
       controller.set_state(new InitActiveState(controller));
       break;
     default:

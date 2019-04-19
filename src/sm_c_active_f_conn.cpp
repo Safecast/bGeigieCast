@@ -18,7 +18,7 @@ void ConnectedState::exit_action() {
 
 void ConnectedState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_api_report_failed:
+    case e_c_api_report_failed:
       controller.set_state(new DisconnectedState(controller));
       break;
     default:

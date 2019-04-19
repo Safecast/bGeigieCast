@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_CONNECTEDSTATE_H
-#define BGEIGIE_POINTCAST_CONNECTEDSTATE_H
+#ifndef BGEIGIECAST_CONNECTEDSTATE_H
+#define BGEIGIECAST_CONNECTEDSTATE_H
 
 #include "sm_c_active_fixed.h"
 
@@ -15,4 +15,4 @@ class ConnectedState: public FixedModeState {
 
 };
 
-#endif //BGEIGIE_POINTCAST_CONNECTEDSTATE_H
+#endif //BGEIGIECAST_CONNECTEDSTATE_H

@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_REPORTER_H
-#define BGEIGIE_POINTCAST_REPORTER_H
+#ifndef BGEIGIECAST_REPORTER_H
+#define BGEIGIECAST_REPORTER_H
 
 #include <Stream.h>
 
@@ -13,13 +13,23 @@
  */
 class Reporter : public Context {
  public:
+
+  typedef enum {
+    k_reporter_failed,
+    k_reporter_success,
+  } ReporterStatus;
+
   Reporter(IEspConfig& config, Stream& bgeigie_connection, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector);
   virtual ~Reporter() = default;
 
   /**
    * Set initial state for the state machine,
    */
-  void setup_state_machine() override;
+  void setup_state_machine();
+
+  void set_report_output(bool bt, bool api);
+  bool is_report_bt() const;
+  bool is_report_api() const;
 
  private:
   BGeigieConnector _geigie_connector;
@@ -29,6 +39,8 @@ class Reporter : public Context {
 
   Reading _last_reading;
 
+  bool _report_bt;
+  bool _report_api;
 };
 
-#endif //BGEIGIE_POINTCAST_REPORTER_H
+#endif //BGEIGIECAST_REPORTER_H

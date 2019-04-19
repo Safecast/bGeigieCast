@@ -1,5 +1,5 @@
-#ifndef BGEIGIE_POINTCAST_CONNECTINGSTATE_H
-#define BGEIGIE_POINTCAST_CONNECTINGSTATE_H
+#ifndef BGEIGIECAST_CONNECTINGSTATE_H
+#define BGEIGIECAST_CONNECTINGSTATE_H
 
 #include "sm_c_active_fixed.h"
 
@@ -18,4 +18,4 @@ class DisconnectedState: public FixedModeState {
   uint32_t state_entry_moment;
 };
 
-#endif //BGEIGIE_POINTCAST_CONNECTINGSTATE_H
+#endif //BGEIGIECAST_CONNECTINGSTATE_H

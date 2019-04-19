@@ -33,6 +33,7 @@ bool ApiConnector::start_connect(bool initial) {
 
 void ApiConnector::stop() {
   WiFi.disconnect(true, true);
+  WiFi.mode(WIFI_MODE_NULL);
 }
 
 bool ApiConnector::test() {
@@ -46,10 +47,10 @@ bool ApiConnector::is_connected() {
   return WiFi.status() == WL_CONNECTED;
 }
 
-bool ApiConnector::send_reading(Reading& reading) {
+bool ApiConnector::send_reading(Reading* reading) {
   //TODO: Send reading
   char json_str[200];
-  if(!reading.as_json(json_str)) {
+  if(!reading->as_json(json_str)) {
     // This whole reading is invalid
     DEBUG_PRINTLN("Unable to send reading, its not valid at all!");
     return false;

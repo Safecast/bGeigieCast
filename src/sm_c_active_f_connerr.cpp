@@ -21,7 +21,7 @@ void ConnectionErrorState::exit_action() {
 
 void ConnectionErrorState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_api_report_success:
+    case e_c_api_report_success:
       controller.set_state(new ConnectedState(controller));
       break;
     default:
