@@ -58,8 +58,7 @@ void controller_sleep(uint32_t millis_to_sleep) {
       break;
     case ESP_SLEEP_WAKEUP_GPIO:
       gpio_wakeup_disable((gpio_num_t) MODE_BUTTON_PIN);
-      gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN,
-                         digitalRead(MODE_BUTTON_PIN) ? GPIO_INTR_LOW_LEVEL : GPIO_INTR_HIGH_LEVEL);
+      gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN, digitalRead(MODE_BUTTON_PIN) ? GPIO_INTR_LOW_LEVEL : GPIO_INTR_HIGH_LEVEL);
       break;
     default:
       break;
@@ -91,18 +90,16 @@ void setup() {
 
   gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN, GPIO_INTR_LOW_LEVEL);
 
-  /// Software configurations
-  // Setup controller
-  controller.setup_state_machine();
-
   // Set sleep options
   esp_sleep_enable_gpio_wakeup();
 
+  /// Software configurations
+  // Setup controller
+  controller.setup_state_machine();
 }
 
 void loop() {
   controller.run();
-//  controller_sleep(&controller);
 }
 
 #endif

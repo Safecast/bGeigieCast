@@ -37,6 +37,11 @@ class Controller : public Context, public ButtonObserver {
   void run_reporter();
 
   /**
+   *
+   */
+  void set_reporter_outputs();
+
+  /**
    * Go to sleep.
    * Wake up sources should be defined before sleeping
    */

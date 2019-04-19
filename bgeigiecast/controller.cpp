@@ -2,6 +2,7 @@
 #include "controller.h"
 #include "reading.h"
 
+#define BUTTON_LONG_PRESSED_MILLIS_TRESHOLD 4000
 
 Controller::Controller(IEspConfig& config, Stream& bGegie_connection_stream, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector, sleep_fn_t sleep_fn) :
     Context(),
@@ -29,7 +30,7 @@ void Controller::initialize() {
 
 void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
   if(button->get_pin() == MODE_BUTTON_PIN) {
-    if(millis_pressed > 4000) {
+    if(millis_pressed > BUTTON_LONG_PRESSED_MILLIS_TRESHOLD) {
       schedule_event(Event_enum::e_c_button_long_pressed);
     } else {
       schedule_event(Event_enum::e_c_button_pressed);
@@ -38,13 +39,13 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
 }
 
 void Controller::run_reporter() {
-//  _reporter.run();
-//  _reporter.process_possible_bgeigie_readings(report_bluetooth, report_api);
+  _reporter.run();
 }
 
 void Controller::sleep() {
-  if(_sleep_fn) {
-    _sleep_fn(0);
+  uint32_t till_next = _reporter.time_till_next_reading(millis());
+  if(_sleep_fn && till_next > 0) {
+    _sleep_fn(till_next);
   }
 }
 

@@ -27,17 +27,27 @@ class Reporter : public Context {
    */
   void setup_state_machine();
 
+  /**
+   * Set to which outputs the reporter should report to
+   * @param bt : report over bluetooth (boolean)
+   * @param api : report to api (boolean)
+   */
   void set_report_output(bool bt, bool api);
   bool is_report_bt() const;
   bool is_report_api() const;
 
+  uint32_t time_till_next_reading(uint32_t from) const;
+
+  void get_new_reading();
+
  private:
-  BGeigieConnector _geigie_connector;
+  BGeigieConnector _bgeigie_connector;
   IEspConfig& _config;
   IApiConnector& _api_connector;
   IBluetoohConnector& _bluetooth;
 
-  Reading _last_reading;
+  Reading* _last_reading;
+  uint32_t _last_reading_moment;
 
   bool _report_bt;
   bool _report_api;

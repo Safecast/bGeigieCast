@@ -3,17 +3,17 @@
 #include "sm_r_rr_report_api.h"
 
 PublishBluetoothState::PublishBluetoothState(Reporter& context) : ReportReadingState(context) {
-
 }
+
 void PublishBluetoothState::entry_action() {
-
 }
+
 void PublishBluetoothState::do_activity() {
-
 }
+
 void PublishBluetoothState::exit_action() {
-
 }
+
 void PublishBluetoothState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_r_reading_reported_bt:

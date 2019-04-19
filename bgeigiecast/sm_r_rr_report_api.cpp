@@ -2,17 +2,17 @@
 #include "sm_r_rr_done.h"
 
 ReportApiState::ReportApiState(Reporter& context) : ReportReadingState(context) {
-
 }
+
 void ReportApiState::entry_action() {
-
 }
+
 void ReportApiState::do_activity() {
-
 }
+
 void ReportApiState::exit_action() {
-
 }
+
 void ReportApiState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_r_reading_reported_api_success:
