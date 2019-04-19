@@ -16,7 +16,7 @@
  */
 class Controller : public Context, public ButtonObserver {
  public:
-  typedef void (*sleep_fn_t)(Controller*);
+  typedef void (*sleep_fn_t)(uint32_t);
 
   Controller(IEspConfig& config, Stream& bGegie_connection, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector, sleep_fn_t sleep_fn = nullptr);
   virtual ~Controller() = default;

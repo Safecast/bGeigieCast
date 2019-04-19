@@ -51,17 +51,21 @@ class IApiConnector : public Context {
    * Process a new reading. will merge with existing readings and if its time, it will be posted to the API
    * @param reading: new reading to process
    */
-  virtual void process_reading(Reading* reading) final;
-
-  uint32_t time_since_last_send() const;
-
- protected:
+  virtual void start_report_reading(Reading* reading) final;
 
   /**
    * Check if enough time has passed to send the latest reading to api
    * @return
    */
   bool time_to_send() const;
+
+ protected:
+
+  /**
+   * Process a new reading. will merge with existing readings and if its time, it will be posted to the API
+   * @param reading: new reading to process
+   */
+  virtual void process_reading(Reading* reading) final;
 
   /**
    * Send a reading to the API
@@ -76,13 +80,17 @@ class IApiConnector : public Context {
    */
   virtual void save_reading(Reading* reading) final;
 
-  IEspConfig& config;
-  CircularBuffer<Reading*, MAX_MISSED_READINGS> missed_readings;
-  uint32_t last_send;
-  Reading merged_reading;
+  IEspConfig& _config;
+  CircularBuffer<Reading*, MAX_MISSED_READINGS> _saved_readings;
+  uint32_t _last_send;
+  Reading _merged_reading;
 
+  bool _emergency;
 
+  // To access the saved readings
   friend class PublishApiState;
+  friend class ApiReportFailedState;
+  friend class ApiProcessReadingState;
 
 };
 

@@ -4,7 +4,7 @@
 #define MAX_EVENTS 10
 
 #include "sm_state.h"
-#include <circular_buffer.h>
+#include "circular_buffer.h"
 
 
 /**

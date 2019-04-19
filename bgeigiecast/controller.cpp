@@ -44,7 +44,7 @@ void Controller::run_reporter() {
 
 void Controller::sleep() {
   if(_sleep_fn) {
-    _sleep_fn(this);
+    _sleep_fn(0);
   }
 }
 

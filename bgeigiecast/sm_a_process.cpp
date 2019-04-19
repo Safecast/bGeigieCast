@@ -10,7 +10,7 @@ void ApiProcessReadingState::entry_action() {
 }
 
 void ApiProcessReadingState::do_activity() {
-
+  api_connector.process_reading(reading);
 }
 
 void ApiProcessReadingState::exit_action() {

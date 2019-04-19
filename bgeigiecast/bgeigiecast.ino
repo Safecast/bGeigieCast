@@ -1,7 +1,7 @@
-/* bGeigieNano Xbee-ESP32 is a addon for bGeigieNano to be used as a fixed sensor device. Hardware is a Xbee socket
+/* bGeigieCast is an addon for bGeigieNano to be used as a fixed sensor device. Hardware is a Xbee socket
  * with ESP32 and some extra components on it.
  *
- * wiki: https://github.com/Safecast/bGeigieNanokit-Xbee/wiki
+ * wiki: https://github.com/Safecast/bGeigieCast/wiki
  *
  *  Copyright (c) 2019, Safecast
 
@@ -37,7 +37,7 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
  */
 
 
-#include <driver/uart.h>
+#include <Arduino.h>
 #include "bluetooth_connector.h"
 #include "api_connector.h"
 #include "debugger.h"
@@ -47,29 +47,24 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
 HardwareSerial& bGeigieSerialConnection = Serial2;
 
+void controller_sleep(uint32_t millis_to_sleep) {
+  esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_TIMER);
+  esp_sleep_enable_timer_wakeup(millis_to_sleep * 1000);
 
-void controller_sleep(Controller* instance) {
-//  if(instance->get_next_expected_reading() < millis()) {
-//    debug_flush();
-//
-//    esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_TIMER);
-//    esp_sleep_enable_timer_wakeup(millis() - instance->get_next_expected_reading());
-//
-//    esp_light_sleep_start();
-//
-//    switch (esp_sleep_get_wakeup_cause()) {
-//      case ESP_SLEEP_WAKEUP_TIMER:
-//        break;
-//      case ESP_SLEEP_WAKEUP_GPIO:
-//        gpio_wakeup_disable((gpio_num_t) MODE_BUTTON_PIN);
-//        gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN, digitalRead(MODE_BUTTON_PIN) ? GPIO_INTR_LOW_LEVEL : GPIO_INTR_HIGH_LEVEL);
-//        break;
-//      default:
-//        break;
-//    }
-//  }
+  esp_light_sleep_start();
+
+  switch(esp_sleep_get_wakeup_cause()) {
+    case ESP_SLEEP_WAKEUP_TIMER:
+      break;
+    case ESP_SLEEP_WAKEUP_GPIO:
+      gpio_wakeup_disable((gpio_num_t) MODE_BUTTON_PIN);
+      gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN,
+                         digitalRead(MODE_BUTTON_PIN) ? GPIO_INTR_LOW_LEVEL : GPIO_INTR_HIGH_LEVEL);
+      break;
+    default:
+      break;
+  }
 }
-
 
 EspConfig config;
 ApiConnector api_conn(config);

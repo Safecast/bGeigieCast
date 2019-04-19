@@ -20,6 +20,7 @@
 #define HEADER_API_USER_AGENT "ESP32"
 #define API_MEASUREMENTS_ENDPOINT "http://" API_HOST "/measurements.json"
 #define API_SEND_FREQUENCY_MINUTES 5
+#define API_SEND_FREQUENCY_MINUTES_EMERGENCY 1
 // max 3 with sending every 5 minutes would mean saving the last 15 minutes if connection failed
 #define MAX_MISSED_READINGS 3
 
