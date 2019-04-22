@@ -10,6 +10,7 @@
 
 #if ENABLE_DEBUG
 #include <Arduino.h>
+#include <StreamString.h>
 
 #ifndef DEBUG_STREAM
 #define DEBUG_STREAM Serial

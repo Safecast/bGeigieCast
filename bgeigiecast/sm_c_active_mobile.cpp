@@ -8,6 +8,7 @@ void MobileModeState::entry_action() {
   DEBUG_PRINTLN("Entered state MobileMode");
   controller.save_state(k_savable_MobileMode);
   controller.get_state_led().set_color(StateLED::StateColor::mobile);
+  controller.set_reporter_outputs(true, false);
 }
 
 void MobileModeState::do_activity() {

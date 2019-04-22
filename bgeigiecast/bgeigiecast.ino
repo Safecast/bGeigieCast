@@ -68,7 +68,12 @@ void controller_sleep(uint32_t millis_to_sleep) {
 EspConfig config;
 ApiConnector api_conn(config);
 BluetoohConnector bt_conn;
+
+#if USE_SLEEP
 Controller controller(config, bGeigieSerialConnection, api_conn, bt_conn, &controller_sleep);
+#else
+Controller controller(config, bGeigieSerialConnection, api_conn, bt_conn);
+#endif
 
 void setup() {
   DEBUG_BEGIN(SERIAL_BAUD);

@@ -6,6 +6,7 @@
 #define ENABLE_DEBUG 1
 #define SERIAL_BAUD 115200
 #define BGEIGIE_CONNECTION_BAUD 9600
+#define USE_SLEEP false
 
 /** Hardware pins settings **/
 #define RGB_LED_PIN_R A18

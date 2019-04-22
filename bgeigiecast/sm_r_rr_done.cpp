@@ -6,7 +6,7 @@ ReporterDoneState::ReporterDoneState(Reporter& context, Reporter::ReporterStatus
 }
 
 void ReporterDoneState::entry_action() {
-
+  reporter._observer->reading_reported(status);
 }
 
 void ReporterDoneState::do_activity() {

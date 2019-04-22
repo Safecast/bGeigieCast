@@ -6,6 +6,7 @@ ActiveState::ActiveState(Controller& context): ControllerState(context) {
 
 void ActiveState::do_activity() {
   controller.run_reporter();
+  controller.sleep();
 }
 
 void ActiveState::handle_event(Event_enum event_id) {
