@@ -10,6 +10,7 @@ void PublishApiState::entry_action() {
 }
 
 void PublishApiState::do_activity() {
+  api_connector.send_reading(reading);
 }
 
 void PublishApiState::exit_action() {

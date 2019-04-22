@@ -6,7 +6,7 @@ ConnectedState::ConnectedState(Controller& context): FixedModeState(context) {
 
 void ConnectedState::entry_action() {
   DEBUG_PRINTLN("Entered state Connected");
-  controller.get_state_led().set_color(StateLED::StateColor::fixed_active);
+  controller._state_led.set_color(StateLED::StateColor::fixed_active);
 }
 
 void ConnectedState::do_activity() {

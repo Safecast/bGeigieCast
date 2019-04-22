@@ -12,11 +12,12 @@ Controller::Controller(IEspConfig& config,
     Context(),
     ButtonObserver(),
     _config(config),
-    _reporter(config, bgeigie_connection, api_connector, bluetooth_connector, this),
+    _reporter(config, bgeigie_connection, api_connector, bluetooth_connector),
     _ap_server(config),
     _mode_button(MODE_BUTTON_PIN),
     _state_led(config),
     _sleep_fn(sleep_fn) {
+  _reporter.set_observer(this);
 }
 
 void Controller::setup_state_machine() {

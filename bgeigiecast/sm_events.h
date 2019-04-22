@@ -18,9 +18,11 @@ typedef enum {
   // Reporter events
   e_r_reading_expected,
   e_r_reading_received,
+  e_r_reading_invalid,
   e_r_reading_reported,
 
   e_r_bluetooth_initialized,
+  e_r_api_connector_initialized,
   e_r_reading_reported_bt,
   e_r_reading_reported_api_success,
   e_r_reading_reported_api_failed,

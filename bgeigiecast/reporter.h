@@ -13,15 +13,26 @@ class ReporterObserver;
 /**
  * The reporter will receive instructions to get and report readings from the bgeigie to the api / bluetooth
  */
-class Reporter : public Context {
+class Reporter : public Context, private ApiConnectionObserver {
  public:
 
+  /**
+   *
+   */
   typedef enum {
     k_reporter_failed,
     k_reporter_success,
   } ReporterStatus;
 
-  Reporter(IEspConfig& config, Stream& bgeigie_connection, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector, ReporterObserver* observer);
+  /**
+   * Create a new reporter
+   * @param config : config connection to be used for the reporter and outgoing connections
+   * @param bgeigie_connection : Stream connected to the bGeigieNano (Serial)
+   * @param api_connector : Wifi connector to the API
+   * @param bluetooth_connector : Bluetooth connector
+   * @param observer : Some instance to report to, default null
+   */
+  Reporter(IEspConfig& config, Stream& bgeigie_connection, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector, ReporterObserver* observer = nullptr);
   virtual ~Reporter() = default;
 
   /**
@@ -42,9 +53,39 @@ class Reporter : public Context {
 
   bool is_idle() const;
 
-  void get_new_reading();
+  void set_observer(ReporterObserver* _observer);
 
  private:
+  void api_reported(IApiConnector::ReportApiStatus status) override;
+
+  /**
+   * Get new reading from the bgeigie connector
+   */
+  void get_new_reading();
+
+  /**
+   * Initialize the bluetooth connection
+   */
+  void init_bluetooth_connector();
+
+  /**
+   * publish the reading over bluetooth
+   */
+  void run_bluetooth_connector();
+
+  /**
+   * Initialize the API connector state machine
+   */
+  void init_api_connector();
+
+  /**
+   * Run the api connector state machine
+   */
+  void run_api_connector();
+
+  void report_complete(ReporterStatus status);
+
+
   BGeigieConnector _bgeigie_connector;
   IEspConfig& _config;
   IApiConnector& _api_connector;
@@ -59,6 +100,12 @@ class Reporter : public Context {
   bool _report_api;
 
   // Friend list
+  friend class GetReadingState;
+  friend class ReporterDoneState;
+  friend class InitBluetoothState;
+  friend class PublishBluetoothState;
+  friend class InitApiState;
+  friend class ReportApiState;
   friend class ReporterDoneState;
 };
 
@@ -66,6 +113,7 @@ class Reporter : public Context {
  * Observing the reporter, gets callback one report is done
  */
 class ReporterObserver {
+ public:
   virtual void reading_reported(Reporter::ReporterStatus status) = 0;
 };
 

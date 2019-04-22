@@ -10,11 +10,11 @@ void ServerActiveState::entry_action() {
 }
 
 void ServerActiveState::do_activity() {
-  controller.get_ap_server().handle_requests();
+  controller._ap_server.handle_requests();
 }
 
 void ServerActiveState::exit_action() {
-  controller.get_ap_server().stop();
+  controller._ap_server.stop();
 }
 
 void ServerActiveState::handle_event(Event_enum event_id) {

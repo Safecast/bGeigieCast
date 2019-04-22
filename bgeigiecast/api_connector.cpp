@@ -4,7 +4,7 @@
 
 #define API_SEND_FREQUENCY (API_SEND_FREQUENCY_MINUTES * 60 * 1000)
 
-ApiConnector::ApiConnector(IEspConfig& config) : IApiConnector(config) {
+ApiConnector::ApiConnector(IEspConfig& config, ApiConnectionObserver* observer) : IApiConnector(config, observer) {
 }
 
 bool ApiConnector::start_connect(bool initial) {
@@ -48,13 +48,19 @@ bool ApiConnector::is_connected() {
 }
 
 bool ApiConnector::send_reading(Reading* reading) {
-  //TODO: Send reading
   char json_str[200];
   if(!reading->as_json(json_str)) {
     // This whole reading is invalid
     DEBUG_PRINTLN("Unable to send reading, its not valid at all!");
     return false;
   }
+
+  if(is_connected()) {
+    DEBUG_PRINTLN("Unable to send, lost connection");
+    save_reading(reading);
+    return false;
+  }
+
   HTTPClient http;
 
   char url[100];

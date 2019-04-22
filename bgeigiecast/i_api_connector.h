@@ -8,6 +8,8 @@
 #include "reading.h"
 #include "sm_context.h"
 
+class ApiConnectionObserver;
+
 /**
  * Abstract class to be used in controller as a Api connector
  */
@@ -20,7 +22,7 @@ class IApiConnector : public Context {
     k_report_success,
   } ReportApiStatus;
 
-  explicit IApiConnector(IEspConfig& config);
+  explicit IApiConnector(IEspConfig& config, ApiConnectionObserver* observer);
   virtual ~IApiConnector() = default;
 
   /**
@@ -48,10 +50,10 @@ class IApiConnector : public Context {
   virtual bool is_connected() = 0;
 
   /**
-   * Process a new reading. will merge with existing readings and if its time, it will be posted to the API
+   * Initialize the process of a new reading.
    * @param reading: new reading to process
    */
-  virtual void start_report_reading(Reading* reading) final;
+  virtual void init_reading_report(Reading* reading) final;
 
   /**
    * Check if enough time has passed to send the latest reading to api
@@ -59,6 +61,12 @@ class IApiConnector : public Context {
    */
   bool time_to_send() const;
 
+  /**
+   * reset the api time and merged readings
+   */
+  void reset();
+
+  void set_observer(ApiConnectionObserver* _observer);
  protected:
 
   /**
@@ -85,13 +93,22 @@ class IApiConnector : public Context {
   uint32_t _last_send;
   Reading _merged_reading;
 
+  ApiConnectionObserver* _observer;
+
   bool _emergency;
 
   // To access the saved readings
+  friend class ApiReportDoneState;
+  friend class ApiProcessReadingState;
   friend class PublishApiState;
   friend class ApiReportFailedState;
   friend class ApiProcessReadingState;
 
+};
+
+class ApiConnectionObserver {
+ public:
+  virtual void api_reported(IApiConnector::ReportApiStatus status) = 0;
 };
 
 #endif //BGEIGIECAST_I_APICONNECTOR_H

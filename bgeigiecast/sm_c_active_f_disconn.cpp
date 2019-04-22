@@ -8,7 +8,7 @@ DisconnectedState::DisconnectedState(Controller& context): FixedModeState(contex
 void DisconnectedState::entry_action() {
   DEBUG_PRINTLN("Entered state FixedMode, Disconnected");
   controller.save_state(k_savable_FixedMode);
-  controller.get_state_led().set_color(StateLED::StateColor::fixed_connecting);
+  controller._state_led.set_color(StateLED::StateColor::fixed_connecting);
   controller.set_reporter_outputs(true, true);
 }
 

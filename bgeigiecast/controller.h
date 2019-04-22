@@ -79,6 +79,15 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
 
   sleep_fn_t _sleep_fn;
 
+
+  friend class InitializeState;
+  friend class PostInitializeState;
+  friend class SetupServerState;
+  friend class ServerActiveState;
+  friend class MobileModeState;
+  friend class ConnectedState;
+  friend class DisconnectedState;
+  friend class ConnectionErrorState;
 };
 
 #endif //BGEIGIECAST_CONTROLLER_HPP

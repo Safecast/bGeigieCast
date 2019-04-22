@@ -8,7 +8,7 @@ ConnectionErrorState::ConnectionErrorState(Controller& context) : FixedModeState
 
 void ConnectionErrorState::entry_action() {
   DEBUG_PRINTLN("Entered state ConnectionError");
-  controller.get_state_led().set_color(StateLED::StateColor::fixed_error);
+  controller._state_led.set_color(StateLED::StateColor::fixed_error);
   timer = millis();
 }
 

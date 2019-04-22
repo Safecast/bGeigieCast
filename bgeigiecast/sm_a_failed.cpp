@@ -5,9 +5,11 @@ ApiReportFailedState::ApiReportFailedState(IApiConnector& context, Reading* read
 }
 
 void ApiReportFailedState::entry_action() {
+  DEBUG_PRINTLN("Apiconn entered state Failed");
 }
 
 void ApiReportFailedState::do_activity() {
+  api_connector.save_reading(reading);
 }
 
 void ApiReportFailedState::exit_action() {

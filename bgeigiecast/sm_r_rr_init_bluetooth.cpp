@@ -5,14 +5,17 @@ InitBluetoothState::InitBluetoothState(Reporter& context) : ReportReadingState(c
 
 }
 void InitBluetoothState::entry_action() {
-
+  DEBUG_PRINTLN("Reporter entered state Init Bluetooth");
 }
+
 void InitBluetoothState::do_activity() {
-
+  reporter.init_bluetooth_connector();
 }
+
 void InitBluetoothState::exit_action() {
 
 }
+
 void InitBluetoothState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_r_bluetooth_initialized:

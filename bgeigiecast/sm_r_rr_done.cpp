@@ -6,11 +6,11 @@ ReporterDoneState::ReporterDoneState(Reporter& context, Reporter::ReporterStatus
 }
 
 void ReporterDoneState::entry_action() {
-  reporter._observer->reading_reported(status);
+  DEBUG_PRINTLN("Reporter entered state Done");
 }
 
 void ReporterDoneState::do_activity() {
-
+  reporter.report_complete(status);
 }
 
 void ReporterDoneState::exit_action() {
@@ -19,8 +19,6 @@ void ReporterDoneState::exit_action() {
 
 void ReporterDoneState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_r_reading_reported:
-      reporter.set_state(new ReporterIdleState(reporter));
     default:
       ReportReadingState::handle_event(event_id);
       break;

@@ -10,6 +10,7 @@ bool BGeigieConnector::get_reading(Reading** out) {
     String str = _serial_connection.readStringUntil('\n');
     str += '\n';
     *out = new Reading(str.c_str());
+    DEBUG_PRINTLN(str);
     return true;
   }
   return false;

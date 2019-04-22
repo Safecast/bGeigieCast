@@ -5,9 +5,11 @@ ReportApiState::ReportApiState(Reporter& context) : ReportReadingState(context) 
 }
 
 void ReportApiState::entry_action() {
+  DEBUG_PRINTLN("Reporter entered state Publish Api");
 }
 
 void ReportApiState::do_activity() {
+  reporter.run_api_connector();
 }
 
 void ReportApiState::exit_action() {
