@@ -52,12 +52,13 @@ bool ApiConnector::send_reading(Reading* reading) {
   if(!reading->as_json(json_str)) {
     // This whole reading is invalid
     DEBUG_PRINTLN("Unable to send reading, its not valid at all!");
+    schedule_event(e_a_api_post_failed);
     return false;
   }
 
   if(is_connected()) {
     DEBUG_PRINTLN("Unable to send, lost connection");
-    save_reading(reading);
+    schedule_event(e_a_api_post_failed);
     return false;
   }
 
@@ -95,14 +96,13 @@ bool ApiConnector::send_reading(Reading* reading) {
     String response = http.getString();
     DEBUG_PRINT(httpResponseCode);
     DEBUG_PRINTLN(response);
-
+    schedule_event(e_a_reading_posted);
     http.end();  //Free resources
     return true;
   } else {
     DEBUG_PRINTLN("Error on sending POST");
     // Failed to send
-    save_reading(reading);
-
+    schedule_event(e_a_api_post_failed);
     http.end();  //Free resources
     return false;
   }
