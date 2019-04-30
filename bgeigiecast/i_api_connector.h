@@ -1,6 +1,7 @@
 #ifndef BGEIGIECAST_I_APICONNECTOR_H
 #define BGEIGIECAST_I_APICONNECTOR_H
 
+#include <Arduino.h>
 
 #include "circular_buffer.h"
 #include "user_config.h"

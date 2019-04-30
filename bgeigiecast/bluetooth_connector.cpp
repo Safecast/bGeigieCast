@@ -2,19 +2,17 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <vector>
-
 #include "bluetooth_connector.h"
 #include "debugger.h"
 
 BluetoohConnector::BluetoohConnector() : IBluetoohConnector() {
 }
 
-void BluetoohConnector::init(uint16_t device_id) {
+bool BluetoohConnector::init(uint16_t device_id) {
   if(initialized) {
-    return;
+    return true;
   }
-  std::vector<std::string> temp = {"asdasd", "asdasd", " asdasd"};
+
 
   char deviceName[16];
   sprintf(deviceName, "bGeigie%d", device_id);
@@ -37,11 +35,8 @@ void BluetoohConnector::init(uint16_t device_id) {
   BLEDevice::startAdvertising();
   initialized = true;
 
-  for(const auto& a : temp) {
-    DEBUG_PRINT(a.c_str());
-  }
-
   DEBUG_PRINT("Bluetooth initialized, device: "); DEBUG_PRINTLN(deviceName);
+  return true;
 }
 
 void BluetoohConnector::create_ble_profile_service(BLEServer* pServer) {

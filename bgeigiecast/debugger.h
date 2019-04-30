@@ -10,7 +10,6 @@
 
 #if ENABLE_DEBUG
 #include <Arduino.h>
-#include <StreamString.h>
 
 #ifndef DEBUG_STREAM
 #define DEBUG_STREAM Serial
@@ -24,11 +23,11 @@
 
 #else
 
-#define DEBUG_BEGIN(...) (void*) 0
-#define DEBUG_PRINT(val) (*void) val
-#define DEBUG_PRINTLN(val) (*void) val
-#define DEBUG_PRINTF(format, ...) (*void) val
-#define DEBUG_FLUSH() (*void) 0
+#define DEBUG_BEGIN(...)
+#define DEBUG_PRINT(val)
+#define DEBUG_PRINTLN(val)
+#define DEBUG_PRINTF(format, ...)
+#define DEBUG_FLUSH()
 
 #endif
 
