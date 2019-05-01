@@ -51,7 +51,10 @@ void controller_sleep(uint32_t millis_to_sleep) {
   esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_TIMER);
   esp_sleep_enable_timer_wakeup(millis_to_sleep * 1000);
 
+  DEBUG_PRINTLN("-----\nEntering sleep");
+  DEBUG_FLUSH();
   esp_light_sleep_start();
+  DEBUG_PRINTLN("Woke up from sleep\n-----");
 
   switch(esp_sleep_get_wakeup_cause()) {
     case ESP_SLEEP_WAKEUP_TIMER:

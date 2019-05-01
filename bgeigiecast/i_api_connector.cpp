@@ -35,15 +35,15 @@ void IApiConnector::process_reading(Reading* reading) {
 }
 
 void IApiConnector::save_reading(Reading* reading) {
+  DEBUG_PRINTLN("Could not upload reading, trying again later");
   if(reading && reading->get_validity() == ReadingValidity::k_reading_valid) {
-    DEBUG_PRINTLN("Could not upload reading, trying again later");
     if(_saved_readings.get_count() == MAX_MISSED_READINGS) {
       // Delete oldest reading, else mem leak
       delete _saved_readings.get();
     }
     _saved_readings.add(new Reading(*reading));
-    schedule_event(e_a_reading_saved);
   }
+  schedule_event(e_a_reading_saved);
 }
 
 void IApiConnector::set_observer(ApiConnectionObserver* observer) {
