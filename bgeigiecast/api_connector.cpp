@@ -56,7 +56,7 @@ bool ApiConnector::send_reading(Reading* reading) {
     return false;
   }
 
-  if(is_connected()) {
+  if(!is_connected()) {
     DEBUG_PRINTLN("Unable to send, lost connection");
     schedule_event(e_a_api_post_failed);
     return false;
