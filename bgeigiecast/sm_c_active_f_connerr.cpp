@@ -24,6 +24,9 @@ void ConnectionErrorState::handle_event(Event_enum event_id) {
     case e_c_api_report_success:
       controller.set_state(new ConnectedState(controller));
       break;
+    case e_c_api_report_failed:
+      // Failed, Nothing happening already in connection error state
+      break;
     default:
       FixedModeState::handle_event(event_id);
       break;

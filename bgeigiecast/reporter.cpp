@@ -2,8 +2,9 @@
 #include "sm_r_idle.h"
 
 // Every 5 seconds
+#define BGEIGIE_MEASUREMENTS_SECONDS 5
 #define BGEIGIE_READING_SLACK 500
-#define READING_DELAY (5 * 1000) - BGEIGIE_READING_SLACK
+#define READING_DELAY (BGEIGIE_MEASUREMENTS_SECONDS * 1000) - BGEIGIE_READING_SLACK
 
 Reporter::Reporter(IEspConfig& config,
                    Stream& bgeigie_connection,
@@ -80,15 +81,17 @@ void Reporter::run_api_connector() {
   _api_connector.run();
 }
 
-void Reporter::set_observer(ReporterObserver* _observer) {
-  Reporter::_observer = _observer;
+void Reporter::set_observer(ReporterObserver* observer) {
+  _observer = observer;
 }
 
 void Reporter::api_reported(IApiConnector::ReportApiStatus status) {
   switch(status) {
     case IApiConnector::k_report_success:
-    case IApiConnector::k_report_skipped:
       schedule_event(e_r_reading_reported_api_success);
+      break;
+    case IApiConnector::k_report_skipped:
+      schedule_event(e_r_reading_reported_api_no_change);
       break;
     case IApiConnector::k_report_failed:
       schedule_event(e_r_reading_reported_api_failed);
@@ -100,4 +103,8 @@ void Reporter::report_complete(ReporterStatus status) {
   if(_observer)
     _observer->reading_reported(status);
   schedule_event(e_r_reading_reported);
+}
+
+Reading* Reporter::get_last_reading() const {
+  return _last_reading;
 }

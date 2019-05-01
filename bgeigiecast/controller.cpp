@@ -82,5 +82,8 @@ void Controller::reading_reported(Reporter::ReporterStatus status) {
     case Reporter::k_reporter_success:
       schedule_event(e_c_api_report_success);
       break;
+    case Reporter::k_reporter_no_change:
+      // No change
+      break;
   }
 }

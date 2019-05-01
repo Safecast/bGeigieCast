@@ -24,6 +24,7 @@ typedef enum {
   e_r_bluetooth_initialized,
   e_r_api_connector_initialized,
   e_r_reading_reported_bt,
+  e_r_reading_reported_api_no_change,
   e_r_reading_reported_api_success,
   e_r_reading_reported_api_failed,
 

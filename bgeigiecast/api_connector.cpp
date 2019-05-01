@@ -75,6 +75,7 @@ bool ApiConnector::send_reading(Reading* reading) {
   if(!http.begin(url)) {
     DEBUG_PRINTLN("Unable to begin url connection");
     save_reading(reading);
+    http.end();  //Free resources
     return false;
   }
 

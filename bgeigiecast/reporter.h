@@ -20,6 +20,7 @@ class Reporter : public Context, private ApiConnectionObserver {
    *
    */
   typedef enum {
+    k_reporter_no_change,
     k_reporter_failed,
     k_reporter_success,
   } ReporterStatus;
@@ -54,6 +55,8 @@ class Reporter : public Context, private ApiConnectionObserver {
   bool is_idle() const;
 
   void set_observer(ReporterObserver* _observer);
+
+  Reading* get_last_reading() const;
 
  private:
   void api_reported(IApiConnector::ReportApiStatus status) override;
