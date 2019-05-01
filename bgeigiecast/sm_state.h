@@ -6,8 +6,8 @@
 
 
 typedef enum {
-  k_savable_MobileMode = 0,
-  k_savable_FixedMode = 1
+  k_savable_MobileMode,
+  k_savable_FixedMode
 } SavableState;
 
 

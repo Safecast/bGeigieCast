@@ -10,7 +10,6 @@ void InitActiveState::entry_action() {
 }
 
 void InitActiveState::do_activity() {
-  DEBUG_PRINTLN("oiii");
   switch(controller.get_saved_state()) {
     case k_savable_FixedMode:
       controller.set_state(new DisconnectedState(controller));

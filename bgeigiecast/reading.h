@@ -44,7 +44,7 @@ class Reading {
    * @param fixed: if the device is in fixed mode, it will add 60000 to the device id
    * @return: succes / not
    */
-  bool as_json(char* out);
+  bool as_json(char* out = nullptr);
 
   /**
    * Clear this reading

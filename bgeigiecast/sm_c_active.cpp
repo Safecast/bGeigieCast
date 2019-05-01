@@ -5,6 +5,7 @@ ActiveState::ActiveState(Controller& context): ControllerState(context) {
 }
 
 void ActiveState::do_activity() {
+  controller.sleep();
   controller.run_reporter();
 }
 

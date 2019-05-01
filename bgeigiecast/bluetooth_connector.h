@@ -19,7 +19,7 @@ class BluetoohConnector : public IBluetoohConnector {
    * Initialize the bluetooth, using device id as name
    * @param device_id : id of the bgeigie device
    */
-  void init(uint16_t device_id) override;
+  bool init(uint16_t device_id) override;
 
   /**
    * Send a new reading over bluetooth

@@ -17,7 +17,7 @@ class IBluetoohConnector {
    * Initialize the bluetooth, using device id as name
    * @param device_id : id of the bgeigie device
    */
-  virtual void init(uint16_t device_id) = 0;
+  virtual bool init(uint16_t device_id) = 0;
 
   /**
    * Send a new reading over bluetooth

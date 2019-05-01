@@ -1,12 +1,13 @@
 #include "sm_a_process.h"
 #include "sm_a_reporting_done.h"
+#include "sm_a_connecting_wifi.h"
 
 ApiProcessReadingState::ApiProcessReadingState(IApiConnector& context, Reading* reading) : ApiReporterState(context, reading) {
 
 }
 
 void ApiProcessReadingState::entry_action() {
-
+  DEBUG_PRINTLN("Apiconn entered state Process");
 }
 
 void ApiProcessReadingState::do_activity() {
@@ -20,7 +21,7 @@ void ApiProcessReadingState::exit_action() {
 void ApiProcessReadingState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_a_report_reading:
-      api_connector.set_state(new ApiProcessReadingState(api_connector, reading));
+      api_connector.set_state(new ConnectWiFiState(api_connector, reading));
       break;
     case e_a_not_reporting:
       api_connector.set_state(new ApiReportDoneState(api_connector, IApiConnector::k_report_skipped));

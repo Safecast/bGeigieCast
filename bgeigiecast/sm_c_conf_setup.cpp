@@ -6,11 +6,11 @@ SetupServerState::SetupServerState(Controller& context) : ConfigModeState(contex
 
 void SetupServerState::entry_action() {
   DEBUG_PRINTLN("Entered state SetupServer");
-  controller.get_state_led().set_color(StateLED::StateColor::config);
+  controller._state_led.set_color(StateLED::StateColor::config);
 }
 
 void SetupServerState::do_activity() {
-  if(controller.get_ap_server().initialize()) {
+  if(controller._ap_server.initialize()) {
     controller.schedule_event(Event_enum::e_c_server_initialized);
   }
 }

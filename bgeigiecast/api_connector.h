@@ -12,7 +12,7 @@
 class ApiConnector : public IApiConnector {
  public:
 
-  explicit ApiConnector(IEspConfig& config);
+  explicit ApiConnector(IEspConfig& config, ApiConnectionObserver* observer = nullptr);
   virtual ~ApiConnector() = default;
 
   /**

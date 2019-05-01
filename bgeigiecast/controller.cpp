@@ -2,16 +2,22 @@
 #include "controller.h"
 #include "reading.h"
 
+#define BUTTON_LONG_PRESSED_MILLIS_TRESHOLD 4000
 
-Controller::Controller(IEspConfig& config, Stream& bGegie_connection_stream, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector, sleep_fn_t sleep_fn) :
+Controller::Controller(IEspConfig& config,
+                       Stream& bgeigie_connection,
+                       IApiConnector& api_connector,
+                       IBluetoohConnector& bluetooth_connector,
+                       sleep_fn_t sleep_fn) :
     Context(),
     ButtonObserver(),
     _config(config),
-    _reporter(config, bGegie_connection_stream, api_connector, bluetooth_connector),
+    _reporter(config, bgeigie_connection, api_connector, bluetooth_connector),
     _ap_server(config),
     _mode_button(MODE_BUTTON_PIN),
     _state_led(config),
-    _sleep_fn(sleep_fn){
+    _sleep_fn(sleep_fn) {
+  _reporter.set_observer(this);
 }
 
 void Controller::setup_state_machine() {
@@ -29,7 +35,7 @@ void Controller::initialize() {
 
 void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
   if(button->get_pin() == MODE_BUTTON_PIN) {
-    if(millis_pressed > 4000) {
+    if(millis_pressed > BUTTON_LONG_PRESSED_MILLIS_TRESHOLD) {
       schedule_event(Event_enum::e_c_button_long_pressed);
     } else {
       schedule_event(Event_enum::e_c_button_pressed);
@@ -38,13 +44,19 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
 }
 
 void Controller::run_reporter() {
-//  _reporter.run();
-//  _reporter.process_possible_bgeigie_readings(report_bluetooth, report_api);
+  _reporter.run();
+}
+
+void Controller::set_reporter_outputs(bool bt, bool api) {
+  _reporter.set_report_output(bt, api);
 }
 
 void Controller::sleep() {
-  if(_sleep_fn) {
-    _sleep_fn(0);
+  if(_sleep_fn && _reporter.is_idle()) {
+    uint32_t till_next = _reporter.time_till_next_reading(millis());
+    if(till_next > 0) {
+      _sleep_fn(till_next);
+    }
   }
 }
 
@@ -62,10 +74,16 @@ SavableState Controller::get_saved_state() {
   return static_cast<SavableState>(_config.get_saved_state());
 }
 
-ConfigWebServer& Controller::get_ap_server() {
-  return _ap_server;
-}
-
-StateLED& Controller::get_state_led() {
-  return _state_led;
+void Controller::reading_reported(Reporter::ReporterStatus status) {
+  switch(status) {
+    case Reporter::k_reporter_failed:
+      schedule_event(e_c_api_report_failed);
+      break;
+    case Reporter::k_reporter_success:
+      schedule_event(e_c_api_report_success);
+      break;
+    case Reporter::k_reporter_no_change:
+      // No change
+      break;
+  }
 }

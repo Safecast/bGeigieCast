@@ -6,6 +6,7 @@
 #define ENABLE_DEBUG 1
 #define SERIAL_BAUD 115200
 #define BGEIGIE_CONNECTION_BAUD 9600
+#define USE_SLEEP 0
 
 /** Hardware pins settings **/
 #define RGB_LED_PIN_R A18
@@ -31,7 +32,7 @@
 #define ACCESS_POINT_NMASK  {255, 255, 255, 0}
 
 /** Default ESP configurations **/
-#define D_ACCESS_POINT_SSID     "bGeigie-ESP32"
+#define D_ACCESS_POINT_SSID     "bGeigieCast"
 #define D_ACCESS_POINT_PASSWORD "safecast"
 #define D_WIFI_SSID             "your wifi ssid"
 #define D_WIFI_PASSWORD         "yourwifipassword"

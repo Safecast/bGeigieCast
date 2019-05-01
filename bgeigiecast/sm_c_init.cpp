@@ -7,7 +7,7 @@ InitializeState::InitializeState(Controller& context) : ControllerState(context)
 
 void InitializeState::entry_action() {
   DEBUG_PRINTLN("Entered state Initialize");
-  controller.get_state_led().set_color(StateLED::StateColor::init);
+  controller._state_led.set_color(StateLED::StateColor::init);
 }
 
 void InitializeState::do_activity() {

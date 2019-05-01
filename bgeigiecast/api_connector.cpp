@@ -4,7 +4,7 @@
 
 #define API_SEND_FREQUENCY (API_SEND_FREQUENCY_MINUTES * 60 * 1000)
 
-ApiConnector::ApiConnector(IEspConfig& config) : IApiConnector(config) {
+ApiConnector::ApiConnector(IEspConfig& config, ApiConnectionObserver* observer) : IApiConnector(config, observer) {
 }
 
 bool ApiConnector::start_connect(bool initial) {
@@ -48,13 +48,20 @@ bool ApiConnector::is_connected() {
 }
 
 bool ApiConnector::send_reading(Reading* reading) {
-  //TODO: Send reading
   char json_str[200];
   if(!reading->as_json(json_str)) {
     // This whole reading is invalid
     DEBUG_PRINTLN("Unable to send reading, its not valid at all!");
+    schedule_event(e_a_api_post_failed);
     return false;
   }
+
+  if(!is_connected()) {
+    DEBUG_PRINTLN("Unable to send, lost connection");
+    schedule_event(e_a_api_post_failed);
+    return false;
+  }
+
   HTTPClient http;
 
   char url[100];
@@ -68,6 +75,7 @@ bool ApiConnector::send_reading(Reading* reading) {
   if(!http.begin(url)) {
     DEBUG_PRINTLN("Unable to begin url connection");
     save_reading(reading);
+    http.end();  //Free resources
     return false;
   }
 
@@ -89,14 +97,13 @@ bool ApiConnector::send_reading(Reading* reading) {
     String response = http.getString();
     DEBUG_PRINT(httpResponseCode);
     DEBUG_PRINTLN(response);
-
+    schedule_event(e_a_reading_posted);
     http.end();  //Free resources
     return true;
   } else {
     DEBUG_PRINTLN("Error on sending POST");
     // Failed to send
-    save_reading(reading);
-
+    schedule_event(e_a_api_post_failed);
     http.end();  //Free resources
     return false;
   }

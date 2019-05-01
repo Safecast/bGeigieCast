@@ -51,15 +51,17 @@ void controller_sleep(uint32_t millis_to_sleep) {
   esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_TIMER);
   esp_sleep_enable_timer_wakeup(millis_to_sleep * 1000);
 
+  DEBUG_PRINTLN("-----\nEntering sleep");
+  DEBUG_FLUSH();
   esp_light_sleep_start();
+  DEBUG_PRINTLN("Woke up from sleep\n-----");
 
   switch(esp_sleep_get_wakeup_cause()) {
     case ESP_SLEEP_WAKEUP_TIMER:
       break;
     case ESP_SLEEP_WAKEUP_GPIO:
       gpio_wakeup_disable((gpio_num_t) MODE_BUTTON_PIN);
-      gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN,
-                         digitalRead(MODE_BUTTON_PIN) ? GPIO_INTR_LOW_LEVEL : GPIO_INTR_HIGH_LEVEL);
+      gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN, digitalRead(MODE_BUTTON_PIN) ? GPIO_INTR_LOW_LEVEL : GPIO_INTR_HIGH_LEVEL);
       break;
     default:
       break;
@@ -69,7 +71,12 @@ void controller_sleep(uint32_t millis_to_sleep) {
 EspConfig config;
 ApiConnector api_conn(config);
 BluetoohConnector bt_conn;
+
+#if USE_SLEEP
 Controller controller(config, bGeigieSerialConnection, api_conn, bt_conn, &controller_sleep);
+#else
+Controller controller(config, bGeigieSerialConnection, api_conn, bt_conn);
+#endif
 
 void setup() {
   DEBUG_BEGIN(SERIAL_BAUD);
@@ -91,18 +98,16 @@ void setup() {
 
   gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN, GPIO_INTR_LOW_LEVEL);
 
-  /// Software configurations
-  // Setup controller
-  controller.setup_state_machine();
-
   // Set sleep options
   esp_sleep_enable_gpio_wakeup();
 
+  /// Software configurations
+  // Setup controller
+  controller.setup_state_machine();
 }
 
 void loop() {
   controller.run();
-//  controller_sleep(&controller);
 }
 
 #endif

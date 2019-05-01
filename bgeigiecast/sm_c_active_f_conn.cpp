@@ -6,7 +6,7 @@ ConnectedState::ConnectedState(Controller& context): FixedModeState(context) {
 
 void ConnectedState::entry_action() {
   DEBUG_PRINTLN("Entered state Connected");
-  controller.get_state_led().set_color(StateLED::StateColor::fixed_active);
+  controller._state_led.set_color(StateLED::StateColor::fixed_active);
 }
 
 void ConnectedState::do_activity() {
@@ -20,6 +20,9 @@ void ConnectedState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_c_api_report_failed:
       controller.set_state(new DisconnectedState(controller));
+      break;
+    case e_c_api_report_success:
+      // Success, no need to do anything already in connected state
       break;
     default:
       FixedModeState::handle_event(event_id);

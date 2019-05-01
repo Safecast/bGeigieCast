@@ -14,11 +14,11 @@
 /**
  * Main controller for the system, implements state machine to run
  */
-class Controller : public Context, public ButtonObserver {
+class Controller : public Context, private ButtonObserver, private ReporterObserver {
  public:
-  typedef void (*sleep_fn_t)(uint32_t);
+  typedef void (*sleep_fn_t)(uint32_t millis_to_sleep);
 
-  Controller(IEspConfig& config, Stream& bGegie_connection, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector, sleep_fn_t sleep_fn = nullptr);
+  Controller(IEspConfig& config, Stream& bgeigie_connection, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector, sleep_fn_t sleep_fn = nullptr);
   virtual ~Controller() = default;
 
   /**
@@ -37,8 +37,12 @@ class Controller : public Context, public ButtonObserver {
   void run_reporter();
 
   /**
-   * Go to sleep.
-   * Wake up sources should be defined before sleeping
+   *
+   */
+  void set_reporter_outputs(bool bt, bool api);
+
+  /**
+   * Go to sleep till next reading is expected.
    */
   void sleep();
 
@@ -63,9 +67,9 @@ class Controller : public Context, public ButtonObserver {
    */
   SavableState get_saved_state();
 
-  // Getters
-  ConfigWebServer& get_ap_server();
-  StateLED& get_state_led();
+ private:
+  void reading_reported(Reporter::ReporterStatus status) override;
+
  private:
   IEspConfig& _config;
   Reporter _reporter;
@@ -75,6 +79,15 @@ class Controller : public Context, public ButtonObserver {
 
   sleep_fn_t _sleep_fn;
 
+
+  friend class InitializeState;
+  friend class PostInitializeState;
+  friend class SetupServerState;
+  friend class ServerActiveState;
+  friend class MobileModeState;
+  friend class ConnectedState;
+  friend class DisconnectedState;
+  friend class ConnectionErrorState;
 };
 
 #endif //BGEIGIECAST_CONTROLLER_HPP
