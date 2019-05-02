@@ -2,7 +2,7 @@
 #include "user_config.h"
 
 IEspConfig::IEspConfig() :
-    _ap_ssid(""),
+    _device_id(0),
     _ap_password(""),
     _wifi_ssid(""),
     _wifi_password(""),
@@ -16,7 +16,7 @@ IEspConfig::IEspConfig() :
 
 void IEspConfig::reset_defaults() {
   if(clear()) {
-    set_ap_ssid(D_ACCESS_POINT_SSID, true);
+    set_device_id(D_DEVICE_ID, true);
     set_ap_password(D_ACCESS_POINT_PASSWORD, true);
     set_wifi_ssid(D_WIFI_SSID, true);
     set_wifi_password(D_WIFI_PASSWORD, true);
@@ -28,8 +28,8 @@ void IEspConfig::reset_defaults() {
   }
 }
 
-const char* IEspConfig::get_ap_ssid() const {
-  return _ap_ssid;
+uint16_t IEspConfig::get_device_id() const {
+  return _device_id;
 }
 
 const char* IEspConfig::get_ap_password() const {

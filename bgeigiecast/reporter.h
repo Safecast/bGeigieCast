@@ -103,6 +103,7 @@ class Reporter : public Context, private ApiConnectionObserver {
   bool _report_api;
 
   // Friend list
+  friend class InitReporterState;
   friend class GetReadingState;
   friend class ReporterDoneState;
   friend class InitBluetoothState;

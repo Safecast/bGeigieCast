@@ -1,4 +1,5 @@
 #include "reporter.h"
+#include "sm_r_init.h"
 #include "sm_r_idle.h"
 
 // Every 5 seconds
@@ -24,7 +25,7 @@ Reporter::Reporter(IEspConfig& config,
 }
 
 void Reporter::setup_state_machine() {
-  set_state(new ReporterIdleState(*this));
+  set_state(new InitReporterState(*this));
 }
 
 void Reporter::set_report_output(bool bt, bool api) {
@@ -46,6 +47,9 @@ void Reporter::get_new_reading() {
     _last_reading = output;
     _last_reading_moment = millis();
     _last_reading->correctly_parsed() ? schedule_event(e_r_reading_received) : schedule_event(e_r_reading_invalid);
+    if (_last_reading->get_device_id() > 0) {
+      _config.set_device_id(_last_reading->get_device_id(), false);
+    }
   }
 }
 

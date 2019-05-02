@@ -81,6 +81,7 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
 
 
   friend class InitializeState;
+  friend class InitReadingState;
   friend class PostInitializeState;
   friend class SetupServerState;
   friend class ServerActiveState;

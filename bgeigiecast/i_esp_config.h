@@ -24,7 +24,7 @@ class IEspConfig {
   void reset_defaults();
 
   // Getters and setters
-  virtual const char* get_ap_ssid() const final;
+  virtual uint16_t get_device_id() const final;
   virtual const char* get_ap_password() const final;
   virtual const char* get_wifi_ssid() const final;
   virtual const char* get_wifi_password() const final;
@@ -34,7 +34,7 @@ class IEspConfig {
   virtual uint8_t get_led_color_intensity() const final;
   virtual uint8_t get_saved_state() const final;
 
-  virtual void set_ap_ssid(const char* ap_ssid, bool force) = 0;
+  virtual void set_device_id(uint16_t device_id, bool force) = 0;
   virtual void set_ap_password(const char* ap_password, bool force) = 0;
   virtual void set_wifi_ssid(const char* wifi_ssid, bool force) = 0;
   virtual void set_wifi_password(const char* wifi_password, bool force) = 0;
@@ -52,8 +52,10 @@ class IEspConfig {
    */
   virtual bool clear() = 0;
 
+  // Device
+  uint16_t _device_id;
+
   // Access point config (for web _ap_server)
-  char _ap_ssid[CONFIG_VAL_MAX];
   char _ap_password[CONFIG_VAL_MAX];
 
   // Wifi config (to connect to the internet)

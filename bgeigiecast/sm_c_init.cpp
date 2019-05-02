@@ -1,6 +1,6 @@
 #include "sm_c_init.h"
 #include "sm_events.h"
-#include "sm_c_post_init.h"
+#include "sm_c_init_reading.h"
 
 InitializeState::InitializeState(Controller& context) : ControllerState(context) {
 }
@@ -21,7 +21,7 @@ void InitializeState::exit_action() {
 void InitializeState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_c_controller_initialized: {
-      controller.set_state(new PostInitializeState(controller));
+      controller.set_state(new InitReadingState(controller));
       break;
     }
     default:
