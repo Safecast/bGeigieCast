@@ -8,7 +8,7 @@ void buttonTrigger(void* arg) {
   }
   Button* b = ((Button*) arg);
   // Read the pin value here so we can use the state_changed in unit tests
-  b->state_changed(digitalRead(b->get_pin()));
+  b->state_changed(digitalRead(b->get_pin()), millis());
 }
 
 Button::Button(uint8_t pin, uint8_t pull_type) :
@@ -40,13 +40,11 @@ bool Button::currently_pressed() const {
   return _current_state;
 }
 
-bool Button::state_changed(int state) {
+bool Button::state_changed(int state, uint32_t time) {
   _current_state = state == _pull_type_mode;
-  if(_last_state_change + DEBOUNCE_TIME_MILLIS > millis()) {
+  if(_last_state_change + DEBOUNCE_TIME_MILLIS > time) {
     return false;
   }
-
-  uint32_t time = (uint32_t) (esp_timer_get_time() / 1000);
 
   if(_current_state) {
     if(_observer) { _observer->on_button_down(this); }

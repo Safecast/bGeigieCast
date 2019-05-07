@@ -1,7 +1,7 @@
 #include "sm_c_init_reading.h"
 #include "sm_c_post_init.h"
 
-#define BLINK_DELAY 200
+#define BLINK_DELAY 400
 
 InitReadingState::InitReadingState(Controller& context) : ControllerState(context) {
 }

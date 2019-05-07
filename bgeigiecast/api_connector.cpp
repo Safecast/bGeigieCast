@@ -18,6 +18,8 @@ bool ApiConnector::start_connect(bool initial) {
     return false;
   }
 
+  DEBUG_PRINTLN();
+
   if(initial) {
     const char* password = _config.get_wifi_password();
     DEBUG_PRINT("Connecting to ssid "); DEBUG_PRINTLN(ssid);

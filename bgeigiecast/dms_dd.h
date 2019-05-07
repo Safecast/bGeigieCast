@@ -3,5 +3,6 @@
 
 
 float dms_to_dd(float dms);
+float dm_to_dd(float dms);
 
 #endif //BGEIGIECAST_DMS_DD_H
