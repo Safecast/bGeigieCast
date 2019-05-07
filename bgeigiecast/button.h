@@ -29,9 +29,10 @@ class Button {
   /**
    * Let the button know that the state has changed
    * @param state: LOW / HIGH reading from the button
+   * @param time: current time
    * @return: true if event was handled (false if ignored)
    */
-  bool state_changed(int state);
+  bool state_changed(int state, uint32_t time);
 
   /**
    * Get pin number

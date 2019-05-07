@@ -14,12 +14,13 @@ ConfigWebServer::ConfigWebServer(IEspConfig& config) : server(SERVER_WIFI_PORT, 
 }
 
 bool ConfigWebServer::initialize() {
-  if(!config.get_ap_ssid() || !config.get_ap_password()) {
+  if(!config.get_device_id() || !config.get_ap_password()) {
     DEBUG_PRINTLN("No SSID or password to start config server");
     return false;
   }
-
-  WiFi.softAP(config.get_ap_ssid(), config.get_ap_password());
+  char ssid[16];
+  sprintf(ssid, ACCESS_POINT_SSID, config.get_device_id());
+  WiFi.softAP((ssid), config.get_ap_password());
 
   delay(100);
 
@@ -111,10 +112,10 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         "<style>html { font-family: Helvetica; margin: 20px auto; text-align: center;} body {text-align: center;} form {display: inline-block; text-align: left; margin: 20px; padding: 20px; background-color: lightgrey;} </style>\r\n"
         "</head>\r\n"
         "<body>\r\n"
-        "<strong>Config Page bGeigie-ESP32</strong><br>"
+        "<strong>Config Page</strong><br>"
+        "BgeigieCast %d<br>"
         "<form action=\"save\" method=\"get\" > "
-        "bGeigie wifi name:<br><input type=\"text\" name=\"ap_ssid\" value=\"%s\"><br>"
-        "bGeigie wifi password:<br><input type=\"text\" name=\"ap_password\" value=\"%s\"><br>"
+        "bGeigieCast password:<br><input type=\"text\" name=\"ap_password\" value=\"%s\"><br>"
         "Network wifi ssid:<br><input type=\"text\" name=\"wf_ssid\" value=\"%s\"><br>"
         "Network wifi password:<br><input type=\"text\" name=\"wf_password\" value=\"%s\"><br>"
         "Safecast API key:<br><input type=\"text\" name=\"apikey\" value=\"%s\"><br>"
@@ -130,7 +131,7 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         "%s"
         "</body>\r\n"
         "</html>",
-        config.get_ap_ssid(),
+        config.get_device_id(),
         config.get_ap_password(),
         config.get_wifi_ssid(),
         config.get_wifi_password(),
@@ -148,7 +149,7 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
 
     char value[64];
     if(request.get_param_value("ap_ssid", value, 64)) {
-      config.set_ap_ssid(value, false);
+      config.set_device_id(strtol(value, nullptr, 10), false);
     }
     if(request.get_param_value("ap_password", value, 64)) {
       config.set_ap_password(value, false);

@@ -201,8 +201,8 @@ void Reading::parse_values() {
     _validity = ReadingValidity::k_reading_valid;
   }
 
-  _latitude = dms_to_dd(lat_dms);
-  _longitude = dms_to_dd(long_dms);
+  _latitude = dm_to_dd(lat_dms);
+  _longitude = dm_to_dd(long_dms);
   if(NorS == 'S') { _latitude *= -1; }
   if(WorE == 'W') { _longitude *= -1; }
 }

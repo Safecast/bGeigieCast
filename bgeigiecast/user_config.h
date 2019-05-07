@@ -26,13 +26,14 @@
 #define MAX_MISSED_READINGS 3
 
 /** Access point settings **/
-#define SERVER_WIFI_PORT    80
-#define SERVER_MAX_CLIENTS  4
-#define ACCESS_POINT_IP     {192, 168, 5, 1}
-#define ACCESS_POINT_NMASK  {255, 255, 255, 0}
+#define ACCESS_POINT_SSID       "bGeigie-%d"
+#define SERVER_WIFI_PORT        80
+#define SERVER_MAX_CLIENTS      4
+#define ACCESS_POINT_IP         {192, 168, 5, 1}
+#define ACCESS_POINT_NMASK      {255, 255, 255, 0}
 
 /** Default ESP configurations **/
-#define D_ACCESS_POINT_SSID     "bGeigieCast"
+#define D_DEVICE_ID             0
 #define D_ACCESS_POINT_PASSWORD "safecast"
 #define D_WIFI_SSID             "your wifi ssid"
 #define D_WIFI_PASSWORD         "yourwifipassword"

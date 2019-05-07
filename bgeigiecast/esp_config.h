@@ -15,10 +15,10 @@ class EspConfig : public IEspConfig {
   /**
    * Read and set all settings from memory
    */
-  void set_all();
+  void set_all() override;
 
   // Getters and setters
-  void set_ap_ssid(const char* ap_ssid, bool force) override;
+  void set_device_id(uint16_t device_id, bool force) override;
   void set_ap_password(const char* ap_password, bool force) override;
   void set_wifi_ssid(const char* wifi_ssid, bool force) override;
   void set_wifi_password(const char* wifi_password, bool force) override;

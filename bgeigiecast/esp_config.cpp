@@ -8,7 +8,7 @@
 const char* memory_name = "data";
 
 // Keys for config
-const char* key_ap_ssid = "ap_ssid";
+const char* key_device_id = "ap_ssid";
 const char* key_ap_password = "ap_password";
 const char* key_wifi_ssid = "wifi_ssid";
 const char* key_wifi_password = "wifi_password";
@@ -25,9 +25,7 @@ EspConfig::EspConfig() :
 
 void EspConfig::set_all() {
   _memory.begin(memory_name, true);
-  if(_memory.getString(key_ap_ssid, _ap_ssid, CONFIG_VAL_MAX) == 0) {
-    strcpy(_ap_ssid, D_ACCESS_POINT_SSID);
-  }
+  _device_id = _memory.getUShort(key_device_id, D_DEVICE_ID);
   if(_memory.getString(key_ap_password, _ap_password, CONFIG_VAL_MAX) == 0) {
     strcpy(_ap_password, D_ACCESS_POINT_PASSWORD);
   }
@@ -43,7 +41,7 @@ void EspConfig::set_all() {
   _use_dev = _memory.getBool(key_use_dev, D_USE_DEV_SERVER);
   _led_color_blind = _memory.getBool(key_led_color_blind, D_LED_COLOR_BLIND);
   _led_color_intensity = _memory.getUChar(key_led_color_intensity, D_LED_COLOR_INTENSITY);
-  _saved_state = _memory.getBool(key_saved_state, D_SAVED_STATE);
+  _saved_state = _memory.getUChar(key_saved_state, D_SAVED_STATE);
   _memory.end();
 }
 
@@ -56,14 +54,14 @@ bool EspConfig::clear() {
   return false;
 }
 
-void EspConfig::set_ap_ssid(const char* ap_ssid, bool force) {
-  if(force || (ap_ssid != nullptr && strlen(ap_ssid) < CONFIG_VAL_MAX)) {
+void EspConfig::set_device_id(uint16_t device_id, bool force) {
+  if(force || (device_id != _device_id)) {
     if(_memory.begin(memory_name)) {
-      strcpy(_ap_ssid, ap_ssid);
-      _memory.putString(key_ap_ssid, _ap_ssid);
+      _device_id = device_id;
+      _memory.putUShort(key_device_id, _device_id);
       _memory.end();
     } else {
-      DEBUG_PRINTLN("unable to save new value for ap_ssid");
+      DEBUG_PRINTLN("unable to save new value for device_id");
     }
   }
 }
