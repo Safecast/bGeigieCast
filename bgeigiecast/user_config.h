@@ -4,6 +4,7 @@
 
 /** System config **/
 #define ENABLE_DEBUG 1
+#define DEBUG_LOG_STATE_TRANSITIONS 0
 #define SERIAL_BAUD 115200
 #define BGEIGIE_CONNECTION_BAUD 9600
 #define USE_SLEEP 0

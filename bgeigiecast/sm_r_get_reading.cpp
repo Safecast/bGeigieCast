@@ -8,7 +8,9 @@ GetReadingState::GetReadingState(Reporter& context) : ReporterState(context) {
 }
 
 void GetReadingState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Reporter entered state Get reading");
+#endif
 }
 
 void GetReadingState::do_activity() {

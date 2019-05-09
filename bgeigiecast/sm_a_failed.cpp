@@ -5,7 +5,9 @@ ApiReportFailedState::ApiReportFailedState(IApiConnector& context, Reading* read
 }
 
 void ApiReportFailedState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Apiconn entered state Failed");
+#endif
 }
 
 void ApiReportFailedState::do_activity() {

@@ -5,7 +5,11 @@ InitApiState::InitApiState(Reporter& context) : ReportReadingState(context) {
 }
 
 void InitApiState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Reporter entered state Init api");
+#endif
+#endif
 }
 
 void InitApiState::do_activity() {

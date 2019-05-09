@@ -10,7 +10,9 @@ ConnectWiFiState::ConnectWiFiState(IApiConnector& context, Reading* reading) : A
 }
 
 void ConnectWiFiState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Apiconn entered state Connecting");
+#endif
   api_connector.start_connect(true);
   _start_time = millis();
   _last_connect_try = millis();

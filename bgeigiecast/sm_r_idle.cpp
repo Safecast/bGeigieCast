@@ -5,7 +5,9 @@ ReporterIdleState::ReporterIdleState(Reporter& context) : ReporterState(context)
 }
 
 void ReporterIdleState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Reporter entered state Idle");
+#endif
 }
 
 void ReporterIdleState::do_activity() {

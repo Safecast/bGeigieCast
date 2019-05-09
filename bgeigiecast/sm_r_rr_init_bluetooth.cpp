@@ -5,7 +5,9 @@ InitBluetoothState::InitBluetoothState(Reporter& context) : ReportReadingState(c
 
 }
 void InitBluetoothState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Reporter entered state Init Bluetooth");
+#endif
 }
 
 void InitBluetoothState::do_activity() {
