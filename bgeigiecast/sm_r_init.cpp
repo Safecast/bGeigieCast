@@ -6,7 +6,9 @@ InitReporterState::InitReporterState(Reporter& context) : ReporterState(context)
 }
 
 void InitReporterState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Reporter entered state Init");
+#endif
 }
 
 void InitReporterState::do_activity() {

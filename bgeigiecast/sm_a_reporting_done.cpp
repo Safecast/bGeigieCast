@@ -6,7 +6,9 @@ ApiReportDoneState::ApiReportDoneState(IApiConnector& context, IApiConnector::Re
 }
 
 void ApiReportDoneState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Apiconn entered state Done");
+#endif
   if(status == IApiConnector::k_report_failed || status == IApiConnector::k_report_success) {
     api_connector._merged_reading.reset();
   }

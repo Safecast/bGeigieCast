@@ -6,7 +6,9 @@ PublishBluetoothState::PublishBluetoothState(Reporter& context) : ReportReadingS
 }
 
 void PublishBluetoothState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Reporter entered state Publish Bluetooth");
+#endif
 }
 
 void PublishBluetoothState::do_activity() {

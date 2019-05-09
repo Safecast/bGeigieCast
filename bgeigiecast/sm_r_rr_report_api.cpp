@@ -5,7 +5,9 @@ ReportApiState::ReportApiState(Reporter& context) : ReportReadingState(context) 
 }
 
 void ReportApiState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Reporter entered state Publish Api");
+#endif
 }
 
 void ReportApiState::do_activity() {

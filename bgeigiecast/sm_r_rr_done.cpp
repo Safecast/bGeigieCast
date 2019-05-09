@@ -6,7 +6,9 @@ ReporterDoneState::ReporterDoneState(Reporter& context, Reporter::ReporterStatus
 }
 
 void ReporterDoneState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Reporter entered state Done");
+#endif
 }
 
 void ReporterDoneState::do_activity() {

@@ -7,7 +7,9 @@ ApiProcessReadingState::ApiProcessReadingState(IApiConnector& context, Reading* 
 }
 
 void ApiProcessReadingState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Apiconn entered state Process");
+#endif
 }
 
 void ApiProcessReadingState::do_activity() {
