@@ -235,13 +235,13 @@ uint16_t Reading::get_total_count() const {
 char Reading::get_geiger_status() const {
   return _geiger_status;
 }
-float Reading::get_latitude() const {
+double Reading::get_latitude() const {
   return _latitude;
 }
-float Reading::get_longitude() const {
+double Reading::get_longitude() const {
   return _longitude;
 }
-float Reading::get_altitude() const {
+double Reading::get_altitude() const {
   return _altitude;
 }
 char Reading::get_gps_status() const {

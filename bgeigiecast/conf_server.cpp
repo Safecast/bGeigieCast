@@ -97,21 +97,31 @@ bool ConfigWebServer::is_running() {
 
 void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request) {
   if(request.is_uri("/")) {
-    char transmission[2048];
+    char transmission[4096];
+    int32_t home_long = static_cast<int32_t>(config.get_home_longtitude()),
+      home_long_decimal = static_cast<int32_t>((config.get_home_longtitude() - home_long) * 10000),
+      home_lat = static_cast<int32_t>(config.get_home_latitude()),
+      home_lat_decimal = static_cast<int32_t>((config.get_home_latitude() - home_lat) * 10000),
+      last_long = static_cast<int32_t>(config.get_last_longtitude()),
+      last_long_decimal = static_cast<int32_t>((config.get_last_longtitude() - last_long) * 10000),
+      last_lat = static_cast<int32_t>(config.get_last_latitude()),
+      last_lat_decimal = static_cast<int32_t>((config.get_last_latitude() - last_lat) * 10000);
+
     sprintf(
         transmission,
-        "<!DOCTYPE html>\r\n"
-        "<html>\r\n"
-        "<head>\r\n"
+        "<!DOCTYPE html>"
+        "<html>"
+        "<head>"
         "<link rel='icon' href='data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAA"
         "AAgAAAAAAAAAAAAAAAEAAAAAAAAACAhYcA////AA0PEAC+pm4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         "AAAAAAAAAAAIiIiIiIiIiIiIiIiIiIiIiIiMyISESIiIiIzIhIRIiIiIiIiEhEiIiIiIiISESIiIiIiIRIRIiIiIiIRIhEiIiIiERIi"
         "ESIiIiIQIhESIiIiIiIRESIiIiIiEREiIiIiIiIRIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIAAAAAAAAAAAAAAAAAAAAAAAA"
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' type='image/x-png' />\r\n"
-        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n"
-        "<style>html { font-family: Helvetica; margin: 20px auto; text-align: center;} body {text-align: center;} form {display: inline-block; text-align: left; margin: 20px; padding: 20px; background-color: lightgrey;} </style>\r\n"
-        "</head>\r\n"
-        "<body>\r\n"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' type='image/x-png' />"
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+        "<style>body {font-family: Helvetica; text-align: center;} form {background-color: lightgrey; text-align: left; margin: 20px; padding: 20px;} input[type=\"text\"], input[type=\"number\"] {max-width: 300px; width: 95%%; padding: 3px; border-radius: 8px; margin-bottom: 5px;}, </style>"
+        "</head>"
+        "<body>"
+        "%s"
         "<strong>Config Page</strong><br>"
         "BgeigieCast %d<br>"
         "<form action=\"save\" method=\"get\" > "
@@ -122,35 +132,44 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         "Use safecast server:<br>"
         "<input type=\"radio\" name=\"devsrv\" value=\"1\" %s>Development<br>"
         "<input type=\"radio\" name=\"devsrv\" value=\"0\" %s>Production<br>"
+        "<hr>"
         "LED intensity:<br><input type=\"number\" min=\"0\" max=\"255\" name=\"led_intensity\" value=\"%d\"><br>"
         "LED Colors:<br>"
         "<input type=\"radio\" name=\"led_color\" value=\"0\" %s>Default<br>"
         "<input type=\"radio\" name=\"led_color\" value=\"1\" %s>Color blind<br>"
+        "<hr>"
+        "Fixed mode GPS settings:<br>"
+        "<input type=\"radio\" name=\"use_home_loc\" value=\"0\" %s>Use home location<br>"
+        "<input type=\"radio\" name=\"use_home_loc\" value=\"1\" %s>Use GPS<br>"
+        "Home latitude:<br><input type=\"number\" min=\"-90.0000\" max=\"90.0000\" name=\"home_lat\" value=\"%d.%d\" step=\"0.0001\"><br>"
+        "Home longitude:<br><input type=\"number\" min=\"-180.0000\" max=\"180.0000\" name=\"home_long\" value=\"%d.%d\" step=\"0.0001\"><br>"
         "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
-        "</form><br><br>\r\n "
-        "%s"
-        "</body>\r\n"
-        "</html>",
-        config.get_device_id(),
-        config.get_ap_password(),
-        config.get_wifi_ssid(),
-        config.get_wifi_password(),
-        config.get_api_key(),
-        config.get_use_dev() ? "checked" : "",
-        config.get_use_dev() ? "" : "checked",
-        config.get_led_color_intensity(),
-        config.is_led_color_blind() ? "" : "checked",
-        config.is_led_color_blind() ? "checked" : "",
-        request.has_param("success") ? "Configurations saved!" : ""
+        "</form><br><br>"
+        "</body>"
+        "</html>"
+        ,request.has_param("success") ? "<em>Configurations saved!</em> - <a href=\"/\">OK</a><br>" : ""
+        ,config.get_device_id()
+        ,config.get_ap_password()
+        ,config.get_wifi_ssid()
+        ,config.get_wifi_password()
+        ,config.get_api_key()
+        ,config.get_use_dev() ? "checked" : ""
+        ,config.get_use_dev() ? "" : "checked"
+        ,config.get_led_color_intensity()
+        ,config.is_led_color_blind() ? "" : "checked"
+        ,config.is_led_color_blind() ? "checked" : ""
+        ,config.get_use_home_location() ? "" : "checked"
+        ,config.get_use_home_location() ? "checked" : ""
+        ,home_lat
+        ,home_lat_decimal
+        ,home_long
+        ,home_long_decimal
     );
     respondSuccess(client, transmission);
 
   } else if(request.is_uri("/save")) {
 
     char value[64];
-    if(request.get_param_value("ap_ssid", value, 64)) {
-      config.set_device_id(strtol(value, nullptr, 10), false);
-    }
     if(request.get_param_value("ap_password", value, 64)) {
       config.set_ap_password(value, false);
     }
@@ -171,6 +190,15 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
     }
     if(request.get_param_value("led_color", value, 64)) {
       config.set_led_color_blind(strcmp(value, "1") == 0, false);
+    }
+    if(request.get_param_value("use_home_loc", value, 64)) {
+      config.set_use_home_location(strcmp(value, "1") == 0, false);
+    }
+    if(request.get_param_value("home_long", value, 64)) {
+      config.set_home_longitude(strtod(value, nullptr), false);
+    }
+    if(request.get_param_value("home_lat", value, 64)) {
+      config.set_home_latitude(strtod(value, nullptr), false);
     }
 
     respondRedirect(client, "/?success=true");

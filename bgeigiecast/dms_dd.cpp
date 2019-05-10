@@ -1,17 +1,16 @@
 #include "dms_dd.h"
 
 
-float dms_to_dd(float dms) {
-  float degree = static_cast<int>(dms / 100);
-  float minutes = static_cast<int>(dms - (degree * 100));
-  float seconds = static_cast<int>((dms - (degree * 100) - minutes) * 100);
+double dms_to_dd(float dms) {
+  double degree = static_cast<int>(dms / 100);
+  double minutes = static_cast<int>(dms - (degree * 100));
+  double seconds = static_cast<int>((dms - (degree * 100) - minutes) * 100);
   return degree + minutes/60 + seconds/3600;
 }
 
-
-float dm_to_dd(float dms) {
-  float degree = static_cast<int>(dms / 100);
-  float minutes = static_cast<int>(dms - (degree * 100));
+double dm_to_dd(float dm) {
+  double degree = static_cast<int>(dm / 100);
+  double minutes = static_cast<int>(dm - (degree * 100));
   return degree + minutes/60;
 }
 
