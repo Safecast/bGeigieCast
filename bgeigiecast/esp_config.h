@@ -27,7 +27,11 @@ class EspConfig : public IEspConfig {
   void set_led_color_blind(bool led_color_blind, bool force) override;
   void set_led_color_intensity(uint8_t led_color_intensity, bool force) override;
   void set_saved_state(uint8_t init_fixed, bool force) override;
-
+  void set_use_home_location(bool use_home_location, bool force) override;
+  void set_home_longitude(double home_longtitude, bool force) override;
+  void set_home_latitude(double home_latitude, bool force) override;
+  void set_last_longitude(double current_longtitude, bool force) override;
+  void set_last_latitude(double current_latitude, bool force) override;
  protected:
   bool clear() override;
 

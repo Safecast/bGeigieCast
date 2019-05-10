@@ -65,9 +65,9 @@ class Reading {
   uint16_t get_cpb() const;
   uint16_t get_total_count() const;
   char get_geiger_status() const;
-  float get_latitude() const;
-  float get_longitude() const;
-  float get_altitude() const;
+  double get_latitude() const;
+  double get_longitude() const;
+  double get_altitude() const;
   char get_gps_status() const;
   int get_sat_count() const;
   float get_precision() const;
@@ -90,9 +90,9 @@ class Reading {
   uint16_t _cpb;
   uint16_t _total_count;
   char _geiger_status;
-  float _latitude;
-  float _longitude;
-  float _altitude;
+  double _latitude;
+  double _longitude;
+  double _altitude;
   char _gps_status;
   int _sat_count;
   float _precision;

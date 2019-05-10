@@ -2,7 +2,7 @@
 #define BGEIGIECAST_DMS_DD_H
 
 
-float dms_to_dd(float dms);
-float dm_to_dd(float dms);
+double dms_to_dd(float dms);
+double dm_to_dd(float dm);
 
 #endif //BGEIGIECAST_DMS_DD_H

@@ -10,8 +10,12 @@ IEspConfig::IEspConfig() :
     _use_dev(D_USE_DEV_SERVER),
     _led_color_blind(D_LED_COLOR_BLIND),
     _led_color_intensity(D_LED_COLOR_INTENSITY),
-    _saved_state(D_SAVED_STATE) {
-
+    _saved_state(D_SAVED_STATE),
+    _use_home_location(false),
+    _home_longitude(0),
+    _home_latitude(0),
+    _last_longitude(0),
+    _last_latitude(0) {
 }
 
 void IEspConfig::reset_defaults() {
@@ -25,6 +29,9 @@ void IEspConfig::reset_defaults() {
     set_led_color_blind(D_LED_COLOR_BLIND, true);
     set_led_color_intensity(D_LED_COLOR_INTENSITY, true);
     set_saved_state(D_SAVED_STATE, true);
+    set_use_home_location(false, true);
+    set_home_longitude(0, true);
+    set_home_latitude(0, true);
   }
 }
 
@@ -62,4 +69,24 @@ uint8_t IEspConfig::get_led_color_intensity() const {
 
 bool IEspConfig::get_use_dev() const {
   return _use_dev;
+}
+
+bool IEspConfig::get_use_home_location() const {
+  return _use_home_location;
+}
+
+double IEspConfig::get_home_longtitude() const {
+  return _home_longitude;
+}
+
+double IEspConfig::get_home_latitude() const {
+  return _home_latitude;
+}
+
+double IEspConfig::get_last_longtitude() const {
+  return _last_longitude;
+}
+
+double IEspConfig::get_last_latitude() const {
+  return _last_latitude;
 }

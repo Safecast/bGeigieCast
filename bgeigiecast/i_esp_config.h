@@ -34,6 +34,12 @@ class IEspConfig {
   virtual uint8_t get_led_color_intensity() const final;
   virtual uint8_t get_saved_state() const final;
 
+  virtual bool get_use_home_location() const final;
+  virtual double get_home_longtitude() const final;
+  virtual double get_home_latitude() const final;
+  virtual double get_last_longtitude() const final;
+  virtual double get_last_latitude() const final;
+
   virtual void set_device_id(uint16_t device_id, bool force) = 0;
   virtual void set_ap_password(const char* ap_password, bool force) = 0;
   virtual void set_wifi_ssid(const char* wifi_ssid, bool force) = 0;
@@ -43,6 +49,11 @@ class IEspConfig {
   virtual void set_led_color_blind(bool led_color_blind, bool force) = 0;
   virtual void set_led_color_intensity(uint8_t led_color_intensity, bool force) = 0;
   virtual void set_saved_state(uint8_t saved_state, bool force) = 0;
+  virtual void set_use_home_location(bool use_home_location, bool force) = 0;
+  virtual void set_home_longitude(double home_longitude, bool force) = 0;
+  virtual void set_home_latitude(double home_latitude, bool force) = 0;
+  virtual void set_last_longitude(double current_longtitude, bool force) = 0;
+  virtual void set_last_latitude(double current_latitude, bool force) = 0;
 
 
  protected:
@@ -72,6 +83,14 @@ class IEspConfig {
 
   // Flag if fixed or mobile mode is started after init
   uint8_t _saved_state;
+
+  // Home location configs
+  bool _use_home_location;
+  double _home_longitude;
+  double _home_latitude;
+
+  double _last_longitude;
+  double _last_latitude;
 };
 
 #endif //BGEIGIECAST_I_ESP_CONFIG_H

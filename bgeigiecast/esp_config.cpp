@@ -17,6 +17,8 @@ const char* key_use_dev = "use_dev";
 const char* key_led_color_blind = "led_color_blind";
 const char* key_led_color_intensity = "led_intensity";
 const char* key_saved_state = "saved_state";
+const char* key_home_longtitude = "home_longtitude";
+const char* key_home_latitude = "home_latitude";
 
 EspConfig::EspConfig() :
     IEspConfig::IEspConfig(),
@@ -42,6 +44,9 @@ void EspConfig::set_all() {
   _led_color_blind = _memory.getBool(key_led_color_blind, D_LED_COLOR_BLIND);
   _led_color_intensity = _memory.getUChar(key_led_color_intensity, D_LED_COLOR_INTENSITY);
   _saved_state = _memory.getUChar(key_saved_state, D_SAVED_STATE);
+  _use_home_location = _memory.getBool(key_led_color_blind, false);
+  _home_longitude = _memory.getDouble(key_home_longtitude, 0);
+  _home_latitude = _memory.getDouble(key_home_latitude, 0);
   _memory.end();
 }
 
@@ -161,4 +166,44 @@ void EspConfig::set_saved_state(uint8_t saved_state, bool force) {
       DEBUG_PRINTLN("unable to save new value for init_fixed");
     }
   }
+}
+
+void EspConfig::set_use_home_location(bool use_home_location, bool force) {
+  if(force || (use_home_location != _use_home_location)) {
+    if(_memory.begin(memory_name)) {
+      _use_home_location = use_home_location;
+      _memory.putBool(key_led_color_blind, use_home_location);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for key_led_color_blind");
+    }
+  }
+}
+
+void EspConfig::set_home_longitude(double home_longtitude, bool force) {
+  if(_memory.begin(memory_name)) {
+    _home_longitude = home_longtitude;
+    _memory.putDouble(key_home_longtitude, home_longtitude);
+    _memory.end();
+  } else {
+    DEBUG_PRINTLN("unable to save new value for key_home_longtitude");
+  }
+}
+
+void EspConfig::set_home_latitude(double home_latitude, bool force) {
+  if(_memory.begin(memory_name)) {
+    _home_latitude = home_latitude;
+    _memory.putDouble(key_home_latitude, home_latitude);
+    _memory.end();
+  } else {
+    DEBUG_PRINTLN("unable to save new value for key_home_latitude");
+  }
+}
+
+void EspConfig::set_last_longitude(double current_longtitude, bool force) {
+  _last_longitude = current_longtitude;
+}
+
+void EspConfig::set_last_latitude(double current_latitude, bool force) {
+  _last_latitude = current_latitude;
 }
