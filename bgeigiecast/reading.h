@@ -55,6 +55,13 @@ class Reading {
    */
   bool valid_reading() const;
 
+  /**
+   * Apply home location. will invalidate the gps status if its out of range, or set the home lat / long if in range.
+   * @param home_lat: latitude
+   * @param home_long: longitude
+   */
+  void apply_home_location(double home_lat, double home_long);
+
   const char* get_reading_str() const;
   int8_t get_status() const;
   uint16_t get_device_id() const;

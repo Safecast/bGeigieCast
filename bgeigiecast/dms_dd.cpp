@@ -10,7 +10,7 @@ double dms_to_dd(double dms) {
 
 double dm_to_dd(double dm) {
   double degree = static_cast<int>(dm / 100);
-  double minutes = static_cast<int>(dm - (degree * 100));
+  double minutes = dm - (degree * 100);
   return degree + minutes/60;
 }
 

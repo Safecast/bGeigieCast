@@ -5,9 +5,12 @@
 #include "dms_dd.h"
 
 #include "reading.h"
+#include "debugger.h"
 
 #define EXPECTED_PARSE_RESULT_COUNT 15
-#define VALID_BGEIGIE_ID(id) (id >= 1000 && id < 9999)
+#define VALID_BGEIGIE_ID(id) (id >= 1000 && id < 10000)
+
+#define LONG_LAT_PRECISION 0.001
 
 Reading::Reading() :
     _reading_str(""),
@@ -111,10 +114,9 @@ Reading& Reading::operator+=(const Reading& o) {
       _status |= k_reading_sensor_ok;
       _cpm = o_cpm;
       _cpb = o_cpb;
-    }
-    else if (_status & k_reading_sensor_ok && !(o._status & k_reading_sensor_ok)) {
-      o_cpm =_cpm;
-      o_cpb =_cpb;
+    } else if(_status & k_reading_sensor_ok && !(o._status & k_reading_sensor_ok)) {
+      o_cpm = _cpm;
+      o_cpb = _cpb;
     }
 
     // Sensor data
@@ -128,11 +130,10 @@ Reading& Reading::operator+=(const Reading& o) {
       _latitude = o_lat;
       _longitude = o_long;
       _altitude = o_alt;
-    }
-    else if (_status & k_reading_gps_ok && !(o._status & k_reading_gps_ok)) {
-      o_lat =_latitude;
-      o_long =_longitude;
-      o_alt =_altitude;
+    } else if(_status & k_reading_gps_ok && !(o._status & k_reading_gps_ok)) {
+      o_lat = _latitude;
+      o_long = _longitude;
+      o_alt = _altitude;
     }
 
     // Location data
@@ -160,8 +161,8 @@ bool Reading::as_json(char* out) {
       "\"device_id\":%d,"
       "\"value\":%d,"
       "\"unit\":\"cpm\","
-      "\"longitude\":%.4f,"
-      "\"latitude\":%.4f}\n",
+      "\"longitude\":%.5f,"
+      "\"latitude\":%.5f}\n",
       _iso_timestr,
       device_id,
       _cpm,
@@ -173,6 +174,18 @@ bool Reading::as_json(char* out) {
 
 void Reading::reset() {
   _average_of = 0;
+}
+
+void Reading::apply_home_location(double home_lat, double home_long) {
+  if(_latitude < home_lat + LONG_LAT_PRECISION && _latitude > home_lat - LONG_LAT_PRECISION
+      && _longitude < home_long + LONG_LAT_PRECISION && _longitude > home_long - LONG_LAT_PRECISION) {
+    DEBUG_PRINTLN("Gps in home location");
+    _latitude = home_lat;
+    _longitude = home_long;
+  } else {
+    DEBUG_PRINTLN("Gps not in home location");
+    _status &= ~(k_reading_gps_ok);
+  }
 }
 
 void Reading::parse_values() {

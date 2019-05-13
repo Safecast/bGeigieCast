@@ -28,6 +28,9 @@ void IApiConnector::process_reading(Reading* reading) {
   _merged_reading += *reading;
   if(time_to_send()) {
     _last_send = millis();
+    if(_config.get_use_home_location()) {
+      _merged_reading.apply_home_location(_config.get_home_latitude(), _config.get_home_longtitude());
+    }
     if(_merged_reading.valid_reading()){
       schedule_event(e_a_report_reading);
     } else {
