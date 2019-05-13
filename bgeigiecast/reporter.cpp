@@ -46,9 +46,13 @@ void Reporter::get_new_reading() {
     delete _last_reading;
     _last_reading = output;
     _last_reading_moment = millis();
-    _last_reading->correctly_parsed() ? schedule_event(e_r_reading_received) : schedule_event(e_r_reading_invalid);
-    if (_last_reading->get_device_id() > 0) {
+    _last_reading->get_status() & k_reading_valid ? schedule_event(e_r_reading_received) : schedule_event(e_r_reading_invalid);
+    if(_last_reading->get_device_id() > 0) {
       _config.set_device_id(_last_reading->get_device_id(), false);
+    }
+    if(_last_reading->get_status() & k_reading_gps_ok) {
+      _config.set_last_latitude(_last_reading->get_latitude(), false);
+      _config.set_last_longitude(_last_reading->get_longitude(), false);
     }
   }
 }
@@ -104,8 +108,9 @@ void Reporter::api_reported(IApiConnector::ReportApiStatus status) {
 }
 
 void Reporter::report_complete(ReporterStatus status) {
-  if(_observer)
+  if(_observer) {
     _observer->reading_reported(status);
+  }
   schedule_event(e_r_reading_reported);
 }
 

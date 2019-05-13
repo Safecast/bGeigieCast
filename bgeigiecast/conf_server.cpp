@@ -143,6 +143,9 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         "<input type=\"radio\" name=\"use_home_loc\" value=\"1\" %s>Use GPS<br>"
         "Home latitude:<br><input type=\"number\" min=\"-90.0000\" max=\"90.0000\" name=\"home_lat\" value=\"%d.%d\" step=\"0.0001\"><br>"
         "Home longitude:<br><input type=\"number\" min=\"-180.0000\" max=\"180.0000\" name=\"home_long\" value=\"%d.%d\" step=\"0.0001\"><br>"
+        "Last known position: <br>"
+        "Latitude: <span id=\"last-lat\">%d.%d</span><br>"
+        "Longitude: <span id=\"last-long\">%d.%d</span><br>"
         "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
         "</form><br><br>"
         "</body>"
@@ -164,6 +167,10 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         ,home_lat_decimal
         ,home_long
         ,home_long_decimal
+        ,last_lat
+        ,last_lat_decimal
+        ,last_long
+        ,last_long_decimal
     );
     respondSuccess(client, transmission);
 
