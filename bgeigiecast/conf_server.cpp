@@ -139,7 +139,7 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         "document.getElementById('home_lat').value = document.getElementById('last_lat').innerHTML;"
         "document.getElementById('home_long').value = document.getElementById('last_long').innerHTML;"
         "return false;"
-        "\">Use location</a>)<br>"
+        "\">Use this</a>)<br>"
         "Latitude: <span id=\"last_lat\">%.4f</span><br>"
         "Longitude: <span id=\"last_long\">%.4f</span><br>"
         "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
