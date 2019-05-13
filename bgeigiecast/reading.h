@@ -5,13 +5,11 @@
 
 #define READING_STR_MAX 100
 
-typedef enum {
-  k_reading_unparsed,
-  k_reading_valid,
-  k_reading_invalid_string,
-  k_reading_invalid_sensor,
-  k_reading_invalid_gps,
-} ReadingValidity;
+constexpr int8_t k_reading_parsed = 0x1 << 0;
+constexpr int8_t k_reading_valid = 0x1 << 1;
+constexpr int8_t k_reading_sensor_ok = 0x1 << 2;
+constexpr int8_t k_reading_gps_ok = 0x1 << 3;
+constexpr int8_t k_reading_checksum_ok = 0x1 << 4;
 
 /**
  * Container for a reading from the bGeigie, with some extra functions
@@ -52,26 +50,23 @@ class Reading {
   void reset();
 
   /**
-   * Check if the reading was correctly parsed
-   * @return true if not unparsed / invalid string
+   * Check if the reading is 100% valid (parsed, sensor and gps OK)
+   * @return true if valid
    */
-  bool correctly_parsed() const;
+  bool valid_reading() const;
 
   const char* get_reading_str() const;
-  ReadingValidity get_validity() const;
+  int8_t get_status() const;
   uint16_t get_device_id() const;
   const char* get_iso_timestr() const;
   uint16_t get_cpm() const;
   uint16_t get_cpb() const;
   uint16_t get_total_count() const;
-  char get_geiger_status() const;
   double get_latitude() const;
   double get_longitude() const;
   double get_altitude() const;
-  char get_gps_status() const;
   int get_sat_count() const;
   float get_precision() const;
-  uint16_t get_checksum() const;
 
  private:
   /**
@@ -80,7 +75,7 @@ class Reading {
   void parse_values();
 
   char _reading_str[READING_STR_MAX];
-  ReadingValidity _validity;
+  int8_t _status;
   uint16_t _average_of;
 
   // Reading content
@@ -89,14 +84,11 @@ class Reading {
   uint16_t _cpm;
   uint16_t _cpb;
   uint16_t _total_count;
-  char _geiger_status;
   double _latitude;
   double _longitude;
   double _altitude;
-  char _gps_status;
   int _sat_count;
   float _precision;
-  uint16_t _checksum;
 
 };
 

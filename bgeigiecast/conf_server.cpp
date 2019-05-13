@@ -98,14 +98,6 @@ bool ConfigWebServer::is_running() {
 void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request) {
   if(request.is_uri("/")) {
     char transmission[4096];
-    int32_t home_long = static_cast<int32_t>(config.get_home_longtitude()),
-      home_long_decimal = static_cast<int32_t>((config.get_home_longtitude() - home_long) * 10000),
-      home_lat = static_cast<int32_t>(config.get_home_latitude()),
-      home_lat_decimal = static_cast<int32_t>((config.get_home_latitude() - home_lat) * 10000),
-      last_long = static_cast<int32_t>(config.get_last_longtitude()),
-      last_long_decimal = static_cast<int32_t>((config.get_last_longtitude() - last_long) * 10000),
-      last_lat = static_cast<int32_t>(config.get_last_latitude()),
-      last_lat_decimal = static_cast<int32_t>((config.get_last_latitude() - last_lat) * 10000);
 
     sprintf(
         transmission,
@@ -141,10 +133,20 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         "Fixed mode GPS settings:<br>"
         "<input type=\"radio\" name=\"use_home_loc\" value=\"0\" %s>Use home location<br>"
         "<input type=\"radio\" name=\"use_home_loc\" value=\"1\" %s>Use GPS<br>"
-        "Home latitude:<br><input type=\"number\" min=\"-90.0000\" max=\"90.0000\" name=\"home_lat\" value=\"%d.%d\" step=\"0.0001\"><br>"
-        "Home longitude:<br><input type=\"number\" min=\"-180.0000\" max=\"180.0000\" name=\"home_long\" value=\"%d.%d\" step=\"0.0001\"><br>"
+        "Home latitude:<br><input type=\"number\" min=\"-90.0000\" max=\"90.0000\" name=\"home_lat\" id=\"home_lat\" value=\"%.4f\" step=\"0.0001\"><br>"
+        "Home longitude:<br><input type=\"number\" min=\"-180.0000\" max=\"180.0000\" name=\"home_long\" id=\"home_long\" value=\"%.4f\" step=\"0.0001\"><br>"
+        "Last known position: (<a href=\"#\" onclick=\""
+        "document.getElementById('home_lat').value = document.getElementById('last_lat').innerHTML;"
+        "document.getElementById('home_long').value = document.getElementById('last_long').innerHTML;"
+        "return false;"
+        "\">Use this</a>)<br>"
+        "Latitude: <span id=\"last_lat\">%.4f</span><br>"
+        "Longitude: <span id=\"last_long\">%.4f</span><br>"
         "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
         "</form><br><br>"
+        "<script>"
+        ""
+        "</script>"
         "</body>"
         "</html>"
         ,request.has_param("success") ? "<em>Configurations saved!</em> - <a href=\"/\">OK</a><br>" : ""
@@ -160,10 +162,10 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         ,config.is_led_color_blind() ? "checked" : ""
         ,config.get_use_home_location() ? "" : "checked"
         ,config.get_use_home_location() ? "checked" : ""
-        ,home_lat
-        ,home_lat_decimal
-        ,home_long
-        ,home_long_decimal
+        ,config.get_home_latitude()
+        ,config.get_home_longtitude()
+        ,config.get_last_latitude()
+        ,config.get_last_longtitude()
     );
     respondSuccess(client, transmission);
 

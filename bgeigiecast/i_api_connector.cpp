@@ -28,7 +28,13 @@ void IApiConnector::process_reading(Reading* reading) {
   _merged_reading += *reading;
   if(time_to_send()) {
     _last_send = millis();
-    schedule_event(e_a_report_reading);
+    if(_merged_reading.valid_reading()){
+      schedule_event(e_a_report_reading);
+    } else {
+      // Invalid reading, no need to send this.
+      schedule_event(e_a_not_reporting);
+      _merged_reading.reset();
+    }
   } else{
     schedule_event(e_a_not_reporting);
   }
@@ -36,7 +42,7 @@ void IApiConnector::process_reading(Reading* reading) {
 
 void IApiConnector::save_reading(Reading* reading) {
   DEBUG_PRINTLN("Could not upload reading, trying again later");
-  if(reading && reading->get_validity() == ReadingValidity::k_reading_valid) {
+  if(reading) {
     if(_saved_readings.get_count() == MAX_MISSED_READINGS) {
       // Delete oldest reading, else mem leak
       delete _saved_readings.get();
