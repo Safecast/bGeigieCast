@@ -19,6 +19,8 @@ const char* key_led_color_intensity = "led_intensity";
 const char* key_saved_state = "saved_state";
 const char* key_home_longtitude = "home_longtitude";
 const char* key_home_latitude = "home_latitude";
+const char* key_last_longtitude = "last_longtitude";
+const char* key_last_latitude = "last_latitude";
 
 EspConfig::EspConfig() :
     IEspConfig::IEspConfig(),
@@ -47,6 +49,8 @@ void EspConfig::set_all() {
   _use_home_location = _memory.getBool(key_led_color_blind, false);
   _home_longitude = _memory.getDouble(key_home_longtitude, 0);
   _home_latitude = _memory.getDouble(key_home_latitude, 0);
+  _last_longitude = _memory.getDouble(key_last_longtitude, 0);
+  _last_latitude = _memory.getDouble(key_last_latitude, 0);
   _memory.end();
 }
 
@@ -200,10 +204,22 @@ void EspConfig::set_home_latitude(double home_latitude, bool force) {
   }
 }
 
-void EspConfig::set_last_longitude(double current_longtitude, bool force) {
-  _last_longitude = current_longtitude;
+void EspConfig::set_last_longitude(double last_longitude, bool force) {
+  if(_memory.begin(memory_name)) {
+    _last_longitude = last_longitude;
+    _memory.putDouble(key_last_longtitude, last_longitude);
+    _memory.end();
+  } else {
+    DEBUG_PRINTLN("unable to save new value for key_last_longtitude");
+  }
 }
 
-void EspConfig::set_last_latitude(double current_latitude, bool force) {
-  _last_latitude = current_latitude;
+void EspConfig::set_last_latitude(double last_latitude, bool force) {
+  if(_memory.begin(memory_name)) {
+    _last_latitude = last_latitude;
+    _memory.putDouble(key_last_latitude, last_latitude);
+    _memory.end();
+  } else {
+    DEBUG_PRINTLN("unable to save new value for key_last_latitude");
+  }
 }

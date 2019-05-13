@@ -52,8 +52,8 @@ class IEspConfig {
   virtual void set_use_home_location(bool use_home_location, bool force) = 0;
   virtual void set_home_longitude(double home_longitude, bool force) = 0;
   virtual void set_home_latitude(double home_latitude, bool force) = 0;
-  virtual void set_last_longitude(double current_longtitude, bool force) = 0;
-  virtual void set_last_latitude(double current_latitude, bool force) = 0;
+  virtual void set_last_longitude(double last_longitude, bool force) = 0;
+  virtual void set_last_latitude(double last_latitude, bool force) = 0;
 
 
  protected:
