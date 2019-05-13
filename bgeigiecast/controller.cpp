@@ -79,10 +79,10 @@ SavableState Controller::get_saved_state() {
 void Controller::reading_reported(Reporter::ReporterStatus status) {
   switch(status) {
     case Reporter::k_reporter_failed:
-      schedule_event(e_c_api_report_failed);
+      schedule_event(e_c_report_failed);
       break;
     case Reporter::k_reporter_success:
-      schedule_event(e_c_api_report_success);
+      schedule_event(e_c_report_success);
       break;
     case Reporter::k_reporter_no_change:
       // No change

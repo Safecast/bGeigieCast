@@ -21,10 +21,10 @@ void DisconnectedState::exit_action() {
 
 void DisconnectedState::handle_event(Event_enum event_id) {
   switch(event_id) {
-    case e_c_api_report_success:
+    case e_c_report_success:
       controller.set_state(new ConnectedState(controller));
       break;
-    case e_c_api_report_failed:
+    case e_c_report_failed:
       controller.set_state(new ConnectionErrorState(controller));
       break;
     default:

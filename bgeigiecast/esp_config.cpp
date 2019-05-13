@@ -57,7 +57,7 @@ void EspConfig::set_all() {
 bool EspConfig::clear() {
   if(_memory.begin(memory_name)) {
     _memory.clear();
-    _memory.end();
+    _memory.end();  
     return true;
   }
   return false;

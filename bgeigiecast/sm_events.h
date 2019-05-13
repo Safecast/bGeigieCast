@@ -12,8 +12,8 @@ typedef enum {
   e_c_post_init_time_passed,
   e_c_server_initialized,
 
-  e_c_api_report_success,
-  e_c_api_report_failed,
+  e_c_report_success,
+  e_c_report_failed,
 
 
   // Reporter events

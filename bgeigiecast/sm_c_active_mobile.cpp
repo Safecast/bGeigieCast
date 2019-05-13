@@ -23,6 +23,9 @@ void MobileModeState::handle_event(Event_enum event_id) {
     case e_c_button_pressed:
       controller.set_state(new DisconnectedState(controller));
       break;
+    case e_c_report_success:
+      // Success, no need to do anything
+      break;
     default:
       ActiveState::handle_event(event_id);
       break;
