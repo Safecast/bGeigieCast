@@ -5,7 +5,6 @@
 #include "dms_dd.h"
 
 #include "reading.h"
-#include "reading_parser.h"
 
 #define EXPECTED_PARSE_RESULT_COUNT 15
 #define VALID_BGEIGIE_ID(id) (id >= 1000 && id < 9999)
