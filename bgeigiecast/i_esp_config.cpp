@@ -26,6 +26,7 @@ void IEspConfig::reset_defaults() {
     set_wifi_password(D_WIFI_PASSWORD, true);
     set_api_key(D_APIKEY, true);
     set_use_dev(D_USE_DEV_SERVER, true);
+    set_dev_sped_up(false, true);
     set_led_color_blind(D_LED_COLOR_BLIND, true);
     set_led_color_intensity(D_LED_COLOR_INTENSITY, true);
     set_saved_state(D_SAVED_STATE, true);
@@ -69,6 +70,10 @@ uint8_t IEspConfig::get_led_color_intensity() const {
 
 bool IEspConfig::get_use_dev() const {
   return _use_dev;
+}
+
+bool IEspConfig::get_dev_sped_up() const {
+  return _dev_sped_up;
 }
 
 bool IEspConfig::get_use_home_location() const {

@@ -30,6 +30,7 @@ class IEspConfig {
   virtual const char* get_wifi_password() const final;
   virtual const char* get_api_key() const final;
   virtual bool get_use_dev() const final;
+  virtual bool get_dev_sped_up() const final;
   virtual bool is_led_color_blind() const final;
   virtual uint8_t get_led_color_intensity() const final;
   virtual uint8_t get_saved_state() const final;
@@ -46,6 +47,7 @@ class IEspConfig {
   virtual void set_wifi_password(const char* wifi_password, bool force) = 0;
   virtual void set_api_key(const char* api_key, bool force) = 0;
   virtual void set_use_dev(bool use_dev, bool force) = 0;
+  virtual void set_dev_sped_up(bool sped_up, bool force) = 0;
   virtual void set_led_color_blind(bool led_color_blind, bool force) = 0;
   virtual void set_led_color_intensity(uint8_t led_color_intensity, bool force) = 0;
   virtual void set_saved_state(uint8_t saved_state, bool force) = 0;
@@ -76,6 +78,7 @@ class IEspConfig {
   // API config (to connect to the API)
   char _api_key[CONFIG_VAL_MAX];
   bool _use_dev;
+  bool _dev_sped_up;
 
   // RGB LED config
   bool _led_color_blind;

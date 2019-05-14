@@ -96,7 +96,7 @@ class IApiConnector : public Context {
 
   ApiConnectionObserver* _observer;
 
-  bool _emergency;
+  bool _alert;
 
   // To access the saved readings
   friend class ApiReportDoneState;

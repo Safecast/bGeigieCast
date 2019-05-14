@@ -110,6 +110,8 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         ,config.get_api_key()
         ,config.get_use_dev() ? "checked" : ""
         ,config.get_use_dev() ? "" : "checked"
+        ,config.get_dev_sped_up() ? "" : "checked"
+        ,config.get_dev_sped_up() ? "checked" : ""
         ,config.get_led_color_intensity()
         ,config.is_led_color_blind() ? "" : "checked"
         ,config.is_led_color_blind() ? "checked" : ""
@@ -139,6 +141,9 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
     }
     if(request.get_param_value("devsrv", value, 64)) {
       config.set_use_dev(strcmp(value, "1") == 0, false);
+    }
+    if(request.get_param_value("devfreq", value, 64)) {
+      config.set_dev_sped_up(strcmp(value, "1") == 0, false);
     }
     if(request.get_param_value("led_intensity", value, 64)) {
       config.set_led_color_intensity(static_cast<uint8_t>(strtoul(value, nullptr, 10)), false);
