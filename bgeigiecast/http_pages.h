@@ -51,6 +51,6 @@ const char* config_response_format =
     "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
     "</form><br><br>"
     "</body>"
-    "</html>";
+    "</html>\0";
 
 #endif //BGEIGIECAST_HTTP_PAGES_H
