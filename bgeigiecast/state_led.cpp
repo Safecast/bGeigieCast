@@ -28,12 +28,16 @@ void StateLED::set_color(StateLED::StateColor color) {
   DEBUG_PRINTLN(color);
   set(_config.is_led_color_blind() ? _colorTypes[color].color_blind : _colorTypes[color].normal);
 }
-void StateLED::blink(StateLED::StateColor color, uint32_t frequency) {
+
+void StateLED::blink(StateLED::StateColor color, double frequency, double percentage_on) {
   // Blink LED
-  if(millis() % frequency > frequency / 2 && !_blink_state) {
+  double blink_millis = 1000/frequency;
+  uint32_t cycle_now = millis() % static_cast<uint32_t>(blink_millis);
+  uint32_t threshold = static_cast<uint32_t>(blink_millis * (percentage_on / 100));
+  if(cycle_now < threshold && !_blink_state) {
     set_color(color);
     _blink_state = true;
-  } else if(millis() % frequency < frequency / 2 && _blink_state) {
+  } else if(cycle_now > threshold && _blink_state) {
     set_color(StateLED::StateColor::off);
     _blink_state = false;
   }

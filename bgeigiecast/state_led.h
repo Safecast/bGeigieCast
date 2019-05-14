@@ -26,7 +26,7 @@ class StateLED : private RGBLed{
 
   void set_color(StateColor color);
 
-  void blink(StateColor color, uint32_t frequency);
+  void blink(StateColor color, double frequency, double percentage_on = 50);
 
  private:
   typedef struct {
