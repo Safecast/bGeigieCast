@@ -23,6 +23,7 @@ bool IApiConnector::time_to_send() const {
 
 void IApiConnector::init_reading_report(Reading* reading) {
   set_state(new ApiProcessReadingState(*this, reading));
+  _alert = reading->get_cpm() > 100; // TODO: configurable value
 }
 
 void IApiConnector::process_reading(Reading* reading) {
