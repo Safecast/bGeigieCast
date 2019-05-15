@@ -2,7 +2,6 @@
 #define BGEIGIECAST_CONTROLLER_HPP
 
 #include "button.h"
-#include "button_observer.h"
 #include "sm_context.h"
 #include "conf_server.h"
 #include "bgeigie_connector.h"

@@ -1,4 +1,5 @@
 #include "button.h"
+#include "debugger.h"
 
 volatile uint32_t temp = 0;
 
@@ -41,10 +42,12 @@ bool Button::currently_pressed() const {
 }
 
 bool Button::state_changed(int state, uint32_t time) {
-  _current_state = state == _pull_type_mode;
-  if(_last_state_change + DEBOUNCE_TIME_MILLIS > time) {
+  bool new_state = state == _pull_type_mode;
+  if(new_state == _current_state || _last_state_change + DEBOUNCE_TIME_MILLIS > time) {
+    _current_state = new_state;
     return false;
   }
+  _current_state = new_state;
 
   if(_current_state) {
     if(_observer) { _observer->on_button_down(this); }
