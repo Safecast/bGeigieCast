@@ -1,4 +1,4 @@
-#include "sm_c_init.h"
+#include "sm_c_concete_states.h"
 #include "controller.h"
 #include "reading.h"
 
@@ -24,6 +24,11 @@ void Controller::setup_state_machine() {
   set_state(new InitializeState(*this));
 }
 
+void Controller::run() {
+  Context::run();
+  _reporter.run();
+}
+
 void Controller::initialize() {
   _mode_button.activate();
   _mode_button.set_observer(this);
@@ -43,10 +48,6 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
       schedule_event(Event_enum::e_c_button_pressed);
     }
   }
-}
-
-void Controller::run_reporter() {
-  _reporter.run();
 }
 
 void Controller::set_reporter_outputs(bool bt, bool api) {

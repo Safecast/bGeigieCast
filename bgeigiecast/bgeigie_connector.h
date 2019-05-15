@@ -22,6 +22,7 @@ class BGeigieConnector {
 
  private:
   Stream& _serial_connection;
+  String _buffer;
 };
 
 #endif //BGEIGIECAST_BGEIGIE_CONNECTOR_H

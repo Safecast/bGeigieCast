@@ -32,9 +32,9 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
   void initialize();
 
   /**
-   * Read new serial input from the bGeigie, if there is, it will report to bluetooth / api
+   * Override the context run to also run the reporter state machine
    */
-  void run_reporter();
+  void run() override;
 
   /**
    *
@@ -66,6 +66,7 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
    * get the saved state from the memory
    */
   SavableState get_saved_state();
+
 
  private:
   void reading_reported(Reporter::ReporterStatus status) override;

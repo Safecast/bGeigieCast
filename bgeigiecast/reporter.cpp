@@ -1,6 +1,5 @@
 #include "reporter.h"
-#include "sm_r_init.h"
-#include "sm_r_idle.h"
+#include "sm_r_concrete_states.h"
 
 // Every 5 seconds
 #define BGEIGIE_MEASUREMENTS_SECONDS 5
@@ -25,7 +24,7 @@ Reporter::Reporter(IEspConfig& config,
 }
 
 void Reporter::setup_state_machine() {
-  set_state(new InitReporterState(*this));
+  set_state(new ReporterIdleState(*this));
 }
 
 void Reporter::set_report_output(bool bt, bool api) {
