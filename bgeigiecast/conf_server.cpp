@@ -3,6 +3,7 @@
 #include "esp_config.h"
 #include "debugger.h"
 #include "http_responses.h"
+#include "http_pages.h"
 
 typedef enum {
   request_line,
@@ -47,6 +48,7 @@ void ConfigWebServer::handle_requests() {
     HttpRequest request;
     RequestParse state = RequestParse::request_line;
     String currentLine = "";
+    uint32_t client_connected = millis();
 
     while(client.connected()) {
       if(client.available()) {
@@ -59,9 +61,11 @@ void ConfigWebServer::handle_requests() {
               case request_line:
                 request.set_request_line(currentLine.c_str());
                 state = RequestParse::header;
+                DEBUG_PRINTLN(currentLine);
                 currentLine = "";
                 break;
               case header:
+                DEBUG_PRINTLN(currentLine);
                 if(currentLine != "") {
                   request.add_header_line(currentLine.c_str());
                   currentLine = "";
@@ -78,7 +82,10 @@ void ConfigWebServer::handle_requests() {
             currentLine += c;
             break;
         }
+      } else if(millis() - client_connected > 200) {
+        break;
       }
+
       if(state == RequestParse::content) {
         handle_client_request(client, request);
         break;
@@ -97,55 +104,10 @@ bool ConfigWebServer::is_running() {
 
 void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request) {
   if(request.is_uri("/")) {
-    char transmission[4096];
 
     sprintf(
-        transmission,
-        "<!DOCTYPE html>"
-        "<html>"
-        "<head>"
-        "<link rel='icon' href='data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAA"
-        "AAgAAAAAAAAAAAAAAAEAAAAAAAAACAhYcA////AA0PEAC+pm4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-        "AAAAAAAAAAAIiIiIiIiIiIiIiIiIiIiIiIiMyISESIiIiIzIhIRIiIiIiIiEhEiIiIiIiISESIiIiIiIRIRIiIiIiIRIhEiIiIiERIi"
-        "ESIiIiIQIhESIiIiIiIRESIiIiIiEREiIiIiIiIRIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIAAAAAAAAAAAAAAAAAAAAAAAA"
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' type='image/x-png' />"
-        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-        "<style>body {font-family: Helvetica; text-align: center;} form {background-color: lightgrey; text-align: left; margin: 20px; padding: 20px;} input[type=\"text\"], input[type=\"number\"] {max-width: 300px; width: 95%%; padding: 3px; border-radius: 8px; margin-bottom: 5px;}, </style>"
-        "</head>"
-        "<body>"
-        "%s"
-        "<strong>Config Page</strong><br>"
-        "BgeigieCast %d<br>"
-        "<form action=\"save\" method=\"get\" > "
-        "bGeigieCast password:<br><input type=\"text\" name=\"ap_password\" value=\"%s\"><br>"
-        "Network wifi ssid:<br><input type=\"text\" name=\"wf_ssid\" value=\"%s\"><br>"
-        "Network wifi password:<br><input type=\"text\" name=\"wf_password\" value=\"%s\"><br>"
-        "Safecast API key:<br><input type=\"text\" name=\"apikey\" value=\"%s\"><br>"
-        "Use safecast server:<br>"
-        "<input type=\"radio\" name=\"devsrv\" value=\"1\" %s>Development<br>"
-        "<input type=\"radio\" name=\"devsrv\" value=\"0\" %s>Production<br>"
-        "<hr>"
-        "LED intensity:<br><input type=\"number\" min=\"0\" max=\"255\" name=\"led_intensity\" value=\"%d\"><br>"
-        "LED Colors:<br>"
-        "<input type=\"radio\" name=\"led_color\" value=\"0\" %s>Default<br>"
-        "<input type=\"radio\" name=\"led_color\" value=\"1\" %s>Color blind<br>"
-        "<hr>"
-        "Fixed mode GPS settings:<br>"
-        "<input type=\"radio\" name=\"use_home_loc\" value=\"0\" %s>Use home location<br>"
-        "<input type=\"radio\" name=\"use_home_loc\" value=\"1\" %s>Use GPS<br>"
-        "Home latitude:<br><input type=\"number\" min=\"-90.0000\" max=\"90.0000\" name=\"home_lat\" id=\"home_lat\" value=\"%.4f\" step=\"0.0001\"><br>"
-        "Home longitude:<br><input type=\"number\" min=\"-180.0000\" max=\"180.0000\" name=\"home_long\" id=\"home_long\" value=\"%.4f\" step=\"0.0001\"><br>"
-        "Last known location: (<a href=\"#\" onclick=\""
-        "document.getElementById('home_lat').value = document.getElementById('last_lat').innerHTML;"
-        "document.getElementById('home_long').value = document.getElementById('last_long').innerHTML;"
-        "return false;"
-        "\">Use this</a>)<br>"
-        "Latitude: <span id=\"last_lat\">%.4f</span><br>"
-        "Longitude: <span id=\"last_long\">%.4f</span><br>"
-        "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
-        "</form><br><br>"
-        "</body>"
-        "</html>"
+        transmission_buffer
+        ,config_response_format
         ,request.has_param("success") ? "<em>Configurations saved!</em> - <a href=\"/\">OK</a><br>" : ""
         ,config.get_device_id()
         ,config.get_ap_password()
@@ -154,6 +116,8 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         ,config.get_api_key()
         ,config.get_use_dev() ? "checked" : ""
         ,config.get_use_dev() ? "" : "checked"
+        ,config.get_dev_sped_up() ? "" : "checked"
+        ,config.get_dev_sped_up() ? "checked" : ""
         ,config.get_led_color_intensity()
         ,config.is_led_color_blind() ? "" : "checked"
         ,config.is_led_color_blind() ? "checked" : ""
@@ -164,7 +128,9 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         ,config.get_last_latitude()
         ,config.get_last_longtitude()
     );
-    respondSuccess(client, transmission);
+    DEBUG_PRINTLN("Writing to client: Started");
+    respondSuccess(client, transmission_buffer);
+    DEBUG_PRINTLN("Writing to client: Done");
 
   } else if(request.is_uri("/save")) {
 
@@ -183,6 +149,9 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
     }
     if(request.get_param_value("devsrv", value, 64)) {
       config.set_use_dev(strcmp(value, "1") == 0, false);
+    }
+    if(request.get_param_value("devfreq", value, 64)) {
+      config.set_dev_sped_up(strcmp(value, "1") == 0, false);
     }
     if(request.get_param_value("led_intensity", value, 64)) {
       config.set_led_color_intensity(static_cast<uint8_t>(strtoul(value, nullptr, 10)), false);

@@ -14,6 +14,7 @@ const char* key_wifi_ssid = "wifi_ssid";
 const char* key_wifi_password = "wifi_password";
 const char* key_api_key = "api_key";
 const char* key_use_dev = "use_dev";
+const char* key_sped_up = "sped_up";
 const char* key_led_color_blind = "led_color_blind";
 const char* key_led_color_intensity = "led_intensity";
 const char* key_saved_state = "saved_state";
@@ -43,6 +44,7 @@ void EspConfig::set_all() {
     strcpy(_api_key, D_APIKEY);
   }
   _use_dev = _memory.getBool(key_use_dev, D_USE_DEV_SERVER);
+  _dev_sped_up = _memory.getBool(key_sped_up, false);
   _led_color_blind = _memory.getBool(key_led_color_blind, D_LED_COLOR_BLIND);
   _led_color_intensity = _memory.getUChar(key_led_color_intensity, D_LED_COLOR_INTENSITY);
   _saved_state = _memory.getUChar(key_saved_state, D_SAVED_STATE);
@@ -131,6 +133,18 @@ void EspConfig::set_use_dev(bool use_dev, bool force) {
       _memory.end();
     } else {
       DEBUG_PRINTLN("unable to save new value for use_dev");
+    }
+  }
+}
+
+void EspConfig::set_dev_sped_up(bool sped_up, bool force) {
+  if(force || (sped_up != _dev_sped_up)) {
+    if(_memory.begin(memory_name)) {
+      _dev_sped_up = sped_up;
+      _memory.putBool(key_sped_up, sped_up);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for sped_up");
     }
   }
 }

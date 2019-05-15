@@ -15,7 +15,7 @@ void respondSuccess(Stream& client, const char* content, const char* content_typ
   client.print("Content-Type: ");
   client.println(content_type);
   client.print("Content-Length: ");
-  client.println(strlen(content) + 2);
+  client.println(strlen(content));
   client.println();
   client.println(content);
 }

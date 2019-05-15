@@ -4,8 +4,9 @@
 #include "debugger.h"
 #include "sm_a_process.h"
 
-#define API_SEND_FREQUENCY (API_SEND_FREQUENCY_MINUTES * 60 * 1000)
-#define API_SEND_FREQUENCY_EMERGENCY (API_SEND_FREQUENCY_MINUTES_EMERGENCY * 60 * 1000)
+#define API_SEND(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT : API_SEND_FREQUENCY_SECONDS)
+#define API_SEND_DEV(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT_DEV : API_SEND_FREQUENCY_SECONDS_DEV)
+#define API_SEND_FREQUENCY(alert, dev, sped) (((dev && sped ? API_SEND_DEV(alert) : API_SEND(alert)) * 1000) - 2000)
 
 IApiConnector::IApiConnector(IEspConfig& config, ApiConnectionObserver* observer) :
     _config(config),
@@ -13,21 +14,25 @@ IApiConnector::IApiConnector(IEspConfig& config, ApiConnectionObserver* observer
     _last_send(0),
     _merged_reading(),
     _observer(observer),
-    _emergency(false){
+    _alert(false){
 }
 
 bool IApiConnector::time_to_send() const {
-  return millis() - _last_send > (_emergency ? API_SEND_FREQUENCY_EMERGENCY : API_SEND_FREQUENCY);
+  return millis() - _last_send > API_SEND_FREQUENCY(_alert, _config.get_use_dev(), _config.get_dev_sped_up());
 }
 
 void IApiConnector::init_reading_report(Reading* reading) {
   set_state(new ApiProcessReadingState(*this, reading));
+  _alert = reading->get_cpm() > 100; // TODO: configurable value
 }
 
 void IApiConnector::process_reading(Reading* reading) {
   _merged_reading += *reading;
   if(time_to_send()) {
     _last_send = millis();
+    if(_config.get_use_home_location()) {
+      _merged_reading.apply_home_location(_config.get_home_latitude(), _config.get_home_longtitude());
+    }
     if(_merged_reading.valid_reading()){
       schedule_event(e_a_report_reading);
     } else {

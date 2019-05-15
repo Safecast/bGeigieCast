@@ -1,7 +1,8 @@
 #include "sm_c_init_reading.h"
 #include "sm_c_post_init.h"
 
-#define BLINK_DELAY 400
+#define BLINK_FREQUENCY 1
+#define BLINK_DURATION_PERCENTAGE 10
 
 InitReadingState::InitReadingState(Controller& context) : ControllerState(context) {
 }
@@ -12,7 +13,7 @@ void InitReadingState::entry_action() {
 }
 
 void InitReadingState::do_activity() {
-  controller._state_led.blink(StateLED::StateColor::init, BLINK_DELAY);
+  controller._state_led.blink(StateLED::StateColor::init, BLINK_FREQUENCY, BLINK_DURATION_PERCENTAGE);
   controller._reporter.run();
   if(controller._reporter.get_last_reading()) {
     controller.schedule_event(e_c_reading_initialized);
