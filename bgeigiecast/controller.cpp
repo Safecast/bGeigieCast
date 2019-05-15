@@ -15,7 +15,7 @@ Controller::Controller(IEspConfig& config,
     _reporter(config, bgeigie_connection, api_connector, bluetooth_connector),
     _ap_server(config),
     _mode_button(MODE_BUTTON_PIN),
-    _state_led(config),
+    _mode_led(config),
     _sleep_fn(sleep_fn) {
   _reporter.set_observer(this);
 }

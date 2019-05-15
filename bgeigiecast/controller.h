@@ -8,7 +8,7 @@
 #include "bgeigie_connector.h"
 #include "i_api_connector.h"
 #include "i_bluetooth_connector.h"
-#include "state_led.h"
+#include "mode_led.h"
 #include "reporter.h"
 
 /**
@@ -76,7 +76,7 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
   Reporter _reporter;
   ConfigWebServer _ap_server;
   Button _mode_button;
-  StateLED _state_led;
+  ModeLED _mode_led;
 
   sleep_fn_t _sleep_fn;
 
