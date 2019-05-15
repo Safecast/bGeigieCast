@@ -50,6 +50,7 @@ void RGBLed::set_b(uint8_t value) {
 }
 
 void RGBLed::set_channel(uint8_t channel, uint8_t value) {
-  uint8_t intensed_value = static_cast<uint8_t>((static_cast<float>(get_intensity()) / 255) * value);
-  ledcWrite(channel, _reversed ? static_cast<uint8_t>(255 - intensed_value) : intensed_value);
+  uint32_t modified_value = static_cast<int32_t>((static_cast<float>(get_intensity()) / 255) * value);
+  // using 256 below because when its inverted 255 will still be very dim, 256 will be 100% turned off.
+  ledcWrite(channel, _reversed ? (256 - modified_value) : modified_value);
 }

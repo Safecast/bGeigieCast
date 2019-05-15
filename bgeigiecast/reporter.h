@@ -47,8 +47,6 @@ class Reporter : public Context, private ApiConnectionObserver {
    * @param api : report to api (boolean)
    */
   void set_report_output(bool bt, bool api);
-  bool is_report_bt() const;
-  bool is_report_api() const;
 
   uint32_t time_till_next_reading(uint32_t current) const;
 
@@ -103,7 +101,6 @@ class Reporter : public Context, private ApiConnectionObserver {
   bool _report_api;
 
   // Friend list
-  friend class InitReporterState;
   friend class GetReadingState;
   friend class ReporterDoneState;
   friend class InitBluetoothState;

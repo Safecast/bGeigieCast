@@ -49,20 +49,11 @@ void Reporter::get_new_reading() {
     if(_last_reading->get_device_id() > 0) {
       _config.set_device_id(_last_reading->get_device_id(), false);
     }
-    if(_last_reading->get_status() & k_reading_gps_ok) {
-      _config.set_last_latitude(_last_reading->get_latitude(), false);
-      _config.set_last_longitude(_last_reading->get_longitude(), false);
-    }
+    _config.set_last_latitude(_last_reading->get_latitude(), false);
+    _config.set_last_longitude(_last_reading->get_longitude(), false);
   }
 }
 
-bool Reporter::is_report_bt() const {
-  return _report_bt;
-}
-
-bool Reporter::is_report_api() const {
-  return _report_api;
-}
 bool Reporter::is_idle() const {
   return dynamic_cast<ReporterIdleState*>(get_current_state()) != nullptr;
 }
