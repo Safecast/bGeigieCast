@@ -1,0 +1,9 @@
+"Id";"Designator";"Package";"Quantity";"Designation";"Supplier and ref";
+1;"U2";"XBEE-20_THT";1;"XBEE-socket";;;
+2;"C1";"CP_Tantalum_Case-D_EIA-7343-31_Hand";1;"CP1";;;
+3;"R2";"R_1206_HandSoldering";1;"1";;;
+4;"D1";"DJS-BRGBC-TR8";1;"RGB-LED";;;
+5;"R1";"R_0805_HandSoldering";1;"470";;;
+6;"U1";"ESP-32S";1;"ESP32S";;;
+7;"SW2";"SW_SPDT_PCM12";1;"SWITCH_INV";;;
+8;"SW1";"SW_SPST_TL3342";1;"TACT-SWITCH";;;
