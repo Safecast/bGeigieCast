@@ -21,7 +21,7 @@ class Context {
    */
   virtual void set_state(State* state);
 
-  /**
+  virtual /**
    * Run the state machine once, will handle scheduled events and run the do activity from the state
    */
   void run();

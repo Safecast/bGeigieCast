@@ -2,13 +2,12 @@
 #define BGEIGIECAST_CONTROLLER_HPP
 
 #include "button.h"
-#include "button_observer.h"
 #include "sm_context.h"
 #include "conf_server.h"
 #include "bgeigie_connector.h"
 #include "i_api_connector.h"
 #include "i_bluetooth_connector.h"
-#include "state_led.h"
+#include "mode_led.h"
 #include "reporter.h"
 
 /**
@@ -32,9 +31,9 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
   void initialize();
 
   /**
-   * Read new serial input from the bGeigie, if there is, it will report to bluetooth / api
+   * Override the context run to also run the reporter state machine
    */
-  void run_reporter();
+  void run() override;
 
   /**
    *
@@ -67,6 +66,7 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
    */
   SavableState get_saved_state();
 
+
  private:
   void reading_reported(Reporter::ReporterStatus status) override;
 
@@ -75,7 +75,7 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
   Reporter _reporter;
   ConfigWebServer _ap_server;
   Button _mode_button;
-  StateLED _state_led;
+  ModeLED _mode_led;
 
   sleep_fn_t _sleep_fn;
 

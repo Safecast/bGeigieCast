@@ -61,11 +61,9 @@ void ConfigWebServer::handle_requests() {
               case request_line:
                 request.set_request_line(currentLine.c_str());
                 state = RequestParse::header;
-                DEBUG_PRINTLN(currentLine);
                 currentLine = "";
                 break;
               case header:
-                DEBUG_PRINTLN(currentLine);
                 if(currentLine != "") {
                   request.add_header_line(currentLine.c_str());
                   currentLine = "";
@@ -128,9 +126,7 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
         ,config.get_last_latitude()
         ,config.get_last_longtitude()
     );
-    DEBUG_PRINTLN("Writing to client: Started");
     respondSuccess(client, transmission_buffer);
-    DEBUG_PRINTLN("Writing to client: Done");
 
   } else if(request.is_uri("/save")) {
 

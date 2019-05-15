@@ -7,7 +7,7 @@
 /**
  * Controls the LED to visualize the current state
  */
-class StateLED : private RGBLed{
+class ModeLED : private RGBLed{
  public:
   typedef enum {
     off,
@@ -18,15 +18,15 @@ class StateLED : private RGBLed{
     fixed_active,
     fixed_error,
     COUNT
-  } StateColor;
+  } ModeColor;
 
 
-  explicit StateLED(IEspConfig& config);
-  virtual ~StateLED() = default;
+  explicit ModeLED(IEspConfig& config);
+  virtual ~ModeLED() = default;
 
-  void set_color(StateColor color);
+  void set_color(ModeColor color);
 
-  void blink(StateColor color, double frequency, double percentage_on = 50);
+  void blink(ModeColor color, double frequency, double percentage_on = 50);
 
  private:
   typedef struct {
@@ -38,7 +38,7 @@ class StateLED : private RGBLed{
 
   const IEspConfig& _config;
   bool _blink_state;
-  const ColorType _colorTypes[StateColor::COUNT];
+  const ColorType _colorTypes[ModeColor::COUNT];
 };
 
 #endif //BGEIGIECAST_STATE_LED_H

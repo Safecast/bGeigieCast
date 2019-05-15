@@ -1,12 +1,12 @@
 
-#include "state_led.h"
+#include "mode_led.h"
 #include "user_config.h"
 #include "debugger.h"
 
 // Set this to true if we use anode LED
 #define RGB_STATE_LED_REVERSED true
 
-StateLED::StateLED(IEspConfig& config) :
+ModeLED::ModeLED(IEspConfig& config) :
     RGBLed(RGB_LED_PIN_R, RGB_LED_PIN_G, RGB_LED_PIN_B, RGB_STATE_LED_REVERSED),
     _config(config),
     _blink_state(false),
@@ -23,13 +23,13 @@ StateLED::StateLED(IEspConfig& config) :
     } {
 }
 
-void StateLED::set_color(StateLED::StateColor color) {
+void ModeLED::set_color(ModeLED::ModeColor color) {
   DEBUG_PRINT("Changed LED to ");
   DEBUG_PRINTLN(color);
   set(_config.is_led_color_blind() ? _colorTypes[color].color_blind : _colorTypes[color].normal);
 }
 
-void StateLED::blink(StateLED::StateColor color, double frequency, double percentage_on) {
+void ModeLED::blink(ModeLED::ModeColor color, double frequency, double percentage_on) {
   // Blink LED
   double blink_millis = 1000/frequency;
   uint32_t cycle_now = millis() % static_cast<uint32_t>(blink_millis);
@@ -38,11 +38,11 @@ void StateLED::blink(StateLED::StateColor color, double frequency, double percen
     set_color(color);
     _blink_state = true;
   } else if(cycle_now > threshold && _blink_state) {
-    set_color(StateLED::StateColor::off);
+    set_color(ModeLED::ModeColor::off);
     _blink_state = false;
   }
 }
 
-uint8_t StateLED::get_intensity() const {
+uint8_t ModeLED::get_intensity() const {
   return _config.get_led_color_intensity();
 }

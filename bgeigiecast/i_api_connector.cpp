@@ -1,8 +1,7 @@
 #include <Arduino.h>
 
 #include "i_api_connector.h"
-#include "debugger.h"
-#include "sm_a_process.h"
+#include "sm_a_concrete_states.h"
 
 #define API_SEND(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT : API_SEND_FREQUENCY_SECONDS)
 #define API_SEND_DEV(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT_DEV : API_SEND_FREQUENCY_SECONDS_DEV)

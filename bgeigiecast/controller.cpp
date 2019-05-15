@@ -1,4 +1,4 @@
-#include "sm_c_init.h"
+#include "sm_c_concete_states.h"
 #include "controller.h"
 #include "reading.h"
 
@@ -15,13 +15,18 @@ Controller::Controller(IEspConfig& config,
     _reporter(config, bgeigie_connection, api_connector, bluetooth_connector),
     _ap_server(config),
     _mode_button(MODE_BUTTON_PIN),
-    _state_led(config),
+    _mode_led(config),
     _sleep_fn(sleep_fn) {
   _reporter.set_observer(this);
 }
 
 void Controller::setup_state_machine() {
   set_state(new InitializeState(*this));
+}
+
+void Controller::run() {
+  Context::run();
+  _reporter.run();
 }
 
 void Controller::initialize() {
@@ -43,10 +48,6 @@ void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
       schedule_event(Event_enum::e_c_button_pressed);
     }
   }
-}
-
-void Controller::run_reporter() {
-  _reporter.run();
 }
 
 void Controller::set_reporter_outputs(bool bt, bool api) {
