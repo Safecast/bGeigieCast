@@ -5,8 +5,8 @@ An extension module to convert your mobile bGeigieNano to a fixed sensor, like a
 ## Hardware requirements
 
 * bGeigieNano
-* bGeigieCase module
-* Wireless charging 
+* bGeigieCast module
+* Wireless charging
     * Dock
     * Transmitter
     * Receiver

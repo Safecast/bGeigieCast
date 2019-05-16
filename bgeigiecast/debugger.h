@@ -18,7 +18,8 @@
 #define DEBUG_BEGIN(baud) DEBUG_STREAM.begin(baud)
 #define DEBUG_PRINT(val) DEBUG_STREAM.print(val)
 #define DEBUG_PRINTLN(val) DEBUG_STREAM.println(val)
-#define DEBUG_PRINTF(format, ...) DEBUG_STREAM.printf(format, ...)
+#define DEBUG_PRINTF(format, ...) DEBUG_STREAM.printf(format,  ##__VA_ARGS__)
+#define DEBUG_PRINTFLN(format, ...) DEBUG_PRINTF(format "\r\n", ##__VA_ARGS__)
 #define DEBUG_FLUSH() DEBUG_STREAM.flush()
 
 #else
@@ -27,6 +28,7 @@
 #define DEBUG_PRINT(val)
 #define DEBUG_PRINTLN(val)
 #define DEBUG_PRINTF(format, ...)
+#define DEBUG_PRINTFLN(format, ...)
 #define DEBUG_FLUSH()
 
 #endif

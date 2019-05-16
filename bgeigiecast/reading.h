@@ -65,6 +65,7 @@ class Reading {
   const char* get_reading_str() const;
   int8_t get_status() const;
   uint16_t get_device_id() const;
+  uint32_t get_fixed_device_id() const;
   const char* get_iso_timestr() const;
   uint16_t get_cpm() const;
   uint16_t get_cpb() const;
