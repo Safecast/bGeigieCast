@@ -11,6 +11,11 @@ typedef enum {
   content
 } RequestParse;
 
+template<typename T>
+T clamp(T val, T min, T max) {
+  return val < min ? min : val > max ? max : val;
+}
+
 ConfigWebServer::ConfigWebServer(IEspConfig& config) : server(SERVER_WIFI_PORT, SERVER_MAX_CLIENTS), config(config) {
 }
 
@@ -150,7 +155,7 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
       config.set_dev_sped_up(strcmp(value, "1") == 0, false);
     }
     if(request.get_param_value("led_intensity", value, 64)) {
-      config.set_led_color_intensity(static_cast<uint8_t>(strtoul(value, nullptr, 10)), false);
+      config.set_led_color_intensity(clamp<uint8_t>(static_cast<uint8_t>(strtoul(value, nullptr, 10)), 5, 100), false);
     }
     if(request.get_param_value("led_color", value, 64)) {
       config.set_led_color_blind(strcmp(value, "1") == 0, false);
@@ -158,11 +163,11 @@ void ConfigWebServer::handle_client_request(Stream& client, HttpRequest& request
     if(request.get_param_value("use_home_loc", value, 64)) {
       config.set_use_home_location(strcmp(value, "1") == 0, false);
     }
-    if(request.get_param_value("home_long", value, 64)) {
-      config.set_home_longitude(strtod(value, nullptr), false);
-    }
     if(request.get_param_value("home_lat", value, 64)) {
-      config.set_home_latitude(strtod(value, nullptr), false);
+      config.set_home_latitude(clamp<double>(strtod(value, nullptr), -90.0, 90.0), false);
+    }
+    if(request.get_param_value("home_long", value, 64)) {
+      config.set_home_longitude(clamp<double>(strtod(value, nullptr), -180.0, 180.0), false);
     }
 
     respondRedirect(client, "/?success=true");

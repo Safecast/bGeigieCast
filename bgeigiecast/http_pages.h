@@ -31,7 +31,7 @@ const char* config_response_format =
     "<input type=\"radio\" name=\"devfreq\" value=\"0\" %s>5 minutes<br>"
     "<input type=\"radio\" name=\"devfreq\" value=\"1\" %s>30 seconds<br>"
     "<hr>"
-    "LED intensity:<br><input type=\"number\" min=\"0\" max=\"255\" name=\"led_intensity\" value=\"%d\"><br>"
+    "LED intensity:<br><input type=\"number\" min=\"5\" max=\"100\" name=\"led_intensity\" value=\"%d\"><br>"
     "LED Colors:<br>"
     "<input type=\"radio\" name=\"led_color\" value=\"0\" %s>Default<br>"
     "<input type=\"radio\" name=\"led_color\" value=\"1\" %s>Color blind<br>"
