@@ -2,6 +2,7 @@
 #define BGEIGIECAST_SERVER_H
 
 #include <WiFi.h>
+#include <WebServer.h>
 
 #include "esp_config.h"
 #include "http_request.h"
@@ -22,15 +23,9 @@ class ConfigWebServer {
   bool initialize();
 
   /**
-   * Stop the web server if it is running
+   * Stop the web server
    */
   void stop();
-
-  /**
-   * Check if the server is running
-   * @return true if running
-   */
-  bool is_running();
 
   /**
    * Checks if there are requests and handles them
@@ -39,12 +34,18 @@ class ConfigWebServer {
  private:
 
   /**
+   * Set the endpoints for the server
+   */
+  void set_endpoints();
+
+  /**
    * Handles request for a client
    */
   void handle_client_request(Stream& client, HttpRequest& request);
 
-  WiFiServer server;
-  IEspConfig& config;
+//  WiFiServer _server;
+  WebServer _server;
+  IEspConfig& _config;
 
 };
 

@@ -30,7 +30,6 @@
 /** Access point settings **/
 #define ACCESS_POINT_SSID       "bGeigie-%d"
 #define SERVER_WIFI_PORT        80
-#define SERVER_MAX_CLIENTS      4
 #define ACCESS_POINT_IP         {192, 168, 5, 1}
 #define ACCESS_POINT_NMASK      {255, 255, 255, 0}
 
