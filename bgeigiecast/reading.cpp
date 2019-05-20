@@ -154,7 +154,6 @@ bool Reading::as_json(char* out) {
     return false;
   }
 
-  uint32_t device_id = _device_id + 60000; // Fixed bGeigie sensors in 60k-70k range
   sprintf(
       out,
       "{\"captured_at\":\"%s\","
@@ -164,7 +163,7 @@ bool Reading::as_json(char* out) {
       "\"longitude\":%.5f,"
       "\"latitude\":%.5f}\n",
       _iso_timestr,
-      device_id,
+      get_fixed_device_id(),
       _cpm,
       _longitude,
       _latitude
@@ -179,7 +178,7 @@ void Reading::reset() {
 void Reading::apply_home_location(double home_lat, double home_long) {
   if(_latitude < home_lat + LONG_LAT_PRECISION && _latitude > home_lat - LONG_LAT_PRECISION
       && _longitude < home_long + LONG_LAT_PRECISION && _longitude > home_long - LONG_LAT_PRECISION) {
-    DEBUG_PRINTLN("Gps in home location");
+    DEBUG_PRINTFLN("Gps in home location, setting reading location to %.5f , %.5f", home_lat, home_long);
     _latitude = home_lat;
     _longitude = home_long;
   } else {
@@ -249,6 +248,9 @@ int8_t Reading::get_status() const {
 }
 uint16_t Reading::get_device_id() const {
   return _device_id;
+}
+uint32_t Reading::get_fixed_device_id() const {
+  return 60000 + _device_id;
 }
 const char* Reading::get_iso_timestr() const {
   return _iso_timestr;
