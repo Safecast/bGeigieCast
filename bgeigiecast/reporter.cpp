@@ -32,6 +32,8 @@ void Reporter::set_report_output(bool bt, bool api) {
   _report_api = api;
   if(_report_api) {
     _api_connector.reset();
+  } else {
+    _api_connector.stop();
   }
 }
 

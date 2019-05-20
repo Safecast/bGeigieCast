@@ -35,8 +35,8 @@ void ApiProcessReadingState::handle_event(Event_enum event_id) {
 // region ConnectWiFiState
 
 
-#define RETRY_CONNECTION 1000
-#define CONNECTION_TIMEOUT 3000
+#define RETRY_EVERY 2000
+#define CONNECTION_TIMEOUT 6000
 
 ConnectWiFiState::ConnectWiFiState(IApiConnector& context, Reading* reading) : ApiReporterState(context, reading), _start_time(0), _last_connect_try(0) {}
 
@@ -44,18 +44,20 @@ void ConnectWiFiState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("Apiconn entered state Connecting");
 #endif
-  api_connector.start_connect(true);
+  api_connector.start_connect();
   _start_time = millis();
   _last_connect_try = millis();
 }
 
 void ConnectWiFiState::do_activity() {
+  uint32_t current_time = millis();
+
   if(api_connector.is_connected()) {
     api_connector.schedule_event(e_a_wifi_connected);
-  } else if(millis() - _last_connect_try > RETRY_CONNECTION) {
-    _last_connect_try = millis();
-    api_connector.start_connect(false);
-  } else if(millis() - _start_time > CONNECTION_TIMEOUT) {
+  } else if(current_time - _last_connect_try > RETRY_EVERY) {
+    api_connector.start_connect();
+    _last_connect_try = _last_connect_try + RETRY_EVERY;
+  } else if(current_time - _start_time > CONNECTION_TIMEOUT) {
     api_connector.schedule_event(e_a_wifi_connection_error);
   }
 }
@@ -186,15 +188,18 @@ void ApiReportDoneState::entry_action() {
 #endif
   if(status == IApiConnector::k_report_failed || status == IApiConnector::k_report_success) {
     api_connector._merged_reading.reset();
+    api_connector.disconnect();
   }
   if(api_connector._observer) {
     api_connector._observer->api_reported(status);
   }
 }
 
-void ApiReportDoneState::do_activity() {}
+void ApiReportDoneState::do_activity() {
+}
 
-void ApiReportDoneState::exit_action() {}
+void ApiReportDoneState::exit_action() {
+}
 
 void ApiReportDoneState::handle_event(Event_enum event_id) {
   switch(event_id) {

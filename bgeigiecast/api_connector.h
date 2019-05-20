@@ -21,11 +21,9 @@ class ApiConnector : public IApiConnector {
    * @param initial: set to false if its for reconnect / connect in error
    * @return true if connection with the wifi was made
    */
-  bool start_connect(bool initial) override;
+  bool start_connect() override;
 
-  /**
-   * Disconnect
-   */
+  void disconnect() override;
   void stop() override;
 
   /**
@@ -47,6 +45,8 @@ class ApiConnector : public IApiConnector {
    * @return: true if the API call was successful
    */
   bool send_reading(Reading* reading) override;
+
+  void perform_connect();
 };
 
 #endif //BGEIGIECAST_APICONNECTOR_H

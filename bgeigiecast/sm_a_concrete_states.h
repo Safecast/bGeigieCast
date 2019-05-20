@@ -29,6 +29,20 @@ class ConnectWiFiState : public ApiReporterState {
   uint32_t _last_connect_try;
 };
 
+//class ReconnectWiFiState : public ApiReporterState {
+// public:
+//  explicit ReconnectWiFiState(IApiConnector& context, Reading* reading);
+//  virtual ~ConnectWiFiState() = default;
+//
+//  void entry_action() override;
+//  void do_activity() override;
+//  void exit_action() override;
+//  void handle_event(Event_enum event_id) override;
+// private:
+//  uint32_t _start_time;
+//  uint32_t _last_connect_try;
+//};
+
 class PublishApiState : public ApiReporterState {
  public:
   explicit PublishApiState(IApiConnector& context, Reading* reading);

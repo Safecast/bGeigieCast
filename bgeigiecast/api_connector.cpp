@@ -2,35 +2,28 @@
 #include "api_connector.h"
 #include "debugger.h"
 
-#define API_SEND_FREQUENCY (API_SEND_FREQUENCY_MINUTES * 60 * 1000)
-
 ApiConnector::ApiConnector(IEspConfig& config, ApiConnectionObserver* observer) : IApiConnector(config, observer) {
 }
 
-bool ApiConnector::start_connect(bool initial) {
-  if(is_connected()) {
-    return true;
+bool ApiConnector::start_connect() {
+  switch(WiFi.status()) {
+    case WL_CONNECTED:
+      schedule_event(e_a_wifi_connected);
+      return true;
+    case WL_IDLE_STATUS:
+    case WL_DISCONNECTED:
+      WiFi.reconnect();
+      break;
+    default:
+      perform_connect();
+      break;
   }
 
-  const char* ssid = _config.get_wifi_ssid();
-  if(!ssid) {
-    DEBUG_PRINTLN("No SSID to connect to!");
-    return false;
-  }
+  return false;
+}
 
-  DEBUG_PRINTLN();
-
-  if(initial) {
-    const char* password = _config.get_wifi_password();
-    DEBUG_PRINT("Connecting to ssid "); DEBUG_PRINTLN(ssid);
-    password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
-    _merged_reading.reset();
-    _last_send = millis();
-  } else {
-    WiFi.reconnect();
-  }
-
-  return is_connected();
+void ApiConnector::disconnect() {
+  WiFi.disconnect();
 }
 
 void ApiConnector::stop() {
@@ -50,6 +43,7 @@ bool ApiConnector::is_connected() {
 }
 
 bool ApiConnector::send_reading(Reading* reading) {
+  DEBUG_PRINTLN("Sending reading to API");
   char json_str[200];
   if(!reading->as_json(json_str)) {
     // This whole reading is invalid
@@ -109,4 +103,18 @@ bool ApiConnector::send_reading(Reading* reading) {
     http.end();  //Free resources
     return false;
   }
+}
+
+void ApiConnector::perform_connect() {
+
+  const char* ssid = _config.get_wifi_ssid();
+  if(!ssid) {
+    DEBUG_PRINTLN("No SSID to connect to!");
+    return;
+  }
+
+  const char* password = _config.get_wifi_password();
+  DEBUG_PRINT("Connecting to ssid ");
+  DEBUG_PRINTLN(ssid);
+  password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
 }
