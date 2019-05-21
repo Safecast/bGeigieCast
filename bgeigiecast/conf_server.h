@@ -39,9 +39,13 @@ class ConfigWebServer {
   void set_endpoints();
 
   /**
-   * Handles request for a client
+   * Handles request for `/`
    */
-  void handle_client_request(Stream& client, HttpRequest& request);
+  void handle_root();
+  /**
+   * Handles request for `/save`
+   */
+  void handle_save();
 
 //  WiFiServer _server;
   WebServer _server;
