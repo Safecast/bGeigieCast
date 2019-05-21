@@ -56,11 +56,24 @@ void ConfigWebServer::set_endpoints() {
     handle_save();
   });
 
-  // Save
+  // Upload get
+  _server.on("/update", HTTP_GET, [this]() {
+    handle_update_retrieve();
+  });
+
+  // Upload post
   _server.on("/update", HTTP_POST, [this]() {
     handle_update_complete();
   }, [this]() {
     handle_update_uploading();
+  });
+
+  // Other things
+  _server.on("/favicon.ico", HTTP_GET, [this]() {
+    _server.send_P(200, "image/x-icon", favicon, sizeof(favicon));
+  });
+  _server.on("/form.css", HTTP_GET, [this]() {
+    _server.send(200, "text/css", form_style);
   });
 
 }
@@ -133,6 +146,7 @@ void ConfigWebServer::handle_save() {
 }
 
 void ConfigWebServer::handle_update_uploading() {
+  DEBUG_PRINTLN("GOT IN THE handle_update_uploading");
   HTTPUpload& upload = _server.upload();
   if(upload.status == UPLOAD_FILE_START) {
     DEBUG_PRINTF("Update: %s\n", upload.filename.c_str());
@@ -154,7 +168,14 @@ void ConfigWebServer::handle_update_uploading() {
 }
 
 void ConfigWebServer::handle_update_complete() {
+  DEBUG_PRINTLN("GOT IN THE handle_update_complete");
   _server.sendHeader("Connection", "close");
   _server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
   ESP.restart();
+}
+
+void ConfigWebServer::handle_update_retrieve() {
+  DEBUG_PRINTLN("GOT IN THE handle_update_retrieve");
+  _server.sendHeader("Connection", "close");
+  _server.send(200, "text/html", upload_page);
 }

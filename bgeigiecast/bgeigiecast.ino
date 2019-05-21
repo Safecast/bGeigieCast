@@ -36,14 +36,15 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
  */
 
+#ifndef UNIT_TEST
+
+#if 1
 
 #include <Arduino.h>
 #include "bluetooth_connector.h"
 #include "api_connector.h"
 #include "debugger.h"
 #include "controller.h"
-
-#ifndef UNIT_TEST
 
 HardwareSerial& bGeigieSerialConnection = Serial2;
 
@@ -104,10 +105,33 @@ void setup() {
   /// Software configurations
   // Setup controller
   controller.setup_state_machine();
+  DEBUG_PRINTLN("HELLO FROM NEW VERSION");
 }
 
 void loop() {
   controller.run();
 }
+
+#else
+
+#include <Arduino.h>
+#include "conf_server.h"
+#include "esp_config.h"
+#include "debugger.h"
+
+EspConfig config;
+ConfigWebServer server(config);
+
+void setup() {
+  DEBUG_BEGIN(SERIAL_BAUD);
+  config.set_all();
+  server.initialize();
+}
+
+void loop() {
+  server.handle_requests();
+}
+
+#endif
 
 #endif

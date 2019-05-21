@@ -48,6 +48,10 @@ class ConfigWebServer {
   /**
    * Handles request for `/update`
    */
+  void handle_update_retrieve();
+  /**
+   * Handles request for `/update` post
+   */
   void handle_update_uploading();
   /**
    * Handles request for `/update` when its complete
