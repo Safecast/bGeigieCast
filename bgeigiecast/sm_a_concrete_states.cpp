@@ -19,7 +19,7 @@ void ApiProcessReadingState::exit_action() {}
 void ApiProcessReadingState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_a_report_reading:
-      api_connector.set_state(new ConnectWiFiState(api_connector, reading));
+      api_connector.set_state(new ConnectWiFiState(api_connector, &api_connector._merged_reading));
       break;
     case e_a_not_reporting:
       api_connector.set_state(new ApiReportDoneState(api_connector, IApiConnector::k_report_skipped));
