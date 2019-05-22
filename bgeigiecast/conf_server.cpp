@@ -1,4 +1,5 @@
 #include <Update.h>
+#include <ESPmDNS.h>
 #include "conf_server.h"
 #include "user_config.h"
 #include "esp_config.h"
@@ -12,28 +13,49 @@ T clamp(T2 val, T min, T max) {
 }
 
 ConfigWebServer::ConfigWebServer(IEspConfig& config) : _server(SERVER_WIFI_PORT), _config(config) {
-  set_endpoints();
 }
 
 bool ConfigWebServer::initialize() {
+  auto device_id = _config.get_device_id();
+
   if(!_config.get_device_id() || !_config.get_ap_password()) {
-    DEBUG_PRINTLN("No SSID or password to start config server");
+    DEBUG_PRINTLN("Can't start config without device id!");
     return false;
   }
-  char ssid[16];
-  sprintf(ssid, ACCESS_POINT_SSID, _config.get_device_id());
-  WiFi.softAP((ssid), _config.get_ap_password());
+
+  char host_ssid[16];
+  device_id ? sprintf(host_ssid, ACCESS_POINT_SSID "%d", device_id) : sprintf(host_ssid, ACCESS_POINT_SSID "unknown");
+
+  MDNS.begin(host_ssid);
 
   delay(100);
 
-  IPAddress ip(ACCESS_POINT_IP);
-  IPAddress n_mask(ACCESS_POINT_NMASK);
-  WiFi.softAPConfig(ip, ip, n_mask);
+  if(_config.get_wifi_ssid()) {
+    for(int i = 0; i < 3; ++i) {
+      connect_wifi();
 
-  delay(100);
+      auto time = millis();
+      while(millis() - time < 2000) {
+        if(WiFi.status() == WL_CONNECTED) {
 
-  _server.begin();
-  return true;
+          DEBUG_PRINTF("Connected to %s, IP address: %s\n", _config.get_wifi_ssid(), WiFi.localIP().toString().c_str());
+
+          set_endpoints();
+          _server.begin();
+          return true;
+        }
+      }
+    }
+
+    WiFi.disconnect(true, true);
+  }
+
+  if(start_ap_server(host_ssid)) {
+    set_endpoints();
+    _server.begin();
+    return true;
+  }
+  return false;
 }
 
 void ConfigWebServer::stop() {
@@ -43,6 +65,36 @@ void ConfigWebServer::stop() {
 
 void ConfigWebServer::handle_requests() {
   _server.handleClient();
+}
+
+bool ConfigWebServer::connect_wifi() {
+  switch(WiFi.status()) {
+    case WL_CONNECTED:
+      return true;
+    case WL_IDLE_STATUS:
+    case WL_DISCONNECTED:
+      WiFi.reconnect();
+      return false;
+    default:
+      const char* wifi_ssid = _config.get_wifi_ssid();
+      const char* password = _config.get_wifi_password();
+      password ? WiFi.begin(wifi_ssid, password) : WiFi.begin(wifi_ssid);
+      return false;
+  }
+}
+
+bool ConfigWebServer::start_ap_server(const char* host_ssid) {
+
+  WiFi.softAP(host_ssid, _config.get_ap_password());
+  delay(100);
+
+  IPAddress ip(ACCESS_POINT_IP);
+  IPAddress n_mask(ACCESS_POINT_NMASK);
+  WiFi.softAPConfig(ip, ip, n_mask);
+
+  delay(100);
+
+  return true;
 }
 
 void ConfigWebServer::set_endpoints() {
@@ -120,10 +172,10 @@ void ConfigWebServer::handle_save() {
     _config.set_api_key(_server.arg("apikey").c_str(), false);
   }
   if(_server.hasArg("devsrv")) {
-    _config.set_use_dev(_server.arg("devsrv") =="1", false);
+    _config.set_use_dev(_server.arg("devsrv") == "1", false);
   }
   if(_server.hasArg("devfreq")) {
-    _config.set_dev_sped_up(_server.arg("devfreq") =="1", false);
+    _config.set_dev_sped_up(_server.arg("devfreq") == "1", false);
   }
   if(_server.hasArg("led_intensity")) {
     _config.set_led_color_intensity(clamp<uint8_t>(_server.arg("led_intensity").toInt(), 5, 100), false);
@@ -146,18 +198,14 @@ void ConfigWebServer::handle_save() {
 }
 
 void ConfigWebServer::handle_update_uploading() {
-  DEBUG_PRINTLN("GOT IN THE handle_update_uploading");
   HTTPUpload& upload = _server.upload();
   if(upload.status == UPLOAD_FILE_START) {
     DEBUG_PRINTF("Update: %s\n", upload.filename.c_str());
-    if(!Update.begin(UPDATE_SIZE_UNKNOWN)) { //start with max available size
-      Update.printError(Serial);
-    }
+    Update.begin(UPDATE_SIZE_UNKNOWN) ? DEBUG_PRINTLN("Starting update") : DEBUG_PRINTLN("Unable to start update");
   } else if(upload.status == UPLOAD_FILE_WRITE) {
     /* flashing firmware to ESP*/
-    if(Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
-      Update.printError(Serial);
-    }
+    auto write_size = Update.write(upload.buf, upload.currentSize);
+    write_size == upload.currentSize ? DEBUG_PRINTF(".") : DEBUG_PRINTFLN("Something failed while uploading (wrote %d out of %d)", write_size, upload.currentSize);
   } else if(upload.status == UPLOAD_FILE_END) {
     if(Update.end(true)) { //true to set the size to the current progress
       DEBUG_PRINTF("Update Success: %u\nRebooting...\n", upload.totalSize);
@@ -168,14 +216,12 @@ void ConfigWebServer::handle_update_uploading() {
 }
 
 void ConfigWebServer::handle_update_complete() {
-  DEBUG_PRINTLN("GOT IN THE handle_update_complete");
   _server.sendHeader("Connection", "close");
   _server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
   ESP.restart();
 }
 
 void ConfigWebServer::handle_update_retrieve() {
-  DEBUG_PRINTLN("GOT IN THE handle_update_retrieve");
   _server.sendHeader("Connection", "close");
   _server.send(200, "text/html", upload_page);
 }

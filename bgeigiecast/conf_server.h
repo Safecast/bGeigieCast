@@ -33,6 +33,18 @@ class ConfigWebServer {
  private:
 
   /**
+   * Try to connect to the wifi
+   * @return success
+   */
+  bool connect_wifi();
+
+  /**
+   * Start access point server
+   * @return success
+   */
+  bool start_ap_server(const char* host_ssid);
+
+  /**
    * Set the endpoints for the server
    */
   void set_endpoints();
@@ -58,7 +70,6 @@ class ConfigWebServer {
    */
   void handle_update_complete();
 
-//  WiFiServer _server;
   WebServer _server;
   IEspConfig& _config;
 

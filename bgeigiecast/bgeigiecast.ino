@@ -105,7 +105,6 @@ void setup() {
   /// Software configurations
   // Setup controller
   controller.setup_state_machine();
-  DEBUG_PRINTLN("HELLO FROM NEW VERSION");
 }
 
 void loop() {

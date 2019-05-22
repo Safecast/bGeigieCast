@@ -28,7 +28,7 @@
 #define MAX_MISSED_READINGS 20 // Keep up to 20 readings in memory if connection to the api failed
 
 /** Access point settings **/
-#define ACCESS_POINT_SSID       "bGeigie-%d"
+#define ACCESS_POINT_SSID       "bgeigie" // With device id
 #define SERVER_WIFI_PORT        80
 #define ACCESS_POINT_IP         {192, 168, 5, 1}
 #define ACCESS_POINT_NMASK      {255, 255, 255, 0}
