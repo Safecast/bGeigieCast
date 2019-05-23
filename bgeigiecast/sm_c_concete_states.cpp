@@ -6,7 +6,7 @@ InitializeState::InitializeState(Controller& context) : ControllerState(context)
 }
 
 void InitializeState::entry_action() {
-  DEBUG_PRINTLN("Entered state Initialize");
+  DEBUG_PRINTLN("-- Entered state Initialize");
   controller._mode_led.set_color(ModeLED::ModeColor::init);
 }
 
@@ -41,7 +41,7 @@ InitReadingState::InitReadingState(Controller& context) : ControllerState(contex
 }
 
 void InitReadingState::entry_action() {
-  DEBUG_PRINTLN("Entered state Initialize reading");
+  DEBUG_PRINTLN("-- Entered state Initialize reading");
   controller._mode_led.set_color(ModeLED::ModeColor::init);
 }
 
@@ -79,7 +79,7 @@ PostInitializeState::PostInitializeState(Controller& context) : ControllerState(
 }
 
 void PostInitializeState::entry_action() {
-  DEBUG_PRINTLN("Entered state PostInitialize");
+  DEBUG_PRINTLN("-- Entered state PostInitialize");
   controller._mode_led.set_color(ModeLED::ModeColor::init);
   timer = millis();
 }
@@ -130,8 +130,8 @@ SetupServerState::SetupServerState(Controller& context) : ConfigModeState(contex
 }
 
 void SetupServerState::entry_action() {
-  DEBUG_PRINTLN("Entered state SetupServer");
-  controller._mode_led.set_color(ModeLED::ModeColor::config);
+  DEBUG_PRINTLN("-- Entered state SetupServer");
+  controller._mode_led.set_color(ModeLED::ModeColor::init_config);
 }
 
 void SetupServerState::do_activity() {
@@ -162,7 +162,8 @@ ServerActiveState::ServerActiveState(Controller& context) : ConfigModeState(cont
 }
 
 void ServerActiveState::entry_action() {
-  DEBUG_PRINTLN("Entered state ServerActive");
+  DEBUG_PRINTLN("-- Entered state ServerActive");
+  controller._mode_led.set_color(ModeLED::ModeColor::config);
 }
 
 void ServerActiveState::do_activity() {
@@ -214,7 +215,7 @@ InitActiveState::InitActiveState(Controller& context) : ActiveState(context) {
 }
 
 void InitActiveState::entry_action() {
-  DEBUG_PRINTLN("Entered state ActiveInit");
+  DEBUG_PRINTLN("-- Entered state ActiveInit");
 }
 
 void InitActiveState::do_activity() {
@@ -249,7 +250,7 @@ MobileModeState::MobileModeState(Controller& context): ActiveState(context) {
 }
 
 void MobileModeState::entry_action() {
-  DEBUG_PRINTLN("Entered state MobileMode");
+  DEBUG_PRINTLN("-- Entered state MobileMode");
   controller.save_state(k_savable_MobileMode);
   controller._mode_led.set_color(ModeLED::ModeColor::mobile);
   controller.set_reporter_outputs(true, false);
@@ -307,7 +308,7 @@ DisconnectedState::DisconnectedState(Controller& context): FixedModeState(contex
 }
 
 void DisconnectedState::entry_action() {
-  DEBUG_PRINTLN("Entered state FixedMode, Disconnected");
+  DEBUG_PRINTLN("-- Entered state FixedMode, Disconnected");
   controller.save_state(k_savable_FixedMode);
   controller._mode_led.set_color(ModeLED::ModeColor::fixed_connecting);
   controller.set_reporter_outputs(true, true);
@@ -342,7 +343,7 @@ ConnectedState::ConnectedState(Controller& context): FixedModeState(context) {
 }
 
 void ConnectedState::entry_action() {
-  DEBUG_PRINTLN("Entered state Connected");
+  DEBUG_PRINTLN("-- Entered state Connected");
   controller._mode_led.set_color(ModeLED::ModeColor::fixed_active);
 }
 
@@ -375,7 +376,7 @@ ConnectionErrorState::ConnectionErrorState(Controller& context) : FixedModeState
 }
 
 void ConnectionErrorState::entry_action() {
-  DEBUG_PRINTLN("Entered state ConnectionError");
+  DEBUG_PRINTLN("-- Entered state ConnectionError");
   controller._mode_led.set_color(ModeLED::ModeColor::fixed_error);
   timer = millis();
 }
@@ -410,7 +411,7 @@ ResetState::ResetState(Controller& context) : ControllerState(context) {
 }
 
 void ResetState::entry_action() {
-  DEBUG_PRINTLN("Entered state Reset");
+  DEBUG_PRINTLN("-- Entered state Reset");
 }
 
 void ResetState::do_activity() {

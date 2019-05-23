@@ -3,7 +3,7 @@
 
 
 /** System config **/
-#define ENABLE_DEBUG 1
+#define ENABLE_DEBUG 1 // 00974
 #define DEBUG_LOG_STATE_TRANSITIONS 0
 #define SERIAL_BAUD 115200
 #define BGEIGIE_CONNECTION_BAUD 9600

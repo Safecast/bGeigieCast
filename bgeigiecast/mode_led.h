@@ -12,6 +12,7 @@ class ModeLED : private RGBLed{
   typedef enum {
     off,
     init,
+    init_config,
     config,
     mobile,
     fixed_connecting,

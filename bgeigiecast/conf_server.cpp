@@ -199,18 +199,33 @@ void ConfigWebServer::handle_save() {
 
 void ConfigWebServer::handle_update_uploading() {
   HTTPUpload& upload = _server.upload();
-  if(upload.status == UPLOAD_FILE_START) {
-    DEBUG_PRINTF("Update: %s\n", upload.filename.c_str());
-    Update.begin(UPDATE_SIZE_UNKNOWN) ? DEBUG_PRINTLN("Starting update") : DEBUG_PRINTLN("Unable to start update");
-  } else if(upload.status == UPLOAD_FILE_WRITE) {
-    /* flashing firmware to ESP*/
-    auto write_size = Update.write(upload.buf, upload.currentSize);
-    write_size == upload.currentSize ? DEBUG_PRINTF(".") : DEBUG_PRINTFLN("Something failed while uploading (wrote %d out of %d)", write_size, upload.currentSize);
-  } else if(upload.status == UPLOAD_FILE_END) {
-    if(Update.end(true)) { //true to set the size to the current progress
-      DEBUG_PRINTF("Update Success: %u\nRebooting...\n", upload.totalSize);
-    } else {
-      DEBUG_PRINTF("Update Failed...");
+  switch(upload.status) {
+    case UPLOAD_FILE_START: {
+      DEBUG_PRINTF("Update: %s\n", upload.filename.c_str());
+      Update.begin(UPDATE_SIZE_UNKNOWN) ? DEBUG_PRINTLN("Starting update") : DEBUG_PRINTLN("Unable to start update");
+      break;
+    }
+    case UPLOAD_FILE_WRITE: {
+      DEBUG_PRINTF(".");
+      auto write_size = Update.write(upload.buf, upload.currentSize);
+      if(write_size != upload.currentSize) {
+        DEBUG_PRINTF("Something failed while uploading (wrote %d out of %d)\n", write_size, upload.currentSize);
+      }
+      break;
+    }
+    case UPLOAD_FILE_END: {
+      if(Update.end(true)) { //true to set the size to the current progress
+        DEBUG_PRINTF("Update Success: %u\nRebooting...\n", upload.totalSize);
+      } else {
+        DEBUG_PRINTF("Update Failed...");
+      }
+      break;
+    }
+    case UPLOAD_FILE_ABORTED: {
+      Update.abort();
+      DEBUG_PRINTF("Update aborted...");
+      _server.client().stop();
+      break;
     }
   }
 }
@@ -218,6 +233,7 @@ void ConfigWebServer::handle_update_uploading() {
 void ConfigWebServer::handle_update_complete() {
   _server.sendHeader("Connection", "close");
   _server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+  _server.client().flush();
   ESP.restart();
 }
 
