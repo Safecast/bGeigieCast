@@ -5,7 +5,7 @@ class HttpPages {
  public:
   HttpPages() = delete;
 
-  static const char* get_home_page();
+  static const char* get_home_page(uint32_t device_id);
   static const char* get_upload_page();
   static const char* get_config_device_page(
       bool display_success,

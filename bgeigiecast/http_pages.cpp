@@ -3,20 +3,6 @@
 
 const char* success_message = "<p><em>Configurations saved!</em> - <a href=\"/\">Home</a></p>";
 
-const char* styles =
-    "<style>"
-    "#update #file-input,#update input{width:100%;height:44px;border-radius:4px;margin:10px auto;font-size:15px}"
-    "#update input{background:#f1f1f1;border:0;padding:0 15px}body {font-family: Helvetica; text-align: center;}"
-    "#update #file-input{padding:0;border:1px solid #ddd;line-height:44px;text-align:left;display:block;cursor:pointer}"
-    "#update #bar,#update #prgbar{background-color:#f1f1f1;border-radius:4px}#bar{background-color:lightgrey;width:0%;height:10px}"
-    "#update form{background:#fff;max-width:258px;margin:75px auto;padding:30px;border-radius:5px;text-align:center}"
-    "#update .btn{background:#3498db;color:#fff;cursor:pointer}"
-    "#config {font-family: Helvetica; text-align: center;} "
-    "#config {max-width:396px; margin:auto;font-family: Helvetica; text-align: center;} "
-    "#config form {background-color: lightgrey; text-align: left; margin: 20px; padding: 20px; max-width: 316p;} "
-    "#config input[type=\"text\"], #config input[type=\"number\"] {max-width: 300px; width: 95%; padding: 3px; border-radius: 8px; margin-bottom: 5px;}"
-    "</style>";
-
 const char* html_page_start =
     "<!DOCTYPE html>"
     "<html>"
@@ -26,8 +12,24 @@ const char* html_page_start =
     "AAAAAAAAAAAIiIiIiIiIiIiIiIiIiIiIiIiMyISESIiIiIzIhIRIiIiIiIiEhEiIiIiIiISESIiIiIiIRIRIiIiIiIRIhEiIiIiERIi"
     "ESIiIiIQIhESIiIiIiIRESIiIiIiEREiIiIiIiIRIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIAAAAAAAAAAAAAAAAAAAAAAAA"
     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' type='image/x-png' />"
-    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+    "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
     "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
+    "<style>"
+    "body{font-family: Helvetica;text-align: center;}"
+    "#update #file-input,"
+    "#update input{width:100%;height:44px;border-radius:4px;margin:10px auto;font-size:15px}"
+    "#update input{background:#f1f1f1;border:0;padding:0 15px}"
+    "#update #file-input{padding:0;border:1px solid #ddd;line-height:44px;text-align:left;display:block;cursor:pointer}"
+    "#update #bar,"
+    "#update #prgbar{background-color:#f1f1f1;border-radius:4px}"
+    "#update #bar{background-color:lightgrey;width:0%;height:10px}"
+    "#update form{background:#fff;max-width:258px;margin:75px auto;padding:30px;border-radius:5px;text-align:center}"
+    "#update .btn{background:#3498db;color:#fff;cursor:pointer}"
+    "#config{max-width:396px;margin:auto;}"
+    "#config form{background-color: lightgrey;text-align: left;margin: 20px;padding: 20px;max-width: 316p;}"
+    "#config input[type='text'],"
+    "#config input[type='number']{max-width: 300px;width: 95%;padding: 3px;border-radius: 8px;margin-bottom: 5px;}"
+    "</style>"
     "</head>"
     "<body>";
 
@@ -35,22 +37,22 @@ const char* html_page_end =
     "</body>"
     "</html>";
 
-const char* HttpPages::get_home_page() {
+const char* HttpPages::get_home_page(uint32_t device_id) {
   sprintf(
       transmission_buffer,
       "%s" // html page start
       "<div id='config'>"
+      "bGeigieCast %d<br>"
       "<ul>"
-      "<li><a href='/configure/device'>Device settings</a></li>"
-      "<li><a href='/configure/location'>Location settings</a></li>"
-      "<li><a href='/configure/connection'>Connection settings</a></li>"
+      "<li><a href='/device'>Device settings</a></li>"
+      "<li><a href='/location'>Location settings</a></li>"
+      "<li><a href='/connection'>Connection settings</a></li>"
       "<li><a href='/update'>Update firmware</a></li>"
       "</ul>"
       "</div>"
-      "%s" // styles
       "%s",  // html page end,
       html_page_start,
-      styles,
+      device_id,
       html_page_end
   );
   return transmission_buffer;
@@ -111,10 +113,8 @@ const char* HttpPages::get_upload_page() {
       "});"
       "</script>"
       "</div>"
-      "%s" // styles
-      "%s",
+      "%s", // html page end
       html_page_start,
-      styles,
       html_page_end
   );
   return transmission_buffer;
@@ -132,24 +132,22 @@ const char* HttpPages::get_config_device_page(
       "<div id='config'>"
       "<span>%s</span>"
       "<strong>Configure device</strong><br>"
-      "BgeigieCast %d<br>"
-      "<form method=\"POST\" > "
-      "LED intensity:<br><input type=\"number\" min=\"5\" max=\"100\" name=\"led_intensity\" value=\"%d\"><br>"
+      "bGeigieCast %d<br>"
+      "<form action='/save?next=/device' method='POST'>"
+      "LED intensity:<br><input type='number' min='5' max='100' name='led_intensity' value='%d'><br>"
       "LED Colors:<br>"
-      "<input type=\"radio\" name=\"led_color\" value=\"0\" %s>Default<br>"
-      "<input type=\"radio\" name=\"led_color\" value=\"1\" %s>Color blind<br>"
-      "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
+      "<input type='radio' name='led_color' value='0' %s>Default<br>"
+      "<input type='radio' name='led_color' value='1' %s>Color blind<br>"
+      "<input type='submit' value='Submit' style='background-color: #FF9800; font-size: initial;color: white;'>"
       "</form><br><br>"
       "</div>"
-      "%s" // styles
-      "%s",
+      "%s", // html page end
       html_page_start,
       display_success ? success_message : "",
       device_id,
       led_intensity,
-      colorblind ? "checked" : "",
       colorblind ? "" : "checked",
-      styles,
+      colorblind ? "checked" : "",
       html_page_end
   );
   return transmission_buffer;
@@ -171,22 +169,21 @@ const char* HttpPages::get_config_network_page(
       "<div id='config'>"
       "<span>%s</span>"
       "<strong>Configure network</strong><br>"
-      "BgeigieCast %d<br>"
-      "<form action=\"/configure\" method=\"POST\" > "
-      "bGeigieCast password:<br><input type=\"text\" name=\"ap_password\" value=\"%s\"><br>"
-      "Network wifi ssid:<br><input type=\"text\" name=\"wf_ssid\" value=\"%s\"><br>"
-      "Network wifi password:<br><input type=\"text\" name=\"wf_password\" value=\"%s\"><br>"
-      "Safecast API key:<br><input type=\"text\" name=\"apikey\" value=\"%s\"><br>"
+      "bGeigieCast %d<br>"
+      "<form action='/save?next=/connection' method='POST' > "
+      "bGeigieCast password:<br><input type='text' name='ap_password' value='%s'><br>"
+      "Network wifi ssid:<br><input type='text' name='wf_ssid' value='%s'><br>"
+      "Network wifi password:<br><input type='text' name='wf_password' value='%s'><br>"
+      "Safecast API key:<br><input type='text' name='apikey' value='%s'><br>"
       "Use safecast server:<br>"
-      "<input type=\"radio\" name=\"devsrv\" value=\"1\" %s>Development<br>"
-      "<input type=\"radio\" name=\"devsrv\" value=\"0\" %s>Production<br>"
+      "<input type='radio' name='devsrv' value='1' %s>Development<br>"
+      "<input type='radio' name='devsrv' value='0' %s>Production<br>"
       "Send frequency (dev only):<br>"
-      "<input type=\"radio\" name=\"devfreq\" value=\"0\" %s>5 minutes<br>"
-      "<input type=\"radio\" name=\"devfreq\" value=\"1\" %s>30 seconds<br>"
-      "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
+      "<input type='radio' name='devfreq' value='0' %s>5 minutes<br>"
+      "<input type='radio' name='devfreq' value='1' %s>30 seconds<br>"
+      "<input type='submit' value='Submit' style='background-color: #FF9800; font-size: initial;color: white;'>"
       "</form><br><br>"
       "</div>"
-      "%s" // styles
       "%s", // html page end
       html_page_start,
       display_success ? success_message : "",
@@ -199,7 +196,6 @@ const char* HttpPages::get_config_network_page(
       use_dev ? "" : "checked",
       sped_up ? "" : "checked",
       sped_up ? "checked" : "",
-      styles,
       html_page_end
   );
   return transmission_buffer;
@@ -220,24 +216,23 @@ const char* HttpPages::get_config_location_page(
       "<div id='config'>"
       "<span>%s</span>"
       "<strong>Configure location</strong><br>"
-      "BgeigieCast %d<br>"
-      "<form action=\"/configure\" method=\"POST\" > "
+      "bGeigieCast %d<br>"
+      "<form action='/save?next=/location' method='POST' > "
       "Fixed mode GPS settings:<br>"
-      "<input type=\"radio\" name=\"use_home_loc\" value=\"0\" %s>Use GPS<br>"
-      "<input type=\"radio\" name=\"use_home_loc\" value=\"1\" %s>Use home location<br>"
-      "Home latitude:<br><input type=\"number\" min=\"-90.0000\" max=\"90.0000\" name=\"home_lat\" id=\"home_lat\" value=\"%.5f\" step=\"0.00001\"><br>"
-      "Home longitude:<br><input type=\"number\" min=\"-180.0000\" max=\"180.0000\" name=\"home_long\" id=\"home_long\" value=\"%.5f\" step=\"0.00001\"><br>"
-      "Last known location: (<a href=\"#\" onclick=\""
+      "<input type='radio' name='use_home_loc' value='0' %s>Use GPS<br>"
+      "<input type='radio' name='use_home_loc' value='1' %s>Use home location<br>"
+      "Home latitude:<br><input type='number' min='-90.0000' max='90.0000' name='home_lat' id='home_lat' value='%.5f' step='0.00001'><br>"
+      "Home longitude:<br><input type='number' min='-180.0000' max='180.0000' name='home_long' id='home_long' value='%.5f' step='0.00001'><br>"
+      "Last known location: (<a href='#' onclick=\""
       "document.getElementById('home_lat').value = document.getElementById('last_lat').innerHTML;"
       "document.getElementById('home_long').value = document.getElementById('last_long').innerHTML;"
       "return false;"
       "\">Use this</a>)<br>"
-      "Latitude: <span id=\"last_lat\">%.5f</span><br>"
-      "Longitude: <span id=\"last_long\">%.5f</span><br>"
-      "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
+      "Latitude: <span id='last_lat'>%.5f</span><br>"
+      "Longitude: <span id='last_long'>%.5f</span><br>"
+      "<input type='submit' value='Submit' style='background-color: #FF9800; font-size: initial;color: white;'>"
       "</form><br><br>"
       "</div>"
-      "%s" // styles
       "%s", // html page end
       html_page_start,
       display_success ? success_message : "",
@@ -248,7 +243,6 @@ const char* HttpPages::get_config_location_page(
       home_longtitude,
       last_latitude,
       last_longtitude,
-      styles,
       html_page_end
   );
   return transmission_buffer;

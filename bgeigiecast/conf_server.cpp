@@ -101,11 +101,11 @@ void ConfigWebServer::set_endpoints() {
   // Home
   _server.on("/", HTTP_GET, [this]() {
     _server.sendHeader("Connection", "close");
-    _server.send(200, "text/html", HttpPages::get_home_page());
+    _server.send(200, "text/html", HttpPages::get_home_page(_config.get_device_id()));
   });
 
   // Configure Device
-  _server.on("/configure/device", HTTP_GET, [this]() {
+  _server.on("/device", HTTP_GET, [this]() {
     _server.sendHeader("Connection", "close");
     _server.send(200, "text/html", HttpPages::get_config_device_page(
         _server.hasArg("success"),
@@ -116,7 +116,7 @@ void ConfigWebServer::set_endpoints() {
   });
 
   // Configure Connection
-  _server.on("/configure/connection", HTTP_GET, [this]() {
+  _server.on("/connection", HTTP_GET, [this]() {
     _server.sendHeader("Connection", "close");
     _server.send(200, "text/html", HttpPages::get_config_network_page(
         _server.hasArg("success"),
@@ -131,7 +131,7 @@ void ConfigWebServer::set_endpoints() {
   });
 
   // Configure Location
-  _server.on("/configure/location", HTTP_GET, [this]() {
+  _server.on("/location", HTTP_GET, [this]() {
 
     _server.sendHeader("Connection", "close");
     _server.send(200, "text/html", HttpPages::get_config_location_page(
@@ -148,7 +148,7 @@ void ConfigWebServer::set_endpoints() {
   });
 
   // Save config
-  _server.on("/configure/save", HTTP_POST, [this]() {
+  _server.on("/save", HTTP_POST, [this]() {
     handle_save();
   });
 
@@ -206,10 +206,10 @@ void ConfigWebServer::handle_save() {
     _config.set_led_color_intensity(clamp<uint8_t>(_server.arg("led_intensity").toInt(), 5, 100), false);
   }
   if(_server.hasArg("led_color")) {
-    _config.set_led_color_blind(strcmp(_server.arg("wf_ssid").c_str(), "1") == 0, false);
+    _config.set_led_color_blind(strcmp(_server.arg("led_color").c_str(), "1") == 0, false);
   }
   if(_server.hasArg("use_home_loc")) {
-    _config.set_use_home_location(strcmp(_server.arg("wf_ssid").c_str(), "1") == 0, false);
+    _config.set_use_home_location(strcmp(_server.arg("use_home_loc").c_str(), "1") == 0, false);
   }
   if(_server.hasArg("home_lat")) {
     _config.set_home_latitude(clamp<double>(_server.arg("home_lat").toDouble(), -90.0, 90.0), false);
@@ -218,7 +218,7 @@ void ConfigWebServer::handle_save() {
     _config.set_home_longitude(clamp<double>(_server.arg("home_long").toDouble(), -180.0, 180.0), false);
   }
 
-  _server.sendHeader("Location", _server.header("Referer") + "?success=true");
+  _server.sendHeader("Location", _server.arg("next") + "?success=true");
   _server.send(302, "text/html");
   _server.client().flush();
 }
