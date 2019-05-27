@@ -98,64 +98,89 @@ bool ConfigWebServer::start_ap_server(const char* host_ssid) {
 }
 
 void ConfigWebServer::set_endpoints() {
-  // Root
+  // Home
   _server.on("/", HTTP_GET, [this]() {
-    handle_root();
+    _server.sendHeader("Connection", "close");
+    _server.send(200, "text/html", HttpPages::get_home_page());
   });
 
-  // Save
-  _server.on("/save", HTTP_GET, [this]() {
+  // Configure Device
+  _server.on("/configure/device", HTTP_GET, [this]() {
+    _server.sendHeader("Connection", "close");
+    _server.send(200, "text/html", HttpPages::get_config_device_page(
+        _server.hasArg("success"),
+        _config.get_device_id(),
+        _config.get_led_color_intensity(),
+        _config.is_led_color_blind()
+    ));
+  });
+
+  // Configure Connection
+  _server.on("/configure/connection", HTTP_GET, [this]() {
+    _server.sendHeader("Connection", "close");
+    _server.send(200, "text/html", HttpPages::get_config_network_page(
+        _server.hasArg("success"),
+        _config.get_device_id(),
+        _config.get_ap_password(),
+        _config.get_wifi_ssid(),
+        _config.get_wifi_password(),
+        _config.get_api_key(),
+        _config.get_use_dev(),
+        _config.get_dev_sped_up()
+    ));
+  });
+
+  // Configure Location
+  _server.on("/configure/location", HTTP_GET, [this]() {
+
+    _server.sendHeader("Connection", "close");
+    _server.send(200, "text/html", HttpPages::get_config_location_page(
+        _server.hasArg("success"),
+        _config.get_device_id(),
+        _config.get_use_home_location() ,
+        _config.get_home_latitude(),
+        _config.get_home_longtitude(),
+        _config.get_last_latitude(),
+        _config.get_last_longtitude()
+    ));
+
+    _server.sendHeader("Connection", "close");
+  });
+
+  // Save config
+  _server.on("/configure/save", HTTP_POST, [this]() {
     handle_save();
   });
 
   // Upload get
   _server.on("/update", HTTP_GET, [this]() {
-    handle_update_retrieve();
+    _server.sendHeader("Connection", "close");
+    _server.send(200, "text/html", HttpPages::get_upload_page());
   });
 
   // Upload post
   _server.on("/update", HTTP_POST, [this]() {
-    handle_update_complete();
+    // Complete
+    _server.sendHeader("Connection", "close");
+    if(_server.upload().totalSize == 0 || Update.hasError()) {
+      _server.send(200, "text/plain", "FAIL");
+    }
+    else {
+      _server.send(200, "text/plain", "OK");
+      _server.client().flush();
+      ESP.restart();
+    }
   }, [this]() {
+    // Upload progress
     handle_update_uploading();
   });
 
   // Other things
-  _server.on("/favicon.ico", HTTP_GET, [this]() {
-    _server.send_P(200, "image/x-icon", favicon, sizeof(favicon));
-  });
-  _server.on("/form.css", HTTP_GET, [this]() {
-    _server.send(200, "text/css", form_style);
+  _server.on("/configure", [this]() { // Redirect
+    _server.sendHeader("Location", "/configure/device");
+    _server.send(302);
   });
 
-}
-void ConfigWebServer::handle_root() {
-  sprintf(
-      transmission_buffer,
-      config_response_format,
-      _server.hasArg("success") ? "<em>Configurations saved!</em> - <a href=\"/\">OK</a><br>" : "",
-      _config.get_device_id(),
-      _config.get_ap_password(),
-      _config.get_wifi_ssid(),
-      _config.get_wifi_password(),
-      _config.get_api_key(),
-      _config.get_use_dev() ? "checked" : "",
-      _config.get_use_dev() ? "" : "checked",
-      _config.get_dev_sped_up() ? "" : "checked",
-      _config.get_dev_sped_up() ? "checked" : "",
-      _config.get_led_color_intensity(),
-      _config.is_led_color_blind() ? "" : "checked",
-      _config.is_led_color_blind() ? "checked" : "",
-      _config.get_use_home_location() ? "" : "checked",
-      _config.get_use_home_location() ? "checked" : "",
-      _config.get_home_latitude(),
-      _config.get_home_longtitude(),
-      _config.get_last_latitude(),
-      _config.get_last_longtitude()
-  );
-
-  _server.sendHeader("Connection", "close");
-  _server.send(200, "text/html", transmission_buffer);
 }
 
 void ConfigWebServer::handle_save() {
@@ -193,8 +218,9 @@ void ConfigWebServer::handle_save() {
     _config.set_home_longitude(clamp<double>(_server.arg("home_long").toDouble(), -180.0, 180.0), false);
   }
 
-  _server.sendHeader("Location", "/?success=true");
+  _server.sendHeader("Location", _server.header("Referer") + "?success=true");
   _server.send(302, "text/html");
+  _server.client().flush();
 }
 
 void ConfigWebServer::handle_update_uploading() {
@@ -214,7 +240,7 @@ void ConfigWebServer::handle_update_uploading() {
       break;
     }
     case UPLOAD_FILE_END: {
-      if(Update.end(true)) { //true to set the size to the current progress
+      if(upload.totalSize > 0 && Update.end(true)) { //true to set the size to the current progress
         DEBUG_PRINTF("Update Success: %u\nRebooting...\n", upload.totalSize);
       } else {
         DEBUG_PRINTF("Update Failed...");
@@ -224,20 +250,7 @@ void ConfigWebServer::handle_update_uploading() {
     case UPLOAD_FILE_ABORTED: {
       Update.abort();
       DEBUG_PRINTF("Update aborted...");
-      _server.client().stop();
       break;
     }
   }
-}
-
-void ConfigWebServer::handle_update_complete() {
-  _server.sendHeader("Connection", "close");
-  _server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
-  _server.client().flush();
-  ESP.restart();
-}
-
-void ConfigWebServer::handle_update_retrieve() {
-  _server.sendHeader("Connection", "close");
-  _server.send(200, "text/html", upload_page);
 }

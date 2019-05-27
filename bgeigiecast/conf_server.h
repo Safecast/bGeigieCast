@@ -50,25 +50,14 @@ class ConfigWebServer {
   void set_endpoints();
 
   /**
-   * Handles request for `/`
-   */
-  void handle_root();
-  /**
    * Handles request for `/save`
    */
   void handle_save();
-  /**
-   * Handles request for `/update`
-   */
-  void handle_update_retrieve();
+
   /**
    * Handles request for `/update` post
    */
   void handle_update_uploading();
-  /**
-   * Handles request for `/update` when its complete
-   */
-  void handle_update_complete();
 
   WebServer _server;
   IEspConfig& _config;
