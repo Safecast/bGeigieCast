@@ -178,7 +178,7 @@ void Reading::reset() {
 void Reading::apply_home_location(double home_lat, double home_long) {
   if(_latitude < home_lat + LONG_LAT_PRECISION && _latitude > home_lat - LONG_LAT_PRECISION
       && _longitude < home_long + LONG_LAT_PRECISION && _longitude > home_long - LONG_LAT_PRECISION) {
-    DEBUG_PRINTFLN("Gps in home location, setting reading location to %.5f , %.5f", home_lat, home_long);
+    DEBUG_PRINTF("Gps in home location, setting reading location to %.5f , %.5f\n", home_lat, home_long);
     _latitude = home_lat;
     _longitude = home_long;
   } else {
