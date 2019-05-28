@@ -24,7 +24,7 @@ bool ConfigWebServer::initialize() {
   }
 
   char host_ssid[16];
-  device_id ? sprintf(host_ssid, ACCESS_POINT_SSID "%d", device_id) : sprintf(host_ssid, ACCESS_POINT_SSID "unknown");
+  sprintf(host_ssid, ACCESS_POINT_SSID, device_id);
 
   MDNS.begin(host_ssid);
 
@@ -118,7 +118,7 @@ void ConfigWebServer::set_endpoints() {
   // Configure Connection
   _server.on("/connection", HTTP_GET, [this]() {
     _server.sendHeader("Connection", "close");
-    _server.send(200, "text/html", HttpPages::get_config_network_page(
+    _server.send(200, "text/html", HttpPages::get_config_connection_page(
         _server.hasArg("success"),
         _config.get_device_id(),
         _config.get_ap_password(),
@@ -139,9 +139,9 @@ void ConfigWebServer::set_endpoints() {
         _config.get_device_id(),
         _config.get_use_home_location() ,
         _config.get_home_latitude(),
-        _config.get_home_longtitude(),
+        _config.get_home_longitude(),
         _config.get_last_latitude(),
-        _config.get_last_longtitude()
+        _config.get_last_longitude()
     ));
 
     _server.sendHeader("Connection", "close");
@@ -155,7 +155,7 @@ void ConfigWebServer::set_endpoints() {
   // Upload get
   _server.on("/update", HTTP_GET, [this]() {
     _server.sendHeader("Connection", "close");
-    _server.send(200, "text/html", HttpPages::get_upload_page());
+    _server.send(200, "text/html", HttpPages::get_update_page(_config.get_device_id()));
   });
 
   // Upload post
@@ -163,7 +163,7 @@ void ConfigWebServer::set_endpoints() {
     // Complete
     _server.sendHeader("Connection", "close");
     if(_server.upload().totalSize == 0 || Update.hasError()) {
-      _server.send(200, "text/plain", "FAIL");
+      _server.send(500, "text/plain", "FAIL");
     }
     else {
       _server.send(200, "text/plain", "OK");
@@ -171,7 +171,7 @@ void ConfigWebServer::set_endpoints() {
       ESP.restart();
     }
   }, [this]() {
-    // Upload progress
+    // Progress
     handle_update_uploading();
   });
 
@@ -179,6 +179,12 @@ void ConfigWebServer::set_endpoints() {
   _server.on("/configure", [this]() { // Redirect
     _server.sendHeader("Location", "/configure/device");
     _server.send(302);
+  });
+
+  // css get
+  _server.on("/pure.css", HTTP_GET, [this]() {
+    _server.sendHeader("Content-Encoding", "gzip");
+    _server.send_P(200, "text/css", reinterpret_cast<const char*>(HttpPages::pure_css), PURE_CSS_SIZE);
   });
 
 }
@@ -254,3 +260,4 @@ void ConfigWebServer::handle_update_uploading() {
     }
   }
 }
+
