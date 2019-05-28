@@ -168,7 +168,6 @@ void ConfigWebServer::set_endpoints() {
     else {
       _server.send(200, "text/plain", "OK");
       _server.client().flush();
-      ESP.restart();
     }
   }, [this]() {
     // Progress
@@ -181,10 +180,19 @@ void ConfigWebServer::set_endpoints() {
     _server.send(302);
   });
 
+  _server.on("/reboot", [this]() { // Reboot
+    ESP.restart();
+  });
+
   // css get
   _server.on("/pure.css", HTTP_GET, [this]() {
     _server.sendHeader("Content-Encoding", "gzip");
     _server.send_P(200, "text/css", reinterpret_cast<const char*>(HttpPages::pure_css), PURE_CSS_SIZE);
+  });
+
+  // css get
+  _server.on("/favicon.ico", HTTP_GET, [this]() {
+    _server.send_P(200, "image/x-icon", reinterpret_cast<const char*>(HttpPages::favicon), FAVICON_SIZE);
   });
 
 }

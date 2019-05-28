@@ -2,6 +2,7 @@
 #define BGEIGIECAST_HTTP_PAGES_H
 
 #define PURE_CSS_SIZE 3929
+#define FAVICON_SIZE 696
 
 class HttpPages {
  public:
@@ -85,8 +86,11 @@ class HttpPages {
   );
 
   static const uint8_t pure_css[PURE_CSS_SIZE];
+  static const uint8_t favicon[FAVICON_SIZE];
 
  private:
+
+  static const char* render_full_page(uint32_t device_id, const char* page_name, const char* content);
   static char transmission_buffer[4096];
   static char content_buffer[2048];
 

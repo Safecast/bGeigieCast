@@ -1,7 +1,13 @@
 #include <WebServer.h>
 #include "http_pages.h"
 
-const char* success_message = "<p><em>Configurations saved!</em> - <a href=\"/\">Home</a></p>";
+#define TITLE_HOME "Home"
+#define TITLE_UPDATE "Update firmware"
+#define TITLE_CONF_DEVICE "Configure device"
+#define TITLE_CONF_LOCATION "Configure location"
+#define TITLE_CONF_CONNECTION "Configure connection"
+
+const char* success_message = "<p><em>Configurations saved!</em></p>";
 
 /**
  * page format
@@ -13,11 +19,6 @@ const char* success_message = "<p><em>Configurations saved!</em> - <a href=\"/\"
 const char* base_page_format =
     "<!DOCTYPE html>"
     "<html lang='en'><head>"
-    "<link rel='icon' href='data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAA"
-    "AAgAAAAAAAAAAAAAAAEAAAAAAAAACAhYcA////AA0PEAC+pm4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    "AAAAAAAAAAAIiIiIiIiIiIiIiIiIiIiIiIiMyISESIiIiIzIhIRIiIiIiIiEhEiIiIiIiISESIiIiIiIRIRIiIiIiIRIhEiIiIiERIi"
-    "ESIiIiIQIhESIiIiIiIRESIiIiIiEREiIiIiIiIRIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIAAAAAAAAAAAAAAAAAAAAAAAA"
-    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' type='image/x-png'/>"
     "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
     "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
     "<link rel='stylesheet' href='/pure.css'>"
@@ -27,6 +28,7 @@ const char* base_page_format =
     "<style>"
     "i{width: 25px;text-align: center;}"
     "#layout{max-width: 680px;margin: auto;}"
+    "#main{padding:1em;}"
     ".pure-menu-link{padding: 1em .7em;}"
     "</style>"
     "</head>"
@@ -44,10 +46,13 @@ const char* base_page_format =
     "<li class='pure-menu-item'><a href='/location' class='pure-menu-link'><i class='fa fa-map-marker-alt'></i>Location</a></li>"
     "</ul></li>"
     "<li class='pure-menu-item'><a href='/update' class='pure-menu-link'><i class='fa fa-download'></i>Update firmware</a></li>"
-    "<li class='pure-menu-item'><a href='https://github.com/Safecast/bGeigieCast/' class='pure-menu-link'><i class='fab fa-github'></i>Github</a></li>"
+    "<li class='pure-menu-item'><a target='_blank' href='https://github.com/Safecast/bGeigieCast/' class='pure-menu-link'><i class='fab fa-github'></i>Github</a></li>"
     "</ul>"
     "</div>"
     "</div>"
+    "<script>"
+    "$('.pure-menu-item').each((i,e)=>$(e).children('a').prop('href')===window.location.href?$(e).addClass('pure-menu-selected'):0);"
+    "</script>"
     "<div id='main'>%s</div>"
     "</div>"
     "</body></html>";
@@ -59,28 +64,26 @@ const char* HttpPages::get_home_page(uint32_t device_id) {
       "bGeigieCast<br>"
       "</div>"
   );
-  sprintf(
-      transmission_buffer,
-      base_page_format,
-      device_id,
-      "Home",
-      device_id,
-      content_buffer
-  );
-  return transmission_buffer;
+  return render_full_page(device_id, TITLE_HOME, content_buffer);
+
 }
 
 const char* HttpPages::get_update_page(uint32_t device_id) {
   sprintf(
       content_buffer,
       "<div id='update'>"
-      "<p><a href='/'>Home</a></p>"
       "<form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
+      "<p id='status'>Update the firmware</p>"
+      "<div id='form-content'>"
+      "<input type='file' name='update' id='file'><br>"
+      //      "<label id='file-input' for='file'>Choose file...</label>"
+      "<input type='submit' class=btn value='Update'>"
+      "</div>"
+      "<br><br>"
+      "<div id='prg'></div>"
+      "<div id='prgbar'><div id='bar'></div></div>"
+      "</form>"
       "<script>"
-      "function sub(obj){"
-      "var fileName = obj.value.split('\\\\');"
-      "document.getElementById('file-input').innerHTML = fileName[fileName.length-1];"
-      "};"
       "$('form').submit(function(e){"
       "e.preventDefault();"
       "$('#form-content').hide();"
@@ -106,7 +109,7 @@ const char* HttpPages::get_update_page(uint32_t device_id) {
       "},"
       "success:function(d, s) {"
       "$('#status').html('Upload success! Restarting device to apply update.');"
-      "console.log('success!') "
+      "$.get('/reboot');"
       "},"
       "error: function (a, b, c) {"
       "$('#status').html('Upload failed... Try again or contact info@safecast.org')"
@@ -114,28 +117,11 @@ const char* HttpPages::get_update_page(uint32_t device_id) {
       "});"
       "});"
       "</script>"
-      "<p id='status'>Update the firmware</p>"
-      "<div id='form-content'>"
-      "<input type='file' name='update' id='file' onchange='sub(this)' style=display:none>"
-      "<label id='file-input' for='file'>Choose file...</label>"
-      "<input type='submit' class=btn value='Update'>"
-      "</div>"
-      "<br><br>"
-      "<div id='prg'></div>"
-      "<div id='prgbar'><div id='bar'></div></div>"
-      "</form>"
       "</div>"
   );
 
-  sprintf(
-      transmission_buffer,
-      base_page_format,
-      device_id,
-      "Update firmware",
-      device_id,
-      content_buffer
-  );
-  return transmission_buffer;
+  return render_full_page(device_id, TITLE_UPDATE, content_buffer);
+
 }
 
 const char* HttpPages::get_config_device_page(
@@ -150,7 +136,6 @@ const char* HttpPages::get_config_device_page(
       "<span>%s</span>"
       "<strong>Configure device</strong><br>"
       "bGeigieCast %d<br>"
-      "<p><a href='/'>Home</a></p>"
       "<form action='/save?next=/device' method='POST'>"
       "LED intensity:<br><input type='number' min='5' max='100' name='led_intensity' value='%d'><br>"
       "LED Colors:<br>"
@@ -166,69 +151,7 @@ const char* HttpPages::get_config_device_page(
       colorblind ? "checked" : ""
   );
 
-  sprintf(
-      transmission_buffer,
-      base_page_format,
-      device_id,
-      "Device config",
-      device_id,
-      content_buffer
-  );
-  return transmission_buffer;
-}
-
-const char* HttpPages::get_config_connection_page(
-    bool display_success,
-    uint32_t device_id,
-    const char* device_password,
-    const char* wifi_ssid,
-    const char* wifi_password,
-    const char* api_key,
-    bool use_dev,
-    bool sped_up
-) {
-  sprintf(
-      content_buffer,
-      "<div id='config'>"
-      "<span>%s</span>"
-      "<strong>Configure network</strong><br>"
-      "bGeigieCast %d<br>"
-      "<p><a href='/'>Home</a></p>"
-      "<form action='/save?next=/connection' method='POST' > "
-      "bGeigieCast access point password:<br><input type='text' name='ap_password' value='%s'><br>"
-      "Network wifi ssid:<br><input type='text' name='wf_ssid' value='%s'><br>"
-      "Network wifi password:<br><input type='text' name='wf_password' value='%s'><br>"
-      "Safecast API key:<br><input type='text' name='apikey' value='%s'><br>"
-      "Use safecast server:<br>"
-      "<input type='radio' name='devsrv' value='1' %s>Development<br>"
-      "<input type='radio' name='devsrv' value='0' %s>Production<br>"
-      "Send frequency (dev only):<br>"
-      "<input type='radio' name='devfreq' value='0' %s>5 minutes<br>"
-      "<input type='radio' name='devfreq' value='1' %s>30 seconds<br>"
-      "<input type='submit' value='Submit' style='background-color: #FF9800; font-size: initial;color: white;'>"
-      "</form><br><br>"
-      "</div>",
-      display_success ? success_message : "",
-      device_id,
-      device_password,
-      wifi_ssid,
-      wifi_password,
-      api_key,
-      use_dev ? "checked" : "",
-      use_dev ? "" : "checked",
-      sped_up ? "" : "checked",
-      sped_up ? "checked" : ""
-  );
-
-  sprintf(
-      transmission_buffer,
-      base_page_format,
-      device_id,
-      "Connection config",
-      device_id,
-      content_buffer
-  );
-  return transmission_buffer;
+  return render_full_page(device_id, TITLE_CONF_DEVICE, content_buffer);
 }
 
 const char* HttpPages::get_config_location_page(
@@ -246,7 +169,6 @@ const char* HttpPages::get_config_location_page(
       "<span>%s</span>"
       "<strong>Configure location</strong><br>"
       "bGeigieCast %d<br>"
-      "<p><a href='/'>Home</a></p>"
       "<form action='/save?next=/location' method='POST' > "
       "Fixed mode GPS settings:<br>"
       "<input type='radio' name='use_home_loc' value='0' %s>Use GPS<br>"
@@ -273,13 +195,62 @@ const char* HttpPages::get_config_location_page(
       last_longitude
   );
 
+  return render_full_page(device_id, TITLE_CONF_LOCATION, content_buffer);
+}
+
+const char* HttpPages::get_config_connection_page(
+    bool display_success,
+    uint32_t device_id,
+    const char* device_password,
+    const char* wifi_ssid,
+    const char* wifi_password,
+    const char* api_key,
+    bool use_dev,
+    bool sped_up
+) {
+  sprintf(
+      content_buffer,
+      "<div id='config'>"
+      "<span>%s</span>"
+      "<strong>Configure network</strong><br>"
+      "bGeigieCast %d<br>"
+      "<form action='/save?next=/connection' method='POST' > "
+      "bGeigieCast access point password:<br><input type='text' name='ap_password' value='%s'><br>"
+      "Network wifi ssid:<br><input type='text' name='wf_ssid' value='%s'><br>"
+      "Network wifi password:<br><input type='text' name='wf_password' value='%s'><br>"
+      "Safecast API key:<br><input type='text' name='apikey' value='%s'><br>"
+      "Use safecast server:<br>"
+      "<input type='radio' name='devsrv' value='1' %s>Development<br>"
+      "<input type='radio' name='devsrv' value='0' %s>Production<br>"
+      "Send frequency (dev only):<br>"
+      "<input type='radio' name='devfreq' value='0' %s>5 minutes<br>"
+      "<input type='radio' name='devfreq' value='1' %s>30 seconds<br>"
+      "<input type='submit' value='Submit' style='background-color: #FF9800; font-size: initial;color: white;'>"
+      "</form><br><br>"
+      "</div>",
+      display_success ? success_message : "",
+      device_id,
+      device_password,
+      wifi_ssid,
+      wifi_password,
+      api_key,
+      use_dev ? "checked" : "",
+      use_dev ? "" : "checked",
+      sped_up ? "" : "checked",
+      sped_up ? "checked" : ""
+  );
+
+  return render_full_page(device_id, TITLE_CONF_CONNECTION, content_buffer);
+}
+
+const char* HttpPages::render_full_page(uint32_t device_id, const char* page_name, const char* content) {
   sprintf(
       transmission_buffer,
       base_page_format,
       device_id,
-      "Location config",
+      page_name,
       device_id,
-      content_buffer
+      content
   );
   return transmission_buffer;
 }
@@ -538,4 +509,51 @@ const uint8_t HttpPages::pure_css[PURE_CSS_SIZE] = {
     0x1b, 0xa0, 0x60, 0x28, 0x7b, 0x7d, 0xa3, 0xe3, 0xb2, 0xf1, 0x15, 0xbb, 0x43, 0x6d, 0x59, 0xb8,
     0xa7, 0xd7, 0xa3, 0x41, 0x53, 0xa6, 0xfa, 0x45, 0xb9, 0x0b, 0xa4, 0x62, 0x74, 0xaf, 0x21, 0xf6,
     0x5f, 0x54, 0xa5, 0x44, 0xa9, 0x41, 0x40, 0x00, 0x00
+};
+
+const uint8_t HttpPages::favicon[FAVICON_SIZE] = {
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52,
+    0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x10, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1f, 0xf3, 0xff,
+    0x61, 0x00, 0x00, 0x00, 0x20, 0x63, 0x48, 0x52, 0x4d, 0x00, 0x00, 0x6d, 0x75, 0x00, 0x00, 0x73,
+    0xa0, 0x00, 0x00, 0xfc, 0xdd, 0x00, 0x00, 0x83, 0x64, 0x00, 0x00, 0x70, 0xe8, 0x00, 0x00, 0xec,
+    0x68, 0x00, 0x00, 0x30, 0x3e, 0x00, 0x00, 0x10, 0x90, 0xe4, 0xec, 0x99, 0xea, 0x00, 0x00, 0x00,
+    0x06, 0x62, 0x4b, 0x47, 0x44, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf9, 0x43, 0xbb, 0x7f, 0x00,
+    0x00, 0x00, 0x09, 0x70, 0x48, 0x59, 0x73, 0x00, 0x00, 0x0b, 0x13, 0x00, 0x00, 0x0b, 0x13, 0x01,
+    0x00, 0x9a, 0x9c, 0x18, 0x00, 0x00, 0x00, 0x09, 0x76, 0x70, 0x41, 0x67, 0x00, 0x00, 0x00, 0x10,
+    0x00, 0x00, 0x00, 0x10, 0x00, 0x5c, 0xc6, 0xad, 0xc3, 0x00, 0x00, 0x02, 0x17, 0x49, 0x44, 0x41,
+    0x54, 0x38, 0xcb, 0x8d, 0x90, 0x4f, 0x48, 0x93, 0x71, 0x1c, 0xc6, 0x9f, 0xdf, 0xbf, 0xf7, 0xf5,
+    0x5d, 0x8e, 0x35, 0x27, 0x94, 0xa7, 0x12, 0x8a, 0x4e, 0x05, 0x32, 0x50, 0x90, 0xfe, 0x30, 0xa1,
+    0x4b, 0x78, 0xe8, 0x14, 0xa4, 0xa6, 0xd0, 0x25, 0x6f, 0x19, 0x12, 0x42, 0x98, 0x21, 0xe9, 0x76,
+    0xd8, 0xa9, 0x43, 0x5e, 0x3a, 0x74, 0x75, 0xd0, 0x84, 0x6c, 0xa7, 0x4e, 0x91, 0x90, 0x87, 0x3c,
+    0x28, 0x83, 0xa2, 0xe5, 0x66, 0x46, 0xb2, 0x06, 0x19, 0x6e, 0x2e, 0x77, 0xd9, 0xde, 0xa7, 0x43,
+    0xfa, 0xe2, 0xf0, 0x4f, 0xfb, 0xc0, 0xf7, 0xf0, 0x85, 0xdf, 0xef, 0xc3, 0xf3, 0x7c, 0x21, 0x8d,
+    0xe1, 0xc9, 0x50, 0x88, 0xd1, 0x58, 0x8c, 0x97, 0x3a, 0x3a, 0x08, 0x80, 0x42, 0x6b, 0x6a, 0xdb,
+    0x6e, 0x68, 0x20, 0x8d, 0x61, 0xa0, 0xa5, 0x85, 0x85, 0x42, 0x81, 0xa5, 0x52, 0x89, 0xd1, 0x58,
+    0x8c, 0xa7, 0xda, 0xda, 0x08, 0x80, 0xd2, 0x98, 0xff, 0x0b, 0x94, 0x65, 0xb1, 0xc9, 0xe7, 0x63,
+    0x22, 0x91, 0xe0, 0x1e, 0xb9, 0xb5, 0x35, 0xde, 0x1b, 0x1e, 0xa6, 0xe3, 0xf3, 0x11, 0x00, 0x95,
+    0x65, 0x1d, 0x2d, 0xd0, 0xb6, 0x4d, 0x69, 0x0c, 0x95, 0x31, 0xbc, 0xdd, 0xd7, 0xc7, 0x74, 0x3a,
+    0xed, 0x89, 0x3e, 0x2c, 0x2e, 0xf2, 0x46, 0x6f, 0x2f, 0x21, 0x25, 0x21, 0xc4, 0xd1, 0x02, 0xa7,
+    0xb9, 0xd9, 0x8b, 0xed, 0x0f, 0x04, 0xf8, 0x70, 0x6c, 0x8c, 0xf9, 0x7c, 0xde, 0x13, 0xbd, 0x4a,
+    0x26, 0xd9, 0x11, 0x0e, 0x1f, 0x5a, 0x0b, 0xd2, 0x18, 0x06, 0x5b, 0x5b, 0xf9, 0x71, 0x69, 0x89,
+    0x4f, 0x26, 0x27, 0x19, 0x08, 0x06, 0x09, 0x80, 0x67, 0xda, 0xdb, 0xf9, 0x7c, 0x66, 0x86, 0x95,
+    0x4a, 0x85, 0x24, 0x59, 0x2e, 0x97, 0x19, 0x8f, 0xc7, 0x79, 0xc2, 0xef, 0xaf, 0xab, 0xe4, 0xdd,
+    0xe0, 0xf5, 0xfc, 0x3c, 0x49, 0x32, 0x93, 0xc9, 0xf0, 0xce, 0xe0, 0x20, 0x85, 0x52, 0x04, 0xc0,
+    0xce, 0xae, 0x2e, 0xbe, 0x49, 0xa5, 0xbc, 0x34, 0x0f, 0x46, 0x47, 0x09, 0xa0, 0xbe, 0x82, 0x32,
+    0x86, 0x4d, 0x3e, 0x1f, 0x07, 0x87, 0x86, 0xf8, 0x75, 0x75, 0x95, 0x24, 0xf9, 0x7e, 0x61, 0x81,
+    0x91, 0x9e, 0x9e, 0x7f, 0xb1, 0xb5, 0x66, 0x6a, 0x57, 0x32, 0x9b, 0x48, 0x1c, 0x14, 0x68, 0xdb,
+    0xa6, 0xb2, 0x2c, 0x02, 0x60, 0x30, 0x14, 0xe2, 0xa3, 0xf1, 0x71, 0x16, 0x8b, 0x45, 0x56, 0x6b,
+    0x35, 0xde, 0x1f, 0x19, 0x21, 0x00, 0x3e, 0x9d, 0x9e, 0x3e, 0x54, 0x20, 0xb1, 0x8b, 0x10, 0x02,
+    0xda, 0xb6, 0xb1, 0x55, 0x2c, 0x22, 0x3a, 0x35, 0x85, 0x6b, 0x91, 0x08, 0xfe, 0x94, 0xcb, 0x18,
+    0xe8, 0xef, 0x07, 0x00, 0x48, 0xe9, 0x3d, 0xad, 0x43, 0xef, 0x5f, 0x48, 0x42, 0x29, 0x05, 0x4a,
+    0x89, 0xe5, 0x95, 0x15, 0x7c, 0x5b, 0x5f, 0x87, 0xd2, 0x1a, 0xc7, 0xe1, 0x69, 0xdd, 0x6a, 0x15,
+    0x5a, 0x6b, 0x90, 0x2e, 0xe8, 0xba, 0x50, 0x4a, 0x79, 0xd2, 0xe3, 0xd0, 0x7b, 0x9f, 0xcf, 0x85,
+    0xbb, 0x71, 0xf5, 0xd6, 0x5d, 0xfc, 0xce, 0xff, 0xc0, 0xdb, 0x97, 0xcf, 0xb0, 0x53, 0xda, 0x42,
+    0x23, 0x48, 0x90, 0x90, 0x5a, 0xa3, 0xfb, 0xe6, 0x00, 0x4e, 0x9f, 0x3d, 0x8f, 0x8b, 0x97, 0xaf,
+    0xe3, 0x42, 0xe7, 0x15, 0xb8, 0xd5, 0x6a, 0x83, 0x02, 0x21, 0xe0, 0xd6, 0xaa, 0xf8, 0x99, 0xfb,
+    0x02, 0x21, 0x25, 0x76, 0xb6, 0xb7, 0xb0, 0xb9, 0xb1, 0x0e, 0x08, 0x01, 0xc7, 0x71, 0xe0, 0x38,
+    0x0e, 0x00, 0xc0, 0xb2, 0x2c, 0x00, 0x80, 0x6d, 0xdb, 0x07, 0x2b, 0x08, 0xa9, 0xf0, 0x6e, 0xf6,
+    0x05, 0xbe, 0x7f, 0x5e, 0xc6, 0xf6, 0xe6, 0x2f, 0x6c, 0x64, 0x3f, 0x41, 0x19, 0x83, 0xc7, 0x13,
+    0x13, 0x70, 0x5d, 0x17, 0x52, 0x6b, 0x24, 0xe7, 0xe6, 0x90, 0xcb, 0xe5, 0x90, 0xcd, 0x66, 0x21,
+    0xf7, 0x1d, 0xf6, 0x2f, 0x5c, 0x10, 0x5a, 0xa6, 0x1c, 0x58, 0x1b, 0xff, 0x00, 0x00, 0x00, 0x00,
+    0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82
 };
