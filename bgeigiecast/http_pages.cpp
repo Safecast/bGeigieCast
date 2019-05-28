@@ -74,6 +74,7 @@ const char* HttpPages::get_update_page(uint32_t device_id) {
   sprintf(
       content_buffer,
       "<div id='update'>"
+      "<p><a href='/'>Home</a></p>"
       "<form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
       "<script>"
       "function sub(obj){"
@@ -149,6 +150,7 @@ const char* HttpPages::get_config_device_page(
       "<span>%s</span>"
       "<strong>Configure device</strong><br>"
       "bGeigieCast %d<br>"
+      "<p><a href='/'>Home</a></p>"
       "<form action='/save?next=/device' method='POST'>"
       "LED intensity:<br><input type='number' min='5' max='100' name='led_intensity' value='%d'><br>"
       "LED Colors:<br>"
@@ -191,6 +193,7 @@ const char* HttpPages::get_config_connection_page(
       "<span>%s</span>"
       "<strong>Configure network</strong><br>"
       "bGeigieCast %d<br>"
+      "<p><a href='/'>Home</a></p>"
       "<form action='/save?next=/connection' method='POST' > "
       "bGeigieCast access point password:<br><input type='text' name='ap_password' value='%s'><br>"
       "Network wifi ssid:<br><input type='text' name='wf_ssid' value='%s'><br>"
@@ -243,6 +246,7 @@ const char* HttpPages::get_config_location_page(
       "<span>%s</span>"
       "<strong>Configure location</strong><br>"
       "bGeigieCast %d<br>"
+      "<p><a href='/'>Home</a></p>"
       "<form action='/save?next=/location' method='POST' > "
       "Fixed mode GPS settings:<br>"
       "<input type='radio' name='use_home_loc' value='0' %s>Use GPS<br>"
