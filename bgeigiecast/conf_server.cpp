@@ -198,38 +198,38 @@ void ConfigWebServer::set_endpoints() {
 }
 
 void ConfigWebServer::handle_save() {
-  if(_server.hasArg("ap_password")) {
-    _config.set_ap_password(_server.arg("ap_password").c_str(), false);
+  if(_server.hasArg("c_ap")) {
+    _config.set_ap_password(_server.arg("c_ap").c_str(), false);
   }
-  if(_server.hasArg("wf_ssid")) {
-    _config.set_wifi_ssid(_server.arg("wf_ssid").c_str(), false);
+  if(_server.hasArg("c_ws")) {
+    _config.set_wifi_ssid(_server.arg("c_ws").c_str(), false);
   }
-  if(_server.hasArg("wf_password")) {
-    _config.set_wifi_password(_server.arg("wf_password").c_str(), false);
+  if(_server.hasArg("c_wp")) {
+    _config.set_wifi_password(_server.arg("c_wp").c_str(), false);
   }
-  if(_server.hasArg("apikey")) {
-    _config.set_api_key(_server.arg("apikey").c_str(), false);
+  if(_server.hasArg("c_ak")) {
+    _config.set_api_key(_server.arg("c_ak").c_str(), false);
   }
-  if(_server.hasArg("devsrv")) {
-    _config.set_use_dev(_server.arg("devsrv") == "1", false);
+  if(_server.hasArg("c_ud")) {
+    _config.set_use_dev(_server.arg("c_ud") == "1", false);
   }
-  if(_server.hasArg("devfreq")) {
-    _config.set_dev_sped_up(_server.arg("devfreq") == "1", false);
+  if(_server.hasArg("c_df")) {
+    _config.set_dev_sped_up(_server.arg("c_df") == "1", false);
   }
-  if(_server.hasArg("led_intensity")) {
-    _config.set_led_color_intensity(clamp<uint8_t>(_server.arg("led_intensity").toInt(), 5, 100), false);
+  if(_server.hasArg("d_li")) {
+    _config.set_led_color_intensity(clamp<uint8_t>(_server.arg("d_li").toInt(), 5, 100), false);
   }
-  if(_server.hasArg("led_color")) {
-    _config.set_led_color_blind(strcmp(_server.arg("led_color").c_str(), "1") == 0, false);
+  if(_server.hasArg("d_lc")) {
+    _config.set_led_color_blind(strcmp(_server.arg("d_lc").c_str(), "1") == 0, false);
   }
-  if(_server.hasArg("use_home_loc")) {
-    _config.set_use_home_location(strcmp(_server.arg("use_home_loc").c_str(), "1") == 0, false);
+  if(_server.hasArg("l_uh")) {
+    _config.set_use_home_location(strcmp(_server.arg("l_uh").c_str(), "1") == 0, false);
   }
-  if(_server.hasArg("home_lat")) {
-    _config.set_home_latitude(clamp<double>(_server.arg("home_lat").toDouble(), -90.0, 90.0), false);
+  if(_server.hasArg("l_ha")) {
+    _config.set_home_latitude(clamp<double>(_server.arg("l_ha").toDouble(), -90.0, 90.0), false);
   }
-  if(_server.hasArg("home_long")) {
-    _config.set_home_longitude(clamp<double>(_server.arg("home_long").toDouble(), -180.0, 180.0), false);
+  if(_server.hasArg("l_ho")) {
+    _config.set_home_longitude(clamp<double>(_server.arg("l_ho").toDouble(), -180.0, 180.0), false);
   }
 
   _server.sendHeader("Location", _server.arg("next") + "?success=true");

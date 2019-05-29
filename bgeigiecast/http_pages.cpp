@@ -29,6 +29,7 @@ const char* base_page_format =
     "i{width: 25px;text-align: center;}"
     "#layout{max-width: 680px;margin: auto;}"
     "#main{padding:1em;}"
+    "input[type='text'],input[type='number']{max-width: 300px;width: 100%%;}"
     ".pure-menu-link{padding: 1em .7em;}"
     "</style>"
     "</head>"
@@ -60,9 +61,7 @@ const char* base_page_format =
 const char* HttpPages::get_home_page(uint32_t device_id) {
   sprintf(
       content_buffer,
-      "<div id='config'>"
-      "bGeigieCast<br>"
-      "</div>"
+      "Landing page"
   );
   return render_full_page(device_id, TITLE_HOME, content_buffer);
 
@@ -132,23 +131,32 @@ const char* HttpPages::get_config_device_page(
 ) {
   sprintf(
       content_buffer,
-      "<div id='config'>"
-      "<span>%s</span>"
-      "<strong>Configure device</strong><br>"
-      "bGeigieCast %d<br>"
-      "<form action='/save?next=/device' method='POST'>"
-      "LED intensity:<br><input type='number' min='5' max='100' name='led_intensity' value='%d'><br>"
-      "LED Colors:<br>"
-      "<input type='radio' name='led_color' value='0' %s>Default<br>"
-      "<input type='radio' name='led_color' value='1' %s>Color blind<br>"
-      "<input type='submit' value='Submit' style='background-color: #FF9800; font-size: initial;color: white;'>"
-      "</form><br><br>"
-      "</div>",
-      display_success ? success_message : "",
-      device_id,
+      "<form class='pure-form pure-form-stacked' action='/save?next=/device' method='POST'>"
+      "<fieldset>"
+      "<legend>Device settings</legend>"
+
+      // Led intensity
+      "<label for='d_li'>Led intensity</label>"
+      "<input type='number' min='5' max='100' name='d_li' id='d_li' value='%d'>"
+      "<span class='pure-form-message'>Value between 5-100 (percentage).</span>"
+
+      // Colorblind
+      "<label>Color set</label>"
+      "<label for='d_cb0' class='pure-radio'>"
+      "<input id='d_cb0' type='radio' name='d_cb' value='0' %s>Default"
+      "</label>"
+      "<label for='d_cb1' class='pure-radio'>"
+      "<input id='d_cb1' type='radio' name='d_cb' value='1' %s>Colorblind"
+      "</label>"
+
+      "<button type='submit' class='pure-button pure-button-primary'>Save</button>"
+      "</fieldset>"
+      "</form>"
+      "%s", // Success message
       led_intensity,
       colorblind ? "" : "checked",
-      colorblind ? "checked" : ""
+      colorblind ? "checked" : "",
+      display_success ? success_message : ""
   );
 
   return render_full_page(device_id, TITLE_CONF_DEVICE, content_buffer);
@@ -165,34 +173,50 @@ const char* HttpPages::get_config_location_page(
 ) {
   sprintf(
       content_buffer,
-      "<div id='config'>"
-      "<span>%s</span>"
-      "<strong>Configure location</strong><br>"
-      "bGeigieCast %d<br>"
-      "<form action='/save?next=/location' method='POST' > "
-      "Fixed mode GPS settings:<br>"
-      "<input type='radio' name='use_home_loc' value='0' %s>Use GPS<br>"
-      "<input type='radio' name='use_home_loc' value='1' %s>Use home location<br>"
-      "Home latitude:<br><input type='number' min='-90.0000' max='90.0000' name='home_lat' id='home_lat' value='%.5f' step='0.00001'><br>"
-      "Home longitude:<br><input type='number' min='-180.0000' max='180.0000' name='home_long' id='home_long' value='%.5f' step='0.00001'><br>"
+      "<form class='pure-form pure-form-stacked' action='/save?next=/location' method='POST'>"
+      "<fieldset>"
+      "<legend>Location settings</legend>"
+
+      // Use home location
+      "<label>Location in fixed mode</label>"
+      "<label for='l_uh0' class='pure-radio'>"
+      "<input id='l_uh0' type='radio' name='l_uh' value='0' %s>Use GPS"
+      "</label>"
+      "<label for='l_uh1' class='pure-radio'>"
+      "<input id='l_uh1' type='radio' name='l_uh' value='1' %s>Use home location"
+      "</label>"
+      "<span class='pure-form-message'>(Informative text)</span>"
+
+      // Home latitude
+      "<label for='l_ha'>Home latitude</label>"
+      "<input type='number' min='-90.0000' max='90.0000' name='l_ha' id='l_ha' value='%.5f' step='0.00001'>"
+
+      // Home longitude
+      "<label for='l_ho'>Home longitude</label>"
+      "<input type='number' min='-180.0000' max='180.0000' name='l_ho' id='l_ho' value='%.5f' step='0.00001'>"
+
+      // Set last known location
+      "<span class='pure-form-message'>"
       "Last known location: (<a href='#' onclick=\""
-      "document.getElementById('home_lat').value = document.getElementById('last_lat').innerHTML;"
-      "document.getElementById('home_long').value = document.getElementById('last_long').innerHTML;"
+      "document.getElementById('l_ha').value = document.getElementById('l_la').innerHTML;"
+      "document.getElementById('l_ho').value = document.getElementById('l_lo').innerHTML;"
       "return false;"
-      "\">Use this</a>)<br>"
-      "Latitude: <span id='last_lat'>%.5f</span><br>"
-      "Longitude: <span id='last_long'>%.5f</span><br>"
-      "<input type='submit' value='Submit' style='background-color: #FF9800; font-size: initial;color: white;'>"
-      "</form><br><br>"
-      "</div>",
-      display_success ? success_message : "",
-      device_id,
+      "\">use this</a>)<br>"
+      "Latitude: <span id='l_la'>%.5f</span><br>"
+      "Longitude: <span id='l_lo'>%.5f</span><br>"
+      "</span>"
+
+      "<button type='submit' class='pure-button pure-button-primary'>Save</button>"
+      "</fieldset>"
+      "</form>"
+      "%s", // Success message
       use_home_location ? "" : "checked",
       use_home_location ? "checked" : "",
       home_latitude,
       home_longitude,
       last_latitude,
-      last_longitude
+      last_longitude,
+      display_success ? success_message : ""
   );
 
   return render_full_page(device_id, TITLE_CONF_LOCATION, content_buffer);
@@ -210,34 +234,61 @@ const char* HttpPages::get_config_connection_page(
 ) {
   sprintf(
       content_buffer,
-      "<div id='config'>"
-      "<span>%s</span>"
-      "<strong>Configure network</strong><br>"
-      "bGeigieCast %d<br>"
-      "<form action='/save?next=/connection' method='POST' > "
-      "bGeigieCast access point password:<br><input type='text' name='ap_password' value='%s'><br>"
-      "Network wifi ssid:<br><input type='text' name='wf_ssid' value='%s'><br>"
-      "Network wifi password:<br><input type='text' name='wf_password' value='%s'><br>"
-      "Safecast API key:<br><input type='text' name='apikey' value='%s'><br>"
-      "Use safecast server:<br>"
-      "<input type='radio' name='devsrv' value='1' %s>Development<br>"
-      "<input type='radio' name='devsrv' value='0' %s>Production<br>"
-      "Send frequency (dev only):<br>"
-      "<input type='radio' name='devfreq' value='0' %s>5 minutes<br>"
-      "<input type='radio' name='devfreq' value='1' %s>30 seconds<br>"
-      "<input type='submit' value='Submit' style='background-color: #FF9800; font-size: initial;color: white;'>"
-      "</form><br><br>"
-      "</div>",
-      display_success ? success_message : "",
-      device_id,
+      "<form class='pure-form pure-form-stacked' action='/save?next=/connection' method='POST'>"
+      "<fieldset>"
+      "<legend>Connection settings</legend>"
+
+      // bGeigie ap password
+      "<label for='c_ap'>bGeigie password</label>"
+      "<input type='text' name='c_ap' id='c_ap' value='%s'>"
+      "<span class='pure-form-message'>(Informative text)</span>"
+
+      // WiFi ssid
+      "<label for='c_ws'>WiFi network name</label>"
+      "<input type='text' name='c_ws' id='c_ws' value='%s'>"
+
+      // WiFi password
+      "<label for='c_wp'>WiFi password</label>"
+      "<input type='text' name='c_wp' id='c_wp' value='%s'>"
+
+      // Api key
+      "<label for='c_ak'>API key</label>"
+      "<input type='text' name='c_ak' id='c_ak' value='%s'>"
+      "<span class='pure-form-message'>(Informative text)</span>"
+
+      // Use dev
+      "<label>Safecast server</label>"
+      "<label for='c_ud0' class='pure-radio'>"
+      "<input id='c_ud0' type='radio' name='c_ud' value='0' %s>Production"
+      "</label>"
+      "<label for='c_ud1' class='pure-radio'>"
+      "<input id='c_ud1' type='radio' name='c_ud' value='1' %s>Development"
+      "</label>"
+      "<span class='pure-form-message'>Use development for testing your device</span>"
+
+      // Dev frequency
+      "<label>Send frequency</label>"
+      "<label for='c_df0' class='pure-radio'>"
+      "<input id='c_df0' type='radio' name='c_df' value='0' %s>5 minutes"
+      "</label>"
+      "<label for='c_df1' class='pure-radio'>"
+      "<input id='c_df1' type='radio' name='c_df' value='1' %s>30 seconds"
+      "</label>"
+      "<span class='pure-form-message'>Only works when publishing to development</span>"
+
+      "<button type='submit' class='pure-button pure-button-primary'>Save</button>"
+      "</fieldset>"
+      "</form>"
+      "%s",
       device_password,
       wifi_ssid,
       wifi_password,
       api_key,
-      use_dev ? "checked" : "",
       use_dev ? "" : "checked",
+      use_dev ? "checked" : "",
       sped_up ? "" : "checked",
-      sped_up ? "checked" : ""
+      sped_up ? "checked" : "",
+      display_success ? success_message : ""
   );
 
   return render_full_page(device_id, TITLE_CONF_CONNECTION, content_buffer);

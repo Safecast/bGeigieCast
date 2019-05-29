@@ -1,6 +1,9 @@
 #ifndef BGEIGIECAST_HTTP_PAGES_H
 #define BGEIGIECAST_HTTP_PAGES_H
 
+#define TRANMISSION_SIZE 4098
+#define CONTENT_SIZE 2048
+
 #define PURE_CSS_SIZE 3929
 #define FAVICON_SIZE 696
 
@@ -91,8 +94,8 @@ class HttpPages {
  private:
 
   static const char* render_full_page(uint32_t device_id, const char* page_name, const char* content);
-  static char transmission_buffer[4096];
-  static char content_buffer[2048];
+  static char transmission_buffer[TRANMISSION_SIZE];
+  static char content_buffer[CONTENT_SIZE];
 
 };
 
