@@ -16,7 +16,7 @@ const char* success_message = "<p><em>Configurations saved!</em></p>";
  * %d - device id (menu title)
  * %s - page content (main content)
  */
-const char* base_page_format =
+const char* base_page_format_begin =
     "<!DOCTYPE html>"
     "<html lang='en'><head>"
     "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
@@ -54,22 +54,25 @@ const char* base_page_format =
     "<script>"
     "$('.pure-menu-item').each((i,e)=>$(e).children('a').prop('href')===window.location.href?$(e).addClass('pure-menu-selected'):0);"
     "</script>"
-    "<div id='main'>%s</div>"
+    "<div id='main'>";
+
+const char* base_page_format_end =
+    "</div>"
     "</div>"
     "</body></html>";
 
 const char* HttpPages::get_home_page(uint32_t device_id) {
-  sprintf(
-      content_buffer,
+  return render_full_page(
+      device_id,
+      TITLE_HOME,
       "Landing page"
   );
-  return render_full_page(device_id, TITLE_HOME, content_buffer);
-
 }
 
 const char* HttpPages::get_update_page(uint32_t device_id) {
-  sprintf(
-      content_buffer,
+  return render_full_page(
+      device_id,
+      TITLE_UPDATE,
       "<div id='update'>"
       "<form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
       "<p id='status'>Update the firmware</p>"
@@ -118,9 +121,6 @@ const char* HttpPages::get_update_page(uint32_t device_id) {
       "</script>"
       "</div>"
   );
-
-  return render_full_page(device_id, TITLE_UPDATE, content_buffer);
-
 }
 
 const char* HttpPages::get_config_device_page(
@@ -129,8 +129,9 @@ const char* HttpPages::get_config_device_page(
     uint8_t led_intensity,
     bool colorblind
 ) {
-  sprintf(
-      content_buffer,
+  return render_full_page(
+      device_id,
+      TITLE_CONF_DEVICE,
       "<form class='pure-form pure-form-stacked' action='/save?next=/device' method='POST'>"
       "<fieldset>"
       "<legend>Device settings</legend>"
@@ -158,8 +159,6 @@ const char* HttpPages::get_config_device_page(
       colorblind ? "checked" : "",
       display_success ? success_message : ""
   );
-
-  return render_full_page(device_id, TITLE_CONF_DEVICE, content_buffer);
 }
 
 const char* HttpPages::get_config_location_page(
@@ -171,8 +170,9 @@ const char* HttpPages::get_config_location_page(
     double last_latitude,
     double last_longitude
 ) {
-  sprintf(
-      content_buffer,
+  return render_full_page(
+      device_id,
+      TITLE_CONF_LOCATION,
       "<form class='pure-form pure-form-stacked' action='/save?next=/location' method='POST'>"
       "<fieldset>"
       "<legend>Location settings</legend>"
@@ -218,8 +218,6 @@ const char* HttpPages::get_config_location_page(
       last_longitude,
       display_success ? success_message : ""
   );
-
-  return render_full_page(device_id, TITLE_CONF_LOCATION, content_buffer);
 }
 
 const char* HttpPages::get_config_connection_page(
@@ -232,8 +230,9 @@ const char* HttpPages::get_config_connection_page(
     bool use_dev,
     bool sped_up
 ) {
-  sprintf(
-      content_buffer,
+  return render_full_page(
+      device_id,
+      TITLE_CONF_CONNECTION,
       "<form class='pure-form pure-form-stacked' action='/save?next=/connection' method='POST'>"
       "<fieldset>"
       "<legend>Connection settings</legend>"
@@ -290,24 +289,38 @@ const char* HttpPages::get_config_connection_page(
       sped_up ? "checked" : "",
       display_success ? success_message : ""
   );
-
-  return render_full_page(device_id, TITLE_CONF_CONNECTION, content_buffer);
 }
 
-const char* HttpPages::render_full_page(uint32_t device_id, const char* page_name, const char* content) {
-  sprintf(
+const char* HttpPages::render_full_page(uint32_t device_id, const char* page_name, const char* content_format, ...) {
+
+  va_list args;
+  va_start(args, content_format);
+
+  auto content_begin = sprintf(
       transmission_buffer,
-      base_page_format,
+      base_page_format_begin,
       device_id,
       page_name,
-      device_id,
-      content
+      device_id
   );
+
+  auto content_end = sprintf(
+      &transmission_buffer[content_begin],
+      content_format,
+      args
+  );
+
+  printf(
+      &transmission_buffer[content_end],
+      base_page_format_end
+  );
+
+  va_end(args);
+
   return transmission_buffer;
 }
 
 char HttpPages::transmission_buffer[] = "";
-char HttpPages::content_buffer[] = "";
 
 /**
  * Gzipped pure css library

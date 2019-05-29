@@ -93,9 +93,8 @@ class HttpPages {
 
  private:
 
-  static const char* render_full_page(uint32_t device_id, const char* page_name, const char* content);
+  static const char* render_full_page(uint32_t device_id, const char* page_name, const char* content_format, ...);
   static char transmission_buffer[TRANMISSION_SIZE];
-  static char content_buffer[CONTENT_SIZE];
 
 };
 
