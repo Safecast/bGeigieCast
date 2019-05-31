@@ -1,8 +1,10 @@
 
+#include <IPAddress.h>
 #include "api_connector.h"
 #include "debugger.h"
 
-ApiConnector::ApiConnector(IEspConfig& config, ApiConnectionObserver* observer) : IApiConnector(config, observer) {
+ApiConnector::ApiConnector(IEspConfig& config, ApiConnectionObserver* observer) : IApiConnector(config, observer),
+                                                                                  _api_endpoint(INADDR_NONE) {
 }
 
 bool ApiConnector::start_connect() {
@@ -31,11 +33,13 @@ void ApiConnector::stop() {
   WiFi.mode(WIFI_MODE_NULL);
 }
 
-bool ApiConnector::test() {
-  WiFiClient client;
-  bool success = client.connect(API_HOST, 80) != 0;
-  client.stop();
-  return success;
+bool ApiConnector::retrieve_endpoint() {
+  if(WiFi.hostByName(API_HOST, _api_endpoint)) {
+    schedule_event(e_a_endpoint_available);
+    return true;
+  }
+  schedule_event(e_a_endpoint_unavailable);
+  return false;
 }
 
 bool ApiConnector::is_connected() {
@@ -62,7 +66,8 @@ bool ApiConnector::send_reading(Reading* reading) {
 
   char url[100];
   sprintf(url,
-          "%s?api_key=%s&%s",
+          "http://%s%s?api_key=%s&%s",
+          _api_endpoint.toString().c_str(),
           API_MEASUREMENTS_ENDPOINT,
           _config.get_api_key(),
           _config.get_use_dev() ? "test=true" : "");
@@ -70,39 +75,39 @@ bool ApiConnector::send_reading(Reading* reading) {
   //Specify destination for HTTP request
   if(!http.begin(url)) {
     DEBUG_PRINTLN("Unable to begin url connection");
-    save_reading(reading);
+    schedule_event(e_a_api_post_failed);
     http.end();  //Free resources
     return false;
   }
 
-  char content_length[5];
-
-  sprintf(content_length, "%d", strlen(json_str));
-
   http.addHeader("Host", API_HOST);
   http.addHeader("Content-Type", HEADER_API_CONTENT_TYPE);
-  http.addHeader("User-Agent", HEADER_API_USER_AGENT);
-  http.addHeader("Content-Length", content_length);
+  http.setUserAgent(HEADER_API_USER_AGENT);
 
   DEBUG_PRINTLN(url);
   DEBUG_PRINTLN(json_str);
 
   int httpResponseCode = http.POST(json_str);   //Send the actual POST request
 
-  if(httpResponseCode > 0) {
+  DEBUG_PRINTF("Response code: %d\n", httpResponseCode);
+
+  bool ret = false;
+
+  if(httpResponseCode == 200 || httpResponseCode == 201) {
     String response = http.getString();
-    DEBUG_PRINT(httpResponseCode);
     DEBUG_PRINTLN(response);
     schedule_event(e_a_reading_posted);
-    http.end();  //Free resources
-    return true;
-  } else {
-    DEBUG_PRINTLN("Error on sending POST");
-    // Failed to send
+    ret = true;
+  }else {
+    if(httpResponseCode == -1 && api_endpoint_resolved()) {
+      // Connection to server could not be made
+      _api_endpoint = INADDR_NONE;
+    }
     schedule_event(e_a_api_post_failed);
-    http.end();  //Free resources
-    return false;
   }
+
+  http.end();  //Free resources
+  return ret;
 }
 
 void ApiConnector::perform_connect() {
@@ -117,4 +122,8 @@ void ApiConnector::perform_connect() {
   DEBUG_PRINT("Connecting to ssid ");
   DEBUG_PRINTLN(ssid);
   password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
+}
+
+bool ApiConnector::api_endpoint_resolved() const {
+  return !(_api_endpoint == INADDR_NONE);
 }

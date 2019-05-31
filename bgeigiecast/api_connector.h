@@ -29,13 +29,19 @@ class ApiConnector : public IApiConnector {
   /**
    * Test the connection to the API
    */
-  bool test() override;
+  bool retrieve_endpoint() override;
 
   /**
    * Check if the connection is up
    * @return true if connected
    */
   bool is_connected() override;
+
+  /**
+   * Checks if the endpoint DNS is resolved
+   * @return
+   */
+  bool api_endpoint_resolved() const override;
 
  protected:
 
@@ -47,6 +53,8 @@ class ApiConnector : public IApiConnector {
   bool send_reading(Reading* reading) override;
 
   void perform_connect();
+
+  IPAddress _api_endpoint;
 };
 
 #endif //BGEIGIECAST_APICONNECTOR_H

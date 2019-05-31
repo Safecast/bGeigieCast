@@ -34,11 +34,11 @@ typedef enum {
   e_a_report_reading,
   e_a_not_reporting,
   e_a_wifi_connected,
-  e_a_api_available,
+  e_a_endpoint_available,
+  e_a_endpoint_unavailable,
   e_a_reading_posted,
 
   e_a_wifi_connection_error,
-  e_a_api_unavailable,
   e_a_api_post_failed,
   e_a_reading_saved,
 

@@ -45,7 +45,12 @@ class IApiConnector : public Context {
   /**
    * Test the connection to the API
    */
-  virtual bool test() = 0;
+  virtual bool retrieve_endpoint() = 0;
+
+  /**
+   * Check if endpoint is resolved
+   */
+  virtual bool api_endpoint_resolved() const = 0;
 
   /**
    * Check if the connection is up

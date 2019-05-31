@@ -67,9 +67,46 @@ void ConnectWiFiState::exit_action() {}
 void ConnectWiFiState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_a_wifi_connected:
-      api_connector.set_state(new PublishApiState(api_connector, reading));
+      if(!api_connector.api_endpoint_resolved()) {
+        api_connector.set_state(new ResolveEndpointState(api_connector, reading));
+      }
+      else {
+        api_connector.set_state(new PublishApiState(api_connector, reading));
+      }
       break;
     case e_a_wifi_connection_error:
+      api_connector.set_state(new ApiReportFailedState(api_connector, reading));
+      break;
+    default:
+      ApiReporterState::handle_event(event_id);
+      break;
+  }
+}
+
+// endregion
+
+// region ResolveEndpoint
+
+ResolveEndpointState::ResolveEndpointState(IApiConnector& context, Reading* reading) : ApiReporterState(context, reading) {}
+
+void ResolveEndpointState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
+  DEBUG_PRINTLN("-- API entered state Resolve endpoint");
+#endif
+}
+
+void ResolveEndpointState::do_activity() {
+  api_connector.retrieve_endpoint();
+}
+
+void ResolveEndpointState::exit_action() {}
+
+void ResolveEndpointState::handle_event(Event_enum event_id) {
+  switch(event_id) {
+    case e_a_endpoint_available:
+      api_connector.set_state(new PublishApiState(api_connector, reading));
+      break;
+    case e_a_endpoint_unavailable:
       api_connector.set_state(new ApiReportFailedState(api_connector, reading));
       break;
     default:
@@ -84,7 +121,11 @@ void ConnectWiFiState::handle_event(Event_enum event_id) {
 
 PublishApiState::PublishApiState(IApiConnector& context, Reading* reading) : ApiReporterState(context, reading) {}
 
-void PublishApiState::entry_action() {}
+void PublishApiState::entry_action() {
+#if DEBUG_LOG_STATE_TRANSITIONS
+  DEBUG_PRINTLN("-- API entered state Publish api");
+#endif
+}
 
 void PublishApiState::do_activity() {
   api_connector.send_reading(reading);

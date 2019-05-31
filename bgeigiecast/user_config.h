@@ -20,7 +20,7 @@
 #define API_HOST "tt.safecast.org"
 #define HEADER_API_CONTENT_TYPE "application/json"
 #define HEADER_API_USER_AGENT "ESP32"
-#define API_MEASUREMENTS_ENDPOINT "http://" API_HOST "/measurements.json"
+#define API_MEASUREMENTS_ENDPOINT "/measurements.json"
 #define API_SEND_FREQUENCY_SECONDS 300 // 5 minutes
 #define API_SEND_FREQUENCY_SECONDS_ALERT 60 // 1 minute
 #define API_SEND_FREQUENCY_SECONDS_DEV 30 // 30 seconds
