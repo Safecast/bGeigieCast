@@ -1,56 +1,43 @@
 #ifndef BGEIGIECAST_HTTP_PAGES_H
 #define BGEIGIECAST_HTTP_PAGES_H
 
-char transmission_buffer[4096];
+class HttpPages {
+ public:
+  HttpPages() = delete;
 
-const char* config_response_format =
-    "<!DOCTYPE html>"
-    "<html>"
-    "<head>"
-    "<link rel='icon' href='data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAA"
-    "AAgAAAAAAAAAAAAAAAEAAAAAAAAACAhYcA////AA0PEAC+pm4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    "AAAAAAAAAAAIiIiIiIiIiIiIiIiIiIiIiIiMyISESIiIiIzIhIRIiIiIiIiEhEiIiIiIiISESIiIiIiIRIRIiIiIiIRIhEiIiIiERIi"
-    "ESIiIiIQIhESIiIiIiIRESIiIiIiEREiIiIiIiIRIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIAAAAAAAAAAAAAAAAAAAAAAAA"
-    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' type='image/x-png' />"
-    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-    "<style>body {font-family: Helvetica; text-align: center;} form {background-color: lightgrey; text-align: left; margin: 20px; padding: 20px;} input[type=\"text\"], input[type=\"number\"] {max-width: 300px; width: 95%%; padding: 3px; border-radius: 8px; margin-bottom: 5px;}, </style>"
-    "</head>"
-    "<body>"
-    "%s"
-    "<strong>Config Page</strong><br>"
-    "BgeigieCast %d<br>"
-    "<form action=\"save\" method=\"get\" > "
-    "bGeigieCast password:<br><input type=\"text\" name=\"ap_password\" value=\"%s\"><br>"
-    "Network wifi ssid:<br><input type=\"text\" name=\"wf_ssid\" value=\"%s\"><br>"
-    "Network wifi password:<br><input type=\"text\" name=\"wf_password\" value=\"%s\"><br>"
-    "Safecast API key:<br><input type=\"text\" name=\"apikey\" value=\"%s\"><br>"
-    "Use safecast server:<br>"
-    "<input type=\"radio\" name=\"devsrv\" value=\"1\" %s>Development<br>"
-    "<input type=\"radio\" name=\"devsrv\" value=\"0\" %s>Production<br>"
-    "Send frequency (dev only):<br>"
-    "<input type=\"radio\" name=\"devfreq\" value=\"0\" %s>5 minutes<br>"
-    "<input type=\"radio\" name=\"devfreq\" value=\"1\" %s>30 seconds<br>"
-    "<hr>"
-    "LED intensity:<br><input type=\"number\" min=\"5\" max=\"100\" name=\"led_intensity\" value=\"%d\"><br>"
-    "LED Colors:<br>"
-    "<input type=\"radio\" name=\"led_color\" value=\"0\" %s>Default<br>"
-    "<input type=\"radio\" name=\"led_color\" value=\"1\" %s>Color blind<br>"
-    "<hr>"
-    "Fixed mode GPS settings:<br>"
-    "<input type=\"radio\" name=\"use_home_loc\" value=\"0\" %s>Use GPS<br>"
-    "<input type=\"radio\" name=\"use_home_loc\" value=\"1\" %s>Use home location<br>"
-    "Home latitude:<br><input type=\"number\" min=\"-90.0000\" max=\"90.0000\" name=\"home_lat\" id=\"home_lat\" value=\"%.5f\" step=\"0.00001\"><br>"
-    "Home longitude:<br><input type=\"number\" min=\"-180.0000\" max=\"180.0000\" name=\"home_long\" id=\"home_long\" value=\"%.5f\" step=\"0.00001\"><br>"
-    "Last known location: (<a href=\"#\" onclick=\""
-    "document.getElementById('home_lat').value = document.getElementById('last_lat').innerHTML;"
-    "document.getElementById('home_long').value = document.getElementById('last_long').innerHTML;"
-    "return false;"
-    "\">Use this</a>)<br>"
-    "Latitude: <span id=\"last_lat\">%.5f</span><br>"
-    "Longitude: <span id=\"last_long\">%.5f</span><br>"
-    "<input type=\"submit\" value=\"Submit\" style=\"background-color: #FF9800; font-size: initial;color: white;\">"
-    "</form><br><br>"
-    "</body>"
-    "</html>";
+  static const char* get_home_page(uint32_t device_id);
+  static const char* get_upload_page();
+  static const char* get_config_device_page(
+      bool display_success,
+      uint32_t device_id,
+      uint8_t led_intensity,
+      bool colorblind
+  );
+  static const char* get_config_network_page(
+      bool display_success,
+      uint32_t device_id,
+      const char* device_password,
+      const char* wifi_ssid,
+      const char* wifi_password,
+      const char* api_key,
+      bool use_dev,
+      bool sped_up
+  );
+  static const char* get_config_location_page(
+      bool display_success,
+      uint32_t device_id,
+      bool use_home_location,
+      double home_latitude,
+      double home_longtitude,
+      double last_latitude,
+      double last_longtitude
+  );
+
+  // Non-pages
+
+ private:
+  static char transmission_buffer[4096];
+
+};
 
 #endif //BGEIGIECAST_HTTP_PAGES_H

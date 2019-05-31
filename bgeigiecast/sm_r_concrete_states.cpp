@@ -7,7 +7,7 @@ ReporterIdleState::ReporterIdleState(Reporter& context) : ReporterState(context)
 
 void ReporterIdleState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
-  DEBUG_PRINTLN("Reporter entered state Idle");
+  DEBUG_PRINTLN("-- Reporter entered state Idle");
 #endif
 }
 
@@ -42,7 +42,7 @@ GetReadingState::GetReadingState(Reporter& context) : ReporterState(context) {
 
 void GetReadingState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
-  DEBUG_PRINTLN("Reporter entered state Get reading");
+  DEBUG_PRINTLN("-- Reporter entered state Get reading");
 #endif
 }
 
@@ -100,7 +100,7 @@ InitBluetoothState::InitBluetoothState(Reporter& context) : ReportReadingState(c
 }
 void InitBluetoothState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
-  DEBUG_PRINTLN("Reporter entered state Init Bluetooth");
+  DEBUG_PRINTLN("-- Reporter entered state Init Bluetooth");
 #endif
 }
 
@@ -132,7 +132,7 @@ PublishBluetoothState::PublishBluetoothState(Reporter& context) : ReportReadingS
 
 void PublishBluetoothState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
-  DEBUG_PRINTLN("Reporter entered state Publish Bluetooth");
+  DEBUG_PRINTLN("-- Reporter entered state Publish Bluetooth");
 #endif
 }
 
@@ -168,7 +168,7 @@ InitApiState::InitApiState(Reporter& context) : ReportReadingState(context) {
 
 void InitApiState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
-  DEBUG_PRINTLN("Reporter entered state Init api");
+  DEBUG_PRINTLN("-- Reporter entered state Init api");
 #endif
 }
 
@@ -199,7 +199,7 @@ ReportApiState::ReportApiState(Reporter& context) : ReportReadingState(context) 
 
 void ReportApiState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
-  DEBUG_PRINTLN("Reporter entered state Publish Api");
+  DEBUG_PRINTLN("-- Reporter entered state Publish Api");
 #endif
 }
 
@@ -237,7 +237,7 @@ ReporterDoneState::ReporterDoneState(Reporter& context, Reporter::ReporterStatus
 
 void ReporterDoneState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
-  DEBUG_PRINTLN("Reporter entered state Done");
+  DEBUG_PRINTLN("-- Reporter entered state Done");
 #endif
 }
 

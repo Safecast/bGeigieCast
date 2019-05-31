@@ -3,7 +3,7 @@
 
 
 /** System config **/
-#define ENABLE_DEBUG 1
+#define ENABLE_DEBUG 1 // 00974
 #define DEBUG_LOG_STATE_TRANSITIONS 0
 #define SERIAL_BAUD 115200
 #define BGEIGIE_CONNECTION_BAUD 9600
@@ -28,9 +28,8 @@
 #define MAX_MISSED_READINGS 20 // Keep up to 20 readings in memory if connection to the api failed
 
 /** Access point settings **/
-#define ACCESS_POINT_SSID       "bGeigie-%d"
+#define ACCESS_POINT_SSID       "bgeigie" // With device id
 #define SERVER_WIFI_PORT        80
-#define SERVER_MAX_CLIENTS      4
 #define ACCESS_POINT_IP         {192, 168, 5, 1}
 #define ACCESS_POINT_NMASK      {255, 255, 255, 0}
 

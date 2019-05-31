@@ -6,7 +6,7 @@ ApiProcessReadingState::ApiProcessReadingState(IApiConnector& context, Reading* 
 
 void ApiProcessReadingState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
-  DEBUG_PRINTLN("Apiconn entered state Process");
+  DEBUG_PRINTLN("-- API entered state Process");
 #endif
 }
 
@@ -42,7 +42,7 @@ ConnectWiFiState::ConnectWiFiState(IApiConnector& context, Reading* reading) : A
 
 void ConnectWiFiState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
-  DEBUG_PRINTLN("Apiconn entered state Connecting");
+  DEBUG_PRINTLN("-- API entered state Connecting");
 #endif
   api_connector.start_connect();
   _start_time = millis();
@@ -119,7 +119,7 @@ ApiReportFailedState::ApiReportFailedState(IApiConnector& context, Reading* read
 
 void ApiReportFailedState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
-  DEBUG_PRINTLN("Apiconn entered state Failed");
+  DEBUG_PRINTLN("-- API entered state Failed");
 #endif
 }
 
@@ -184,7 +184,7 @@ ApiReportDoneState::ApiReportDoneState(IApiConnector& context, IApiConnector::Re
 
 void ApiReportDoneState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
-  DEBUG_PRINTLN("Apiconn entered state Done");
+  DEBUG_PRINTLN("-- API entered state Done");
 #endif
   if(status == IApiConnector::k_report_failed || status == IApiConnector::k_report_success) {
     api_connector._merged_reading.reset();

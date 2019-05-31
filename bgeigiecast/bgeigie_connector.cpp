@@ -10,7 +10,7 @@ bool BGeigieConnector::get_reading(Reading** out) {
     char c = static_cast<char>(_serial_connection.read());
     _buffer += c;
     if(c == '\n') {
-      DEBUG_PRINT("--New reading: "); DEBUG_PRINT(_buffer);
+//      DEBUG_PRINT("New reading: "); DEBUG_PRINT(_buffer);
       *out = new Reading(_buffer.c_str());
       _buffer = "";
       return true;

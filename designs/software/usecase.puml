@@ -12,23 +12,28 @@ rectangle <<subsystem>>\nesp32Controller{
     (Set esp mode)
     (Reset configurations)
     (Set\n mobile mode)
-    (Set\n stationary mode)
+    (Set\n fixed mode)
     (Publish to API)
     (Publish\n over bluetooth)
     (Report data)
+
+    ''' For ordering '''
+    (Set esp mode) -[hidden]> (Reset configurations)
+    (Reset configurations) -[hidden]> (Set config)
+    ''''''
 
 
     (Publish to API) -u.> (Report data) : <<extend>>
     (Report data) -d.> (Publish\n over bluetooth) : <<include>>
     (Set\n mobile mode) -u-|> (Set esp mode)
-    (Set\n stationary mode) -u-|> (Set esp mode)
+    (Set\n fixed mode) -u-|> (Set esp mode)
 
     (Publish to API) -d- API
     (Publish\n over bluetooth) -d- BLU
 
-    user -d- (Set esp mode)
-    user -d- (Set config)
-    user -d- (Reset configurations)
+    user -- (Set esp mode)
+    user -- (Set config)
+    user -- (Reset configurations)
     BGN -- (Report data)
 }
 

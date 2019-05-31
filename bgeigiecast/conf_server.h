@@ -2,9 +2,9 @@
 #define BGEIGIECAST_SERVER_H
 
 #include <WiFi.h>
+#include <WebServer.h>
 
 #include "esp_config.h"
-#include "http_request.h"
 
 /**
  * Class to host a web server for configuring the ESP32. Will set up an access
@@ -22,15 +22,9 @@ class ConfigWebServer {
   bool initialize();
 
   /**
-   * Stop the web server if it is running
+   * Stop the web server
    */
   void stop();
-
-  /**
-   * Check if the server is running
-   * @return true if running
-   */
-  bool is_running();
 
   /**
    * Checks if there are requests and handles them
@@ -39,12 +33,34 @@ class ConfigWebServer {
  private:
 
   /**
-   * Handles request for a client
+   * Try to connect to the wifi
+   * @return success
    */
-  void handle_client_request(Stream& client, HttpRequest& request);
+  bool connect_wifi();
 
-  WiFiServer server;
-  IEspConfig& config;
+  /**
+   * Start access point server
+   * @return success
+   */
+  bool start_ap_server(const char* host_ssid);
+
+  /**
+   * Set the endpoints for the server
+   */
+  void set_endpoints();
+
+  /**
+   * Handles request for `/save`
+   */
+  void handle_save();
+
+  /**
+   * Handles request for `/update` post
+   */
+  void handle_update_uploading();
+
+  WebServer _server;
+  IEspConfig& _config;
 
 };
 

@@ -36,14 +36,13 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
  */
 
+#ifndef UNIT_TEST
 
 #include <Arduino.h>
 #include "bluetooth_connector.h"
 #include "api_connector.h"
 #include "debugger.h"
 #include "controller.h"
-
-#ifndef UNIT_TEST
 
 HardwareSerial& bGeigieSerialConnection = Serial2;
 
