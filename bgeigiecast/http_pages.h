@@ -2,7 +2,6 @@
 #define BGEIGIECAST_HTTP_PAGES_H
 
 #define TRANMISSION_SIZE 4098
-#define CONTENT_SIZE 2048
 
 #define PURE_CSS_SIZE 3929
 #define FAVICON_SIZE 696
@@ -90,6 +89,7 @@ class HttpPages {
 
   static const uint8_t pure_css[PURE_CSS_SIZE];
   static const uint8_t favicon[FAVICON_SIZE];
+  static const char* pure_js;
 
  private:
 

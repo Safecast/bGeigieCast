@@ -322,6 +322,13 @@ const char* HttpPages::render_full_page(uint32_t device_id, const char* page_nam
 
 char HttpPages::transmission_buffer[] = "";
 
+const char* HttpPages::pure_js =
+    "(function (w,d){const a='active',l=d.getElementById('layout'),m=d.getElementById('menu'),n=d"
+    ".getElementById('menuLink'),c=d.getElementById('main'),tc=(e,b)=>{const r=e.className.split("
+    "/\\s+/),p=r.length;let i=0;while (i < p){if(r[i]===b){r.splice(i,1);break;}i++;}if(i===p){r."
+    "push(b);}e.className=r.join(' ');},ta=(e)=>{e.preventDefault();tc(l,a);tc(m,a);tc(n,a);};n.o"
+    "nclick=(e)=>ta(e);c.onclick=(e)=>m.className.indexOf(a)!==-1 && ta(e);}(this,this.document));";
+
 /**
  * Gzipped pure css library
  * https://purecss.io/
