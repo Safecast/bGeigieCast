@@ -9,10 +9,34 @@
 
 const char* success_message = "<p><em>Configurations saved!</em></p>";
 
+const char* local_resources =
+    "<link rel='stylesheet' href='/pure.css'>";
+
+const char* online_resources =
+    "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
+    "<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.8.2/css/all.css' "
+    "integrity='sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay' crossorigin='anonymous'>";
+
+const char* fallback_resources =
+    "";
+
+const char* update_firmware_script =
+    "(()=>{const e=(...e)=>document.querySelector(...e),t=e('form'),n=e('#file'),a=e('#form-content'),o=e('#status"
+    "'),s=e('#prg'),r=e('#bar');t.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(t),i=n.fil"
+    "es[0],l=new XMLHttpRequest;i?(a.style.display='none',d.append('update',i),l.addEventListener('load',e=>{o.inn"
+    "erText='Upload success! Restarting device to apply update!';const t=new XMLHttpRequest;t.open('get','/reboot'"
+    "),t.send()}),l.addEventListener('error',e=>{o.innerText='Upload failed... Try again or contact info@safecast."
+    "org'}),l.addEventListener('abort',e=>{o.innerText='Upload cancelled...',a.style.display='block'}),l.upload.ad"
+    "dEventListener('progress',e=>{if(e.lengthComputable){o.innerText='Uploading new firmware... This can take up "
+    "to 10 minutes.';const t=Math.round(e.loaded/e.total*100);s.innerText='progress: '+t+'%',r.style.width=t+'%'}}"
+    "),l.open(t.method,t.action),l.send(d)):o.innerText='Please select a file...'})})();";
+
 /**
  * page format
  * %d - device id (page title)
  * %s - page name (page title)
+ * %s - remote resources
+ * %s - local resources
  * %d - device id (menu title)
  * %s - page content (main content)
  */
@@ -20,11 +44,9 @@ const char* base_page_format_begin =
     "<!DOCTYPE html>"
     "<html lang='en'><head>"
     "<meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-    "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
-    "<link rel='stylesheet' href='/pure.css'>"
-    "<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.8.2/css/all.css' "
-    "integrity='sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay' crossorigin='anonymous'>"
     "<title>bGeigieCast %d | %s</title>"
+    "%s"
+    "%s"
     "<style>"
     "i{width: 25px;text-align: center;}"
     "#layout{max-width: 680px;margin: auto;}"
@@ -52,7 +74,7 @@ const char* base_page_format_begin =
     "</div>"
     "</div>"
     "<script>"
-    "$('.pure-menu-item').each((i,e)=>$(e).children('a').prop('href')===window.location.href?$(e).addClass('pure-menu-selected'):0);"
+    "document.querySelectorAll('.pure-menu-item').forEach((e)=>e.children[0].href===window.location.href?e.classList.add('pure-menu-selected'):0);"
     "</script>"
     "<div id='main'>";
 
@@ -86,40 +108,10 @@ const char* HttpPages::get_update_page(uint32_t device_id) {
       "<div id='prgbar'><div id='bar'></div></div>"
       "</form>"
       "<script>"
-      "$('form').submit(function(e){"
-      "e.preventDefault();"
-      "$('#form-content').hide();"
-      "var form = $('#upload_form')[0];"
-      "var data = new FormData(form);"
-      "$.ajax({"
-      "url: '/update',"
-      "type: 'POST',"
-      "data: data,"
-      "contentType: false,"
-      "processData:false,"
-      "xhr: function() {"
-      "var xhr = new window.XMLHttpRequest();"
-      "xhr.upload.addEventListener('progress', function(evt) {"
-      "if (evt.lengthComputable) {"
-      "$('#status').html('Uploading new firmware... This can take up to 10 minutes.');"
-      "var per = evt.loaded / evt.total;"
-      "$('#prg').html('progress: ' + Math.round(per*100) + '%%');"
-      "$('#bar').css('width',Math.round(per*100) + '%%');"
-      "}"
-      "}, false);"
-      "return xhr;"
-      "},"
-      "success:function(d, s) {"
-      "$('#status').html('Upload success! Restarting device to apply update.');"
-      "$.get('/reboot');"
-      "},"
-      "error: function (a, b, c) {"
-      "$('#status').html('Upload failed... Try again or contact info@safecast.org')"
-      "}"
-      "});"
-      "});"
+      "%s"
       "</script>"
-      "</div>"
+      "</div>",
+      update_firmware_script
   );
 }
 
@@ -292,30 +284,30 @@ const char* HttpPages::get_config_connection_page(
 }
 
 const char* HttpPages::render_full_page(uint32_t device_id, const char* page_name, const char* content_format, ...) {
-
-  va_list args;
-  va_start(args, content_format);
-
-  auto content_begin = sprintf(
+  sprintf(
       transmission_buffer,
       base_page_format_begin,
       device_id,
       page_name,
+      local_resources,
+      internet_access ? online_resources : fallback_resources,
       device_id
   );
 
-  auto content_end = sprintf(
-      &transmission_buffer[content_begin],
+  va_list args;
+  va_start(args, content_format);
+  vsprintf(
+      &transmission_buffer[strlen(transmission_buffer)],
       content_format,
       args
   );
+  va_end(args);
 
-  printf(
-      &transmission_buffer[content_end],
+  sprintf(
+      &transmission_buffer[strlen(transmission_buffer)],
       base_page_format_end
   );
 
-  va_end(args);
 
   return transmission_buffer;
 }
@@ -328,6 +320,11 @@ const char* HttpPages::pure_js =
     "/\\s+/),p=r.length;let i=0;while (i < p){if(r[i]===b){r.splice(i,1);break;}i++;}if(i===p){r."
     "push(b);}e.className=r.join(' ');},ta=(e)=>{e.preventDefault();tc(l,a);tc(m,a);tc(n,a);};n.o"
     "nclick=(e)=>ta(e);c.onclick=(e)=>m.className.indexOf(a)!==-1 && ta(e);}(this,this.document));";
+
+/**
+ *
+ */
+bool HttpPages::internet_access = false;
 
 /**
  * Gzipped pure css library

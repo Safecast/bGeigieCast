@@ -91,6 +91,8 @@ class HttpPages {
   static const uint8_t favicon[FAVICON_SIZE];
   static const char* pure_js;
 
+  static bool internet_access;
+
  private:
 
   static const char* render_full_page(uint32_t device_id, const char* page_name, const char* content_format, ...);

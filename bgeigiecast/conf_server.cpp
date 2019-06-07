@@ -42,6 +42,7 @@ bool ConfigWebServer::initialize() {
 
           set_endpoints();
           _server.begin();
+          HttpPages::internet_access = true;
           return true;
         }
       }
@@ -174,12 +175,6 @@ void ConfigWebServer::set_endpoints() {
     handle_update_uploading();
   });
 
-  // Other things
-  _server.on("/configure", [this]() { // Redirect
-    _server.sendHeader("Location", "/configure/device");
-    _server.send(302);
-  });
-
   _server.on("/reboot", [this]() { // Reboot
     ESP.restart();
   });
@@ -250,12 +245,13 @@ void ConfigWebServer::handle_update_uploading() {
       auto write_size = Update.write(upload.buf, upload.currentSize);
       if(write_size != upload.currentSize) {
         DEBUG_PRINTF("Something failed while uploading (wrote %d out of %d)\n", write_size, upload.currentSize);
+        Update.abort();
       }
       break;
     }
     case UPLOAD_FILE_END: {
       if(upload.totalSize > 0 && Update.end(true)) { //true to set the size to the current progress
-        DEBUG_PRINTF("Update Success: %u\nRebooting...\n", upload.totalSize);
+        DEBUG_PRINTF("\nUpdate Success: %u\n", upload.totalSize);
       } else {
         DEBUG_PRINTF("Update Failed...");
       }
