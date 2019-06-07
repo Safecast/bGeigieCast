@@ -80,7 +80,7 @@ bool IEspConfig::get_use_home_location() const {
   return _use_home_location;
 }
 
-double IEspConfig::get_home_longtitude() const {
+double IEspConfig::get_home_longitude() const {
   return _home_longitude;
 }
 
@@ -88,7 +88,7 @@ double IEspConfig::get_home_latitude() const {
   return _home_latitude;
 }
 
-double IEspConfig::get_last_longtitude() const {
+double IEspConfig::get_last_longitude() const {
   return _last_longitude;
 }
 

@@ -36,9 +36,9 @@ class IEspConfig {
   virtual uint8_t get_saved_state() const final;
 
   virtual bool get_use_home_location() const final;
-  virtual double get_home_longtitude() const final;
+  virtual double get_home_longitude() const final;
   virtual double get_home_latitude() const final;
-  virtual double get_last_longtitude() const final;
+  virtual double get_last_longitude() const final;
   virtual double get_last_latitude() const final;
 
   virtual void set_device_id(uint16_t device_id, bool force) = 0;

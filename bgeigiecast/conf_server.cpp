@@ -24,7 +24,7 @@ bool ConfigWebServer::initialize() {
   }
 
   char host_ssid[16];
-  device_id ? sprintf(host_ssid, ACCESS_POINT_SSID "%d", device_id) : sprintf(host_ssid, ACCESS_POINT_SSID "unknown");
+  sprintf(host_ssid, ACCESS_POINT_SSID, device_id);
 
   MDNS.begin(host_ssid);
 
@@ -42,6 +42,7 @@ bool ConfigWebServer::initialize() {
 
           set_endpoints();
           _server.begin();
+          HttpPages::internet_access = true;
           return true;
         }
       }
@@ -118,7 +119,7 @@ void ConfigWebServer::set_endpoints() {
   // Configure Connection
   _server.on("/connection", HTTP_GET, [this]() {
     _server.sendHeader("Connection", "close");
-    _server.send(200, "text/html", HttpPages::get_config_network_page(
+    _server.send(200, "text/html", HttpPages::get_config_connection_page(
         _server.hasArg("success"),
         _config.get_device_id(),
         _config.get_ap_password(),
@@ -139,9 +140,9 @@ void ConfigWebServer::set_endpoints() {
         _config.get_device_id(),
         _config.get_use_home_location() ,
         _config.get_home_latitude(),
-        _config.get_home_longtitude(),
+        _config.get_home_longitude(),
         _config.get_last_latitude(),
-        _config.get_last_longtitude()
+        _config.get_last_longitude()
     ));
 
     _server.sendHeader("Connection", "close");
@@ -155,7 +156,7 @@ void ConfigWebServer::set_endpoints() {
   // Upload get
   _server.on("/update", HTTP_GET, [this]() {
     _server.sendHeader("Connection", "close");
-    _server.send(200, "text/html", HttpPages::get_upload_page());
+    _server.send(200, "text/html", HttpPages::get_update_page(_config.get_device_id()));
   });
 
   // Upload post
@@ -163,59 +164,67 @@ void ConfigWebServer::set_endpoints() {
     // Complete
     _server.sendHeader("Connection", "close");
     if(_server.upload().totalSize == 0 || Update.hasError()) {
-      _server.send(200, "text/plain", "FAIL");
+      _server.send(500, "text/plain", "FAIL");
     }
     else {
       _server.send(200, "text/plain", "OK");
       _server.client().flush();
-      ESP.restart();
     }
   }, [this]() {
-    // Upload progress
+    // Progress
     handle_update_uploading();
   });
 
-  // Other things
-  _server.on("/configure", [this]() { // Redirect
-    _server.sendHeader("Location", "/configure/device");
-    _server.send(302);
+  _server.on("/reboot", [this]() { // Reboot
+    ESP.restart();
+  });
+
+  // css get
+  _server.on("/pure.css", HTTP_GET, [this]() {
+    _server.sendHeader("Content-Encoding", "gzip");
+    _server.send_P(200, "text/css", reinterpret_cast<const char*>(HttpPages::pure_css), PURE_CSS_SIZE);
+  });
+
+  // css get
+  _server.on("/favicon.ico", HTTP_GET, [this]() {
+    _server.send_P(200, "image/x-icon", reinterpret_cast<const char*>(HttpPages::favicon), FAVICON_SIZE);
   });
 
 }
 
 void ConfigWebServer::handle_save() {
-  if(_server.hasArg("ap_password")) {
-    _config.set_ap_password(_server.arg("ap_password").c_str(), false);
+  if(_server.hasArg("c_ap")) {
+    _config.set_ap_password(_server.arg("c_ap").c_str(), false);
   }
-  if(_server.hasArg("wf_ssid")) {
-    _config.set_wifi_ssid(_server.arg("wf_ssid").c_str(), false);
+  if(_server.hasArg("c_ws")) {
+    _config.set_wifi_ssid(_server.arg("c_ws").c_str(), false);
   }
-  if(_server.hasArg("wf_password")) {
-    _config.set_wifi_password(_server.arg("wf_password").c_str(), false);
+  if(_server.hasArg("c_wp")) {
+    _config.set_wifi_password(_server.arg("c_wp").c_str(), false);
   }
-  if(_server.hasArg("apikey")) {
-    _config.set_api_key(_server.arg("apikey").c_str(), false);
+  if(_server.hasArg("c_ak")) {
+    _config.set_api_key(_server.arg("c_ak").c_str(), false);
   }
-  if(_server.hasArg("devsrv")) {
-    _config.set_use_dev(_server.arg("devsrv") == "1", false);
+  if(_server.hasArg("c_ud")) {
+    _config.set_use_dev(_server.arg("c_ud") == "1", false);
   }
-  if(_server.hasArg("devfreq")) {
-    _config.set_dev_sped_up(_server.arg("devfreq") == "1", false);
+  if(_server.hasArg("c_df")) {
+    _config.set_dev_sped_up(_server.arg("c_df") == "1", false);
   }
-  if(_server.hasArg("led_intensity")) {
-    _config.set_led_color_intensity(clamp<uint8_t>(_server.arg("led_intensity").toInt(), 5, 100), false);
+  if(_server.hasArg("d_li")) {
+    _config.set_led_color_intensity(clamp<uint8_t>(_server.arg("d_li").toInt(), 5, 100), false);
   }
-  if(_server.hasArg("led_color")) {
-    _config.set_led_color_blind(strcmp(_server.arg("led_color").c_str(), "1") == 0, false);
+  if(_server.hasArg("d_lc")) {
+    _config.set_led_color_blind(strcmp(_server.arg("d_lc").c_str(), "1") == 0, false);
   }
-  if(_server.hasArg("use_home_loc")) {
-    _config.set_use_home_location(strcmp(_server.arg("use_home_loc").c_str(), "1") == 0, false);
+  if(_server.hasArg("l_uh")) {
+    _config.set_use_home_location(strcmp(_server.arg("l_uh").c_str(), "1") == 0, false);
   }
-  if(_server.hasArg("home_lat")) {
-    _config.set_home_latitude(clamp<double>(_server.arg("home_lat").toDouble(), -90.0, 90.0), false);
+  if(_server.hasArg("l_ha")) {
+    _config.set_home_latitude(clamp<double>(_server.arg("l_ha").toDouble(), -90.0, 90.0), false);
   }
-  if(_server.hasArg("home_long")) {
-    _config.set_home_longitude(clamp<double>(_server.arg("home_long").toDouble(), -180.0, 180.0), false);
+  if(_server.hasArg("l_ho")) {
+    _config.set_home_longitude(clamp<double>(_server.arg("l_ho").toDouble(), -180.0, 180.0), false);
   }
 
   _server.sendHeader("Location", _server.arg("next") + "?success=true");
@@ -236,12 +245,13 @@ void ConfigWebServer::handle_update_uploading() {
       auto write_size = Update.write(upload.buf, upload.currentSize);
       if(write_size != upload.currentSize) {
         DEBUG_PRINTF("Something failed while uploading (wrote %d out of %d)\n", write_size, upload.currentSize);
+        Update.abort();
       }
       break;
     }
     case UPLOAD_FILE_END: {
       if(upload.totalSize > 0 && Update.end(true)) { //true to set the size to the current progress
-        DEBUG_PRINTF("Update Success: %u\nRebooting...\n", upload.totalSize);
+        DEBUG_PRINTF("\nUpdate Success: %u\n", upload.totalSize);
       } else {
         DEBUG_PRINTF("Update Failed...");
       }
@@ -254,3 +264,4 @@ void ConfigWebServer::handle_update_uploading() {
     }
   }
 }
+
