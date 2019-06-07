@@ -21,15 +21,15 @@ const char* fallback_resources =
     "";
 
 const char* update_firmware_script =
-    "(()=>{const e=(...e)=>document.querySelector(...e),t=e('form'),n=e('#file'),a=e('#form-content'),o=e('#status"
-    "'),s=e('#prg'),r=e('#bar');t.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(t),i=n.fil"
-    "es[0],l=new XMLHttpRequest;i?(a.style.display='none',d.append('update',i),l.addEventListener('load',e=>{o.inn"
-    "erText='Upload success! Restarting device to apply update!';const t=new XMLHttpRequest;t.open('get','/reboot'"
-    "),t.send()}),l.addEventListener('error',e=>{o.innerText='Upload failed... Try again or contact info@safecast."
-    "org'}),l.addEventListener('abort',e=>{o.innerText='Upload cancelled...',a.style.display='block'}),l.upload.ad"
-    "dEventListener('progress',e=>{if(e.lengthComputable){o.innerText='Uploading new firmware... This can take up "
-    "to 10 minutes.';const t=Math.round(e.loaded/e.total*100);s.innerText='progress: '+t+'%',r.style.width=t+'%'}}"
-    "),l.open(t.method,t.action),l.send(d)):o.innerText='Please select a file...'})})();";
+    "(e=>{const t=(...t)=>e.querySelector(...t),n=t('form'),a=t('#status');n.addEventListener('submit',e=>{e.prevent"
+    "Default();const s=new FormData(n),o=t('#file').files[0],d=new XMLHttpRequest;o?(n.classList.add('uploading'),s."
+    "append('update',o),d.addEventListener('load',e=>{a.innerText='Upload success! Restarting device to apply update"
+    ".';const t=new XMLHttpRequest;t.open('get','/reboot'),t.send()}),d.addEventListener('error',e=>{a.innerText='Up"
+    "load failed... Try again or contact info@safecast.org',n.classList.remove('uploading')}),d.addEventListener('ab"
+    "ort',e=>{a.innerText='Upload cancelled...'}),d.upload.addEventListener('progress',e=>{if(e.lengthComputable){a."
+    "innerText='Uploading new firmware... This can take up to 10 minutes.';const n=Math.round(e.loaded/e.total*100)+"
+    "'%';t('#prg').innerText=n,t('#bar').style.width=n}}),d.open(n.method,n.action),d.send(s)):a.innerText='Please s"
+    "elect a file...'})})(this.document);";
 
 /**
  * page format
@@ -96,20 +96,29 @@ const char* HttpPages::get_update_page(uint32_t device_id) {
       device_id,
       TITLE_UPDATE,
       "<div id='update'>"
-      "<form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
-      "<p id='status'>Update the firmware</p>"
-      "<div id='form-content'>"
+      "<form class='pure-form pure-form-stacked' method='POST' enctype='multipart/form-data'>"
+      "<fieldset>"
+      "<legend>Update the firmware</legend>"
+      "<p id='status'></p>"
+      "<div id='upload-inputs'>"
       "<input type='file' name='update' id='file'><br>"
       //      "<label id='file-input' for='file'>Choose file...</label>"
-      "<input type='submit' class=btn value='Update'>"
+      "<input type='submit' class='pure-button pure-button-primary' value='Update firmware'>"
       "</div>"
-      "<br><br>"
-      "<div id='prg'></div>"
-      "<div id='prgbar'><div id='bar'></div></div>"
+      "<div id='upload-progress'>"
+      "<div style='background:#eee'><div id='bar' style='background:#ccc;height:10px'></div></div>"
+      "<div id='prg' style='text-align:center'></div>"
+      "</div>"
+      "</fieldset>"
       "</form>"
       "<script>"
       "%s"
       "</script>"
+      "<style>"
+      "#upload-progress{display:none}"
+      "form.uploading #upload-inputs{display:none}"
+      "form.uploading #upload-progress{display:block}"
+      "</sctyle>"
       "</div>",
       update_firmware_script
   );
