@@ -1,9 +1,10 @@
 #ifndef USER_CONFIG_H
 #define USER_CONFIG_H
 
+#define VERSION "1.0"
 
 /** System config **/
-#define ENABLE_DEBUG 1 // 00974
+#define ENABLE_DEBUG 1
 #define DEBUG_LOG_STATE_TRANSITIONS 0
 #define SERIAL_BAUD 115200
 #define BGEIGIE_CONNECTION_BAUD 9600
@@ -19,8 +20,8 @@
 /** API connector settings **/
 #define API_HOST "tt.safecast.org"
 #define HEADER_API_CONTENT_TYPE "application/json"
-#define HEADER_API_USER_AGENT "ESP32"
-#define API_MEASUREMENTS_ENDPOINT "/measurements.json"
+#define HEADER_API_USER_AGENT "bGeigieCast/" VERSION
+#define API_MEASUREMENTS_ENDPOINT "http://" API_HOST "/measurements.json"
 #define API_SEND_FREQUENCY_SECONDS 300 // 5 minutes
 #define API_SEND_FREQUENCY_SECONDS_ALERT 60 // 1 minute
 #define API_SEND_FREQUENCY_SECONDS_DEV 30 // 30 seconds
@@ -28,7 +29,7 @@
 #define MAX_MISSED_READINGS 20 // Keep up to 20 readings in memory if connection to the api failed
 
 /** Access point settings **/
-#define ACCESS_POINT_SSID       "bgeigie" // With device id
+#define ACCESS_POINT_SSID       "bgeigie%d" // With device id
 #define SERVER_WIFI_PORT        80
 #define ACCESS_POINT_IP         {192, 168, 5, 1}
 #define ACCESS_POINT_NMASK      {255, 255, 255, 0}

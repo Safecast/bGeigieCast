@@ -38,7 +38,7 @@ void Reporter::set_report_output(bool bt, bool api) {
 }
 
 uint32_t Reporter::time_till_next_reading(uint32_t current) const {
-  return current - _last_reading_moment < READING_DELAY ? READING_DELAY - (current - _last_reading_moment) : 0;
+  return _last_reading_moment != 0 && current - _last_reading_moment < READING_DELAY ? READING_DELAY - (current - _last_reading_moment) : 0;
 }
 
 void Reporter::get_new_reading() {
