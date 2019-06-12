@@ -85,67 +85,60 @@ Reading& Reading::operator=(const Reading& other) {
 
 Reading& Reading::operator+=(const Reading& o) {
   if(!(o._status & k_reading_valid)) {
+    // Do nothing with the other, not valid
     return *this;
   }
   if(_average_of == 0) {
-    strcpy(_reading_str, o._reading_str);
-    _status = o._status;
-    _device_id = o._device_id;
-    strcpy(_iso_timestr, o._iso_timestr);
-    _cpm = o._cpm;
-    _cpb = o._cpb;
-    _total_count = o._total_count;
-    _latitude = o._latitude;
-    _longitude = o._longitude;
-    _altitude = o._altitude;
-    _sat_count = o._sat_count;
-    _precision = o._precision;
-  } else {
-    // Use latest datetime and total count
-    strcpy(_iso_timestr, o._iso_timestr);
-    _total_count = o._total_count;
-
-    // Maybe do something smarter with the validity...?
-    _status |= o._status & k_reading_valid;
-
-    uint16_t o_cpm = o._cpm, o_cpb = o._cpb;
-
-    if(!(_status & k_reading_sensor_ok) && o._status & k_reading_sensor_ok) {
-      _status |= k_reading_sensor_ok;
-      _cpm = o_cpm;
-      _cpb = o_cpb;
-    } else if(_status & k_reading_sensor_ok && !(o._status & k_reading_sensor_ok)) {
-      o_cpm = _cpm;
-      o_cpb = _cpb;
-    }
-
-    // Sensor data
-    _cpm = ((_cpm * _average_of) + (o_cpm * o._average_of)) / (_average_of + o._average_of);
-    _cpb = ((_cpb * _average_of) + (o_cpb * o._average_of)) / (_average_of + o._average_of);
-
-    double o_lat = o._latitude, o_long = o._longitude, o_alt = o._altitude;
-
-    if(!(_status & k_reading_gps_ok) && o._status & k_reading_gps_ok) {
-      _status |= k_reading_gps_ok;
-      _latitude = o_lat;
-      _longitude = o_long;
-      _altitude = o_alt;
-    } else if(_status & k_reading_gps_ok && !(o._status & k_reading_gps_ok)) {
-      o_lat = _latitude;
-      o_long = _longitude;
-      o_alt = _altitude;
-    }
-
-    // Location data
-    _latitude = ((_latitude * _average_of) + (o_lat * o._average_of)) / (_average_of + o._average_of);
-    _longitude = ((_longitude * _average_of) + (o_long * o._average_of)) / (_average_of + o._average_of);
-    _altitude = ((_altitude * _average_of) + (o_alt * o._average_of)) / (_average_of + o._average_of);
-    _sat_count = ((_sat_count * _average_of) + (o._sat_count * o._average_of)) / (_average_of + o._average_of);
-    _precision = ((_precision * _average_of) + (o._precision * o._average_of)) / (_average_of + o._average_of);
-
-    // Update count of readings merged with this
-    _average_of += o._average_of;
+    // Assign other to this
+    return operator=(o);
   }
+  // Else, merge other with this
+
+  // Use latest datetime and total count
+  strcpy(_iso_timestr, o._iso_timestr);
+  _total_count = o._total_count;
+
+  // Maybe do something smarter with the validity...?
+  _status |= o._status & k_reading_valid;
+
+  uint16_t o_cpm = o._cpm, o_cpb = o._cpb;
+
+  if(!(_status & k_reading_sensor_ok) && o._status & k_reading_sensor_ok) {
+    _status |= k_reading_sensor_ok;
+    _cpm = o_cpm;
+    _cpb = o_cpb;
+  } else if(_status & k_reading_sensor_ok && !(o._status & k_reading_sensor_ok)) {
+    o_cpm = _cpm;
+    o_cpb = _cpb;
+  }
+
+  // Sensor data
+  _cpm = ((_cpm * _average_of) + (o_cpm * o._average_of)) / (_average_of + o._average_of);
+  _cpb = ((_cpb * _average_of) + (o_cpb * o._average_of)) / (_average_of + o._average_of);
+
+  double o_lat = o._latitude, o_long = o._longitude, o_alt = o._altitude;
+
+  if(!(_status & k_reading_gps_ok) && o._status & k_reading_gps_ok) {
+    _status |= k_reading_gps_ok;
+    _latitude = o_lat;
+    _longitude = o_long;
+    _altitude = o_alt;
+  } else if(_status & k_reading_gps_ok && !(o._status & k_reading_gps_ok)) {
+    o_lat = _latitude;
+    o_long = _longitude;
+    o_alt = _altitude;
+  }
+
+  // Location data
+  _latitude = ((_latitude * _average_of) + (o_lat * o._average_of)) / (_average_of + o._average_of);
+  _longitude = ((_longitude * _average_of) + (o_long * o._average_of)) / (_average_of + o._average_of);
+  _altitude = ((_altitude * _average_of) + (o_alt * o._average_of)) / (_average_of + o._average_of);
+  _sat_count = ((_sat_count * _average_of) + (o._sat_count * o._average_of)) / (_average_of + o._average_of);
+  _precision = ((_precision * _average_of) + (o._precision * o._average_of)) / (_average_of + o._average_of);
+
+  // Update count of readings merged with this
+  _average_of += o._average_of;
+
   return *this;
 }
 

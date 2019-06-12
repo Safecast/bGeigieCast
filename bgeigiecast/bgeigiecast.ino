@@ -95,10 +95,11 @@ void setup() {
   gpio_config(&io_conf);
   gpio_install_isr_service(ESP_INTR_FLAG_LEVEL1);
 
-  gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN, GPIO_INTR_LOW_LEVEL);
-
+#if USE_SLEEP
   // Set sleep options
+  gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN, GPIO_INTR_LOW_LEVEL);
   esp_sleep_enable_gpio_wakeup();
+#endif
 
   /// Software configurations
   // Setup controller

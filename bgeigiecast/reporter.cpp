@@ -19,7 +19,8 @@ Reporter::Reporter(IEspConfig& config,
     _last_reading(nullptr),
     _last_reading_moment(0),
     _report_bt(false),
-    _report_api(false) {
+    _report_api(false),
+    _idle(false){
   _api_connector.set_observer(this);
 }
 
@@ -55,7 +56,7 @@ void Reporter::get_new_reading() {
 }
 
 bool Reporter::is_idle() const {
-  return dynamic_cast<ReporterIdleState*>(get_current_state()) != nullptr;
+  return _idle;
 }
 
 void Reporter::init_bluetooth_connector() {

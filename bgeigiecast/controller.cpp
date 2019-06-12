@@ -17,11 +17,11 @@ Controller::Controller(IEspConfig& config,
     _mode_button(MODE_BUTTON_PIN),
     _mode_led(config),
     _sleep_fn(sleep_fn) {
-  _reporter.set_observer(this);
 }
 
 void Controller::setup_state_machine() {
   set_state(new InitializeState(*this));
+  _reporter.setup_state_machine();
 }
 
 void Controller::run() {
@@ -32,8 +32,8 @@ void Controller::run() {
 void Controller::initialize() {
   _mode_button.activate();
   _mode_button.set_observer(this);
+  _reporter.set_observer(this);
   _config.set_all();
-  _reporter.setup_state_machine();
 
   schedule_event(Event_enum::e_c_controller_initialized);
 }

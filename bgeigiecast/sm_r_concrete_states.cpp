@@ -9,6 +9,7 @@ void ReporterIdleState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("-- Reporter entered state Idle");
 #endif
+  reporter._idle = true;
 }
 
 void ReporterIdleState::do_activity() {
@@ -18,7 +19,7 @@ void ReporterIdleState::do_activity() {
 }
 
 void ReporterIdleState::exit_action() {
-
+  reporter._idle = false;
 }
 
 void ReporterIdleState::handle_event(Event_enum event_id) {
