@@ -16,8 +16,6 @@ void reading_merging_normal(void);
 void reading_merging_multiple(void);
 void reading_merging_multiple_faulty(void);
 
-void test_dms_to_dd(void);
-void test_dm_to_dd(void);
 
 void setup() {
   delay(2000);
@@ -38,8 +36,6 @@ void setup() {
   RUN_TEST(reading_merging_normal);
   RUN_TEST(reading_merging_multiple);
   RUN_TEST(reading_merging_multiple_faulty);
-
-  RUN_TEST(test_dms_to_dd);
 
   UNITY_END();
 }

@@ -21,7 +21,7 @@ void reading_merging_new(void) {
   TEST_ASSERT_EQUAL(63, r.get_cpb());
   TEST_ASSERT_EQUAL(33895, r.get_total_count());
   TEST_ASSERT_EQUAL_FLOAT(dm_to_dd(5641.7788), r.get_latitude());
-  TEST_ASSERT_EQUAL_FLOAT(dm_to_dd(1411.9100), r.get_longitude());
+  TEST_ASSERT_EQUAL_FLOAT(dm_to_dd(1411.8820), r.get_longitude());
   TEST_ASSERT_EQUAL_FLOAT(9861.2, r.get_altitude());
   TEST_ASSERT_EQUAL(109, r.get_sat_count());
   TEST_ASSERT_EQUAL_FLOAT(9, r.get_precision());

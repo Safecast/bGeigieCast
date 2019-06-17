@@ -1,7 +1,7 @@
 #ifndef BGEIGIECAST_BUTTON_HPP
 #define BGEIGIECAST_BUTTON_HPP
 
-#define DEBOUNCE_TIME_MILLIS 50
+#define BUTTON_DEBOUNCE_TIME_MILLIS 50
 
 
 #include <Arduino.h>
@@ -45,6 +45,12 @@ class Button {
    * @return: true if button is down
    */
   bool currently_pressed() const;
+
+  /**
+   * Get the moment last state changed (getter)
+   * @return millis of last change
+   */
+  uint32_t get_last_state_change() const;
 
   /**
    * Set an observer for this button (for callback to class methods)
