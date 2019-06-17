@@ -1,8 +1,6 @@
 #include "button.h"
 #include "debugger.h"
 
-volatile uint32_t temp = 0;
-
 void buttonTrigger(void* arg) {
   if(!arg) {
     return;
@@ -16,7 +14,7 @@ Button::Button(uint8_t pin, uint8_t pull_type) :
     _pin(pin),
     _pull_type_mode(pull_type == PULLDOWN ? HIGH : LOW),
     _observer(nullptr),
-    _current_state(digitalRead(_pin) == _pull_type_mode),
+    _current_state(false),
     _last_state_change(0),
     _on_button_down_fn(nullptr),
     _on_button_release_fn(nullptr),
@@ -24,13 +22,13 @@ Button::Button(uint8_t pin, uint8_t pull_type) :
 }
 
 Button::~Button() {
-  gpio_reset_pin((gpio_num_t) _pin);
   gpio_isr_handler_remove((gpio_num_t) _pin);
 }
 
 void Button::activate() {
   gpio_set_intr_type((gpio_num_t) _pin, GPIO_INTR_ANYEDGE);
   gpio_isr_handler_add((gpio_num_t) _pin, buttonTrigger, this);
+  _current_state = digitalRead(_pin) == _pull_type_mode;
 }
 
 void Button::set_observer(ButtonObserver* observer) {
@@ -43,7 +41,7 @@ bool Button::currently_pressed() const {
 
 bool Button::state_changed(int state, uint32_t time) {
   bool new_state = state == _pull_type_mode;
-  if(new_state == _current_state || _last_state_change + DEBOUNCE_TIME_MILLIS > time) {
+  if(new_state == _current_state || _last_state_change + BUTTON_DEBOUNCE_TIME_MILLIS > time) {
     _current_state = new_state;
     return false;
   }
@@ -76,5 +74,9 @@ void Button::set_on_button_release_fn(on_button_release_fn_t on_button_release_f
 
 void Button::set_on_button_pressed_fn(on_button_pressed_fn_t on_button_pressed_fn) {
   _on_button_pressed_fn = on_button_pressed_fn;
+}
+
+uint32_t Button::get_last_state_change() const {
+  return _last_state_change;
 }
 
