@@ -73,8 +73,6 @@ void InitReadingState::handle_event(Event_enum event_id) {
 
 // region PostInitializeState
 
-#define POST_INIT_DURATION_MILLIS 3000
-
 PostInitializeState::PostInitializeState(Controller& context) : ControllerState(context), timer(0) {
 }
 
@@ -85,7 +83,7 @@ void PostInitializeState::entry_action() {
 }
 
 void PostInitializeState::do_activity() {
-  if(millis() - timer > POST_INIT_DURATION_MILLIS) {
+  if(millis() - timer > POST_INITIALIZE_DURATION) {
     controller.schedule_event(e_c_post_init_time_passed);
   }
 }

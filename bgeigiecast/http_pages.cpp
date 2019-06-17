@@ -1,5 +1,6 @@
 #include <WebServer.h>
 #include "http_pages.h"
+#include "user_config.h"
 
 #define TITLE_HOME "Home"
 #define TITLE_UPDATE "Update firmware"
@@ -33,8 +34,8 @@ const char* update_firmware_script =
 
 /**
  * page format
- * %d - device id (page title)
  * %s - page name (page title)
+ * %d - device id (page title)
  * %s - remote resources
  * %s - local resources
  * %d - device id (menu title)
@@ -87,7 +88,8 @@ const char* HttpPages::get_home_page(uint32_t device_id) {
   return render_full_page(
       device_id,
       TITLE_HOME,
-      "Landing page"
+      "Landing page <br> bGeigieCast version %s",
+      BGEIGIECAST_VERSION
   );
 }
 
