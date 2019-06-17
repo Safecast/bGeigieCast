@@ -15,14 +15,14 @@ void test_set_config(void) {
 
   TEST_ASSERT_GREATER_THAN(CONFIG_VAL_MAX, long_string_val);
 
-  // Set new ap ssid
-  config.set_ap_ssid(new_string_val, false);
-  TEST_ASSERT_EQUAL_STRING(config.get_ap_ssid(), new_string_val);
+  // Set new ap password
+  config.set_ap_password(new_string_val, false);
+  TEST_ASSERT_EQUAL_STRING(config.get_ap_password(), new_string_val);
 
-  // Set ap ssid with invalid value
-  config.set_ap_ssid(long_string_val, false);
-  TEST_ASSERT_NOT_EQUAL(strcmp(config.get_ap_ssid(), long_string_val), 0);
+  // Set ap password with invalid value
+  config.set_ap_password(long_string_val, false);
+  TEST_ASSERT_NOT_EQUAL(strcmp(config.get_ap_password(), long_string_val), 0);
 
   // Should still return the old, correct value
-  TEST_ASSERT_EQUAL_STRING(config.get_ap_ssid(), new_string_val);
+  TEST_ASSERT_EQUAL_STRING(config.get_ap_password(), new_string_val);
 }

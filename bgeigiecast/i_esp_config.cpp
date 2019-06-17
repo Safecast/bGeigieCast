@@ -33,6 +33,8 @@ void IEspConfig::reset_defaults() {
     set_use_home_location(false, true);
     set_home_longitude(0, true);
     set_home_latitude(0, true);
+    set_last_longitude(0, true);
+    set_last_latitude(0, true);
   }
 }
 

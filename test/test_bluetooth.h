@@ -4,7 +4,7 @@
 #include <BLEDevice.h>
 #include <StreamString.h>
 
-#include <connectors/i_bluetooth_connector.h>
+#include <i_bluetooth_connector.h>
 
 /**
  * Test class to inject in unit test controller

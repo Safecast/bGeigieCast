@@ -5,7 +5,7 @@
 #include <HTTPClient.h>
 #include <StreamString.h>
 
-#include <connectors/i_api_connector.h>
+#include <i_api_connector.h>
 
 /**
  * Test class to inject in unit test controller
