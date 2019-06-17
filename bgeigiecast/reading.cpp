@@ -181,7 +181,7 @@ void Reading::apply_home_location(double home_lat, double home_long) {
 }
 
 void Reading::parse_values() {
-  double lat_dms = 0, long_dms = 0;
+  double lat_dm = 0, long_dm = 0;
   char n_or_s, w_or_e, sensor_status, gps_status;
   int16_t checksum;
 
@@ -194,9 +194,9 @@ void Reading::parse_values() {
       &_cpb,
       &_total_count,
       &sensor_status,
-      &lat_dms,
+      &lat_dm,
       &n_or_s,
-      &long_dms,
+      &long_dm,
       &w_or_e,
       &_altitude,
       &gps_status,
@@ -215,8 +215,8 @@ void Reading::parse_values() {
     if(gps_status == 'A') {
       _status |= k_reading_gps_ok;
 
-      _latitude = dm_to_dd(lat_dms);
-      _longitude = dm_to_dd(long_dms);
+      _latitude = dm_to_dd(lat_dm);
+      _longitude = dm_to_dd(long_dm);
 
       if(n_or_s == 'S') { _latitude *= -1; }
       if(w_or_e == 'W') { _longitude *= -1; }

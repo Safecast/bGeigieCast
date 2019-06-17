@@ -2,6 +2,7 @@
 #include <unity.h>
 
 void test_int_buffer();
+void test_dm_to_dd();
 void test_button_status_pullup();
 void test_button_status_pulldown();
 void test_button_with_callback_functions();
@@ -17,8 +18,7 @@ void setup() {
   UNITY_BEGIN();
 
   RUN_TEST(test_int_buffer);
-
-
+  RUN_TEST(test_dm_to_dd);
   RUN_TEST(test_button_status_pullup);
   RUN_TEST(test_button_status_pulldown);
   RUN_TEST(test_button_with_callback_functions);

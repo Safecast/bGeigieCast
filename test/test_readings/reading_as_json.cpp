@@ -20,8 +20,8 @@ void reading_json_stationary(void) {
       "\"device_id\":62041,"
       "\"value\":776,"
       "\"unit\":\"cpm\","
-      "\"longitude\":14.1833,"
-      "\"latitude\":56.6833}\n", json_buffer);
+      "\"longitude\":14.19803,"
+      "\"latitude\":56.69631}\n", json_buffer);
 
 }
 
