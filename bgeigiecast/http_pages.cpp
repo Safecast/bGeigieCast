@@ -88,7 +88,16 @@ const char* HttpPages::get_home_page(uint32_t device_id) {
   return render_full_page(
       device_id,
       TITLE_HOME,
-      "Landing page <br> bGeigieCast version %s",
+      "<h1>Manage your bGeigieCast</h1>"
+      "<p class='pure-form-message'>bGeigieCast version %s</p>"
+      "<p>"
+      "<ul>"
+      "<li><a href='/device'>Configure your device</a></li>"
+      "<li><a href='/connection'>Configure your connection to the API</a></li>"
+      "<li><a href='/location'>Configure your location for fixed mode</a></li>"
+      "</ul>"
+      "More information about configurations in the <a href='https://github.com/Safecast/bGeigieCast/wiki/User-manual#available-settings' target='_blank'>User manual</a>."
+      "</p>",
       BGEIGIECAST_VERSION
   );
 }
