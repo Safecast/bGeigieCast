@@ -296,8 +296,8 @@ const char* HttpPages::render_full_page(uint32_t device_id, const char* page_nam
   sprintf(
       transmission_buffer,
       base_page_format_begin,
-      device_id,
       page_name,
+      device_id,
       local_resources,
       internet_access ? online_resources : fallback_resources,
       device_id
