@@ -14,12 +14,15 @@ class TestBluetoohConnector : public IBluetoohConnector {
   explicit TestBluetoohConnector(StreamString& output) : output(output) {}
   virtual ~TestBluetoohConnector() = default;
 
-  void init(uint16_t device_id) override {
-    // OK
+  bool init(uint16_t device_id) override {
+    initialized = true;
+    return initialized;
   }
 
-  void send_reading(Reading& reading) override {
-    output.write((uint8_t*) reading.get_reading_str(), strlen(reading.get_reading_str()));
+  void send_reading(Reading* reading) override {
+    if(reading) {
+      output.write((uint8_t*) reading->get_reading_str(), strlen(reading->get_reading_str()));
+    }
   }
  private:
   StreamString& output;

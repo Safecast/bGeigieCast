@@ -149,17 +149,17 @@ const char* HttpPages::get_config_device_page(
       "<legend>Device settings</legend>"
 
       // Led intensity
-      "<label for='d_li'>Led intensity</label>"
-      "<input type='number' min='5' max='100' name='d_li' id='d_li' value='%d'>"
+      "<label for='" FORM_NAME_LED_INTENSITY "'>Led intensity</label>"
+      "<input type='number' min='5' max='100' name='" FORM_NAME_LED_INTENSITY "' id='" FORM_NAME_LED_INTENSITY "' value='%d'>"
       "<span class='pure-form-message'>Value between 5-100 (percentage).</span>"
 
       // Colorblind
       "<label>Color set</label>"
-      "<label for='d_cb0' class='pure-radio'>"
-      "<input id='d_cb0' type='radio' name='d_cb' value='0' %s>Default"
+      "<label for='" FORM_NAME_LED_COLOR "0' class='pure-radio'>"
+      "<input id='" FORM_NAME_LED_COLOR "0' type='radio' name='" FORM_NAME_LED_COLOR "' value='0' %s>Default"
       "</label>"
-      "<label for='d_cb1' class='pure-radio'>"
-      "<input id='d_cb1' type='radio' name='d_cb' value='1' %s>Colorblind"
+      "<label for='" FORM_NAME_LED_COLOR "1' class='pure-radio'>"
+      "<input id='" FORM_NAME_LED_COLOR "1' type='radio' name='" FORM_NAME_LED_COLOR "' value='1' %s>Colorblind"
       "</label>"
 
       "<button type='submit' class='pure-button pure-button-primary'>Save</button>"
@@ -189,29 +189,31 @@ const char* HttpPages::get_config_location_page(
       "<fieldset>"
       "<legend>Location settings</legend>"
 
+
+
       // Use home location
       "<label>Location in fixed mode</label>"
-      "<label for='l_uh0' class='pure-radio'>"
-      "<input id='l_uh0' type='radio' name='l_uh' value='0' %s>Use GPS"
+      "<label for='" FORM_NAME_LOC_HOME "0' class='pure-radio'>"
+      "<input id='" FORM_NAME_LOC_HOME "0' type='radio' name='" FORM_NAME_LOC_HOME "' value='0' %s>Use GPS"
       "</label>"
-      "<label for='l_uh1' class='pure-radio'>"
-      "<input id='l_uh1' type='radio' name='l_uh' value='1' %s>Use home location"
+      "<label for='" FORM_NAME_LOC_HOME "1' class='pure-radio'>"
+      "<input id='" FORM_NAME_LOC_HOME "1' type='radio' name='" FORM_NAME_LOC_HOME "' value='1' %s>Use home location"
       "</label>"
       "<span class='pure-form-message'>(Informative text)</span>"
 
       // Home latitude
-      "<label for='l_ha'>Home latitude</label>"
-      "<input type='number' min='-90.0000' max='90.0000' name='l_ha' id='l_ha' value='%.5f' step='0.00001'>"
+      "<label for='" FORM_NAME_LOC_HOME_LAT "'>Home latitude</label>"
+      "<input type='number' min='-90.0000' max='90.0000' name='" FORM_NAME_LOC_HOME_LAT "' id='" FORM_NAME_LOC_HOME_LAT "' value='%.5f' step='0.00001'>"
 
       // Home longitude
-      "<label for='l_ho'>Home longitude</label>"
-      "<input type='number' min='-180.0000' max='180.0000' name='l_ho' id='l_ho' value='%.5f' step='0.00001'>"
+      "<label for='" FORM_NAME_LOC_HOME_LON "'>Home longitude</label>"
+      "<input type='number' min='-180.0000' max='180.0000' name='" FORM_NAME_LOC_HOME_LON "' id='" FORM_NAME_LOC_HOME_LON "' value='%.5f' step='0.00001'>"
 
       // Set last known location
       "<span class='pure-form-message'>"
       "Last known location: (<a href='#' onclick=\""
-      "document.getElementById('l_ha').value = document.getElementById('l_la').innerHTML;"
-      "document.getElementById('l_ho').value = document.getElementById('l_lo').innerHTML;"
+      "document.getElementById('" FORM_NAME_LOC_HOME_LAT "').value = document.getElementById('l_la').innerHTML;"
+      "document.getElementById('" FORM_NAME_LOC_HOME_LON "').value = document.getElementById('l_lo').innerHTML;"
       "return false;"
       "\">use this</a>)<br>"
       "Latitude: <span id='l_la'>%.5f</span><br>"
@@ -249,41 +251,42 @@ const char* HttpPages::get_config_connection_page(
       "<fieldset>"
       "<legend>Connection settings</legend>"
 
+
       // bGeigie ap password
-      "<label for='c_ap'>bGeigie password</label>"
-      "<input type='text' name='c_ap' id='c_ap' value='%s'>"
+      "<label for='" FORM_NAME_AP_LOGIN "'>bGeigie password</label>"
+      "<input type='text' name='" FORM_NAME_AP_LOGIN "' id='" FORM_NAME_AP_LOGIN "' value='%s'>"
       "<span class='pure-form-message'>(Informative text)</span>"
 
       // WiFi ssid
-      "<label for='c_ws'>WiFi network name</label>"
-      "<input type='text' name='c_ws' id='c_ws' value='%s'>"
+      "<label for='" FORM_NAME_WIFI_SSID "'>WiFi network name</label>"
+      "<input type='text' name='" FORM_NAME_WIFI_SSID "' id='" FORM_NAME_WIFI_SSID "' value='%s'>"
 
       // WiFi password
-      "<label for='c_wp'>WiFi password</label>"
-      "<input type='text' name='c_wp' id='c_wp' value='%s'>"
+      "<label for='" FORM_NAME_WIFI_PASS "'>WiFi password</label>"
+      "<input type='text' name='" FORM_NAME_WIFI_PASS "' id='" FORM_NAME_WIFI_PASS "' value='%s'>"
 
       // Api key
-      "<label for='c_ak'>API key</label>"
-      "<input type='text' name='c_ak' id='c_ak' value='%s'>"
+      "<label for='" FORM_NAME_API_KEY "'>API key</label>"
+      "<input type='text' name='" FORM_NAME_API_KEY "' id='" FORM_NAME_API_KEY "' value='%s'>"
       "<span class='pure-form-message'>(Informative text)</span>"
 
       // Use dev
       "<label>Safecast server</label>"
-      "<label for='c_ud0' class='pure-radio'>"
-      "<input id='c_ud0' type='radio' name='c_ud' value='0' %s>Production"
+      "<label for='" FORM_NAME_USE_DEV "0' class='pure-radio'>"
+      "<input id='" FORM_NAME_USE_DEV "0' type='radio' name='" FORM_NAME_USE_DEV "' value='0' %s>Production"
       "</label>"
-      "<label for='c_ud1' class='pure-radio'>"
-      "<input id='c_ud1' type='radio' name='c_ud' value='1' %s>Development"
+      "<label for='" FORM_NAME_USE_DEV "1' class='pure-radio'>"
+      "<input id='" FORM_NAME_USE_DEV "1' type='radio' name='" FORM_NAME_USE_DEV "' value='1' %s>Development"
       "</label>"
       "<span class='pure-form-message'>Use development for testing your device</span>"
 
       // Dev frequency
       "<label>Send frequency</label>"
-      "<label for='c_df0' class='pure-radio'>"
-      "<input id='c_df0' type='radio' name='c_df' value='0' %s>5 minutes"
+      "<label for='" FORM_NAME_DEV_FREQ "0' class='pure-radio'>"
+      "<input id='" FORM_NAME_DEV_FREQ "0' type='radio' name='" FORM_NAME_DEV_FREQ "' value='0' %s>5 minutes"
       "</label>"
-      "<label for='c_df1' class='pure-radio'>"
-      "<input id='c_df1' type='radio' name='c_df' value='1' %s>30 seconds"
+      "<label for='" FORM_NAME_DEV_FREQ "1' class='pure-radio'>"
+      "<input id='" FORM_NAME_DEV_FREQ "1' type='radio' name='" FORM_NAME_DEV_FREQ "' value='1' %s>30 seconds"
       "</label>"
       "<span class='pure-form-message'>Only works when publishing to development</span>"
 

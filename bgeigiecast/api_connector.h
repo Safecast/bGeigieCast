@@ -16,7 +16,6 @@ class ApiConnector : public IApiConnector {
   virtual ~ApiConnector() = default;
 
   /**
-   *
    * Initialize the connection
    * @param initial: set to false if its for reconnect / connect in error
    * @return true if connection with the wifi was made

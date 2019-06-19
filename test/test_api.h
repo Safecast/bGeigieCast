@@ -15,38 +15,23 @@ class TestApiConnector : public IApiConnector {
   TestApiConnector(IEspConfig& config, StreamString& output) : IApiConnector(config), connected(false), output(output) {}
   virtual ~TestApiConnector() = default;
 
-  /**
-   *
-   * Initialize the connection
-   * @param initial: set to false if its for reconnect / connect in error
-   * @return true if connection with the wifi was made
-   */
   bool start_connect(bool initial) override {
     return connected;
   }
 
-  /**
-   * Disconnect
-   */
   void stop() override {
     // OK
   }
 
-  /**
-   * Test the connection to the API
-   */
   bool test() override {
     return connected;
   }
 
-  /**
-   * Check if the connection is up
-   * @return true if connected
-   */
   bool is_connected() override {
     return connected;
   }
 
+  // set connected state for testing
   bool connected;
 
  protected:
@@ -60,11 +45,11 @@ class TestApiConnector : public IApiConnector {
    * @param reading: reading to send
    * @return: true if the API call was successful
    */
-  bool send_reading(Reading& reading) override {
+  bool send_reading(Reading* reading) override {
     if(connected) {
 
       char reading_json[1000];
-      reading.as_json(reading_json);
+      reading->as_json(reading_json);
       output.write((uint8_t*) reading_json, strlen(reading_json));
       return true;
     }

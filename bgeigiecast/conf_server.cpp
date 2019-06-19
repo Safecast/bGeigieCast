@@ -12,13 +12,17 @@ T clamp(T2 val, T min, T max) {
   return _val < min ? min : _val > max ? max : _val;
 }
 
-ConfigWebServer::ConfigWebServer(IEspConfig& config) : _server(SERVER_WIFI_PORT), _config(config) {
+ConfigWebServer::ConfigWebServer(IEspConfig& config) : _server(SERVER_WIFI_PORT), _config(config), _running(false) {
 }
 
-bool ConfigWebServer::initialize() {
+ConfigWebServer::~ConfigWebServer() {
+  stop();
+}
+
+bool ConfigWebServer::connect(bool try_wifi) {
   auto device_id = _config.get_device_id();
 
-  if(!_config.get_device_id() || !_config.get_ap_password()) {
+  if(!_config.get_device_id()) {
     DEBUG_PRINTLN("Can't start config without device id!");
     return false;
   }
@@ -30,18 +34,14 @@ bool ConfigWebServer::initialize() {
 
   delay(100);
 
-  if(_config.get_wifi_ssid()) {
+  if(try_wifi && _config.get_wifi_ssid()) {
     for(int i = 0; i < 3; ++i) {
       connect_wifi();
 
       auto time = millis();
       while(millis() - time < 2000) {
         if(WiFi.status() == WL_CONNECTED) {
-
           DEBUG_PRINTF("Connected to %s, IP address: %s\n", _config.get_wifi_ssid(), WiFi.localIP().toString().c_str());
-
-          set_endpoints();
-          _server.begin();
           HttpPages::internet_access = true;
           return true;
         }
@@ -51,17 +51,17 @@ bool ConfigWebServer::initialize() {
     WiFi.disconnect(true, true);
   }
 
-  if(start_ap_server(host_ssid)) {
-    set_endpoints();
-    _server.begin();
-    return true;
-  }
-  return false;
+  return start_ap_server(host_ssid);
 }
 
 void ConfigWebServer::stop() {
-  _server.stop();
-  WiFi.softAPdisconnect(true);
+  Serial.printf("Stopping server..");
+  if(_running) {
+    _running = false;
+    _server.stop();
+    WiFi.softAPdisconnect(true);
+    delay(10);
+  }
 }
 
 void ConfigWebServer::handle_requests() {
@@ -85,7 +85,6 @@ bool ConfigWebServer::connect_wifi() {
 }
 
 bool ConfigWebServer::start_ap_server(const char* host_ssid) {
-
   WiFi.softAP(host_ssid, _config.get_ap_password());
   delay(100);
 
@@ -98,7 +97,10 @@ bool ConfigWebServer::start_ap_server(const char* host_ssid) {
   return true;
 }
 
-void ConfigWebServer::set_endpoints() {
+void ConfigWebServer::start_server() {
+  if(_running) {
+    return;
+  }
   // Home
   _server.on("/", HTTP_GET, [this]() {
     _server.sendHeader("Connection", "close");
@@ -138,7 +140,7 @@ void ConfigWebServer::set_endpoints() {
     _server.send(200, "text/html", HttpPages::get_config_location_page(
         _server.hasArg("success"),
         _config.get_device_id(),
-        _config.get_use_home_location() ,
+        _config.get_use_home_location(),
         _config.get_home_latitude(),
         _config.get_home_longitude(),
         _config.get_last_latitude(),
@@ -165,8 +167,7 @@ void ConfigWebServer::set_endpoints() {
     _server.sendHeader("Connection", "close");
     if(_server.upload().totalSize == 0 || Update.hasError()) {
       _server.send(500, "text/plain", "FAIL");
-    }
-    else {
+    } else {
       _server.send(200, "text/plain", "OK");
       _server.client().flush();
     }
@@ -190,41 +191,47 @@ void ConfigWebServer::set_endpoints() {
     _server.send_P(200, "image/x-icon", reinterpret_cast<const char*>(HttpPages::favicon), FAVICON_SIZE);
   });
 
+  _server.begin();
+  _running = true;
+}
+
+bool ConfigWebServer::running() const {
+  return _running;
 }
 
 void ConfigWebServer::handle_save() {
-  if(_server.hasArg("c_ap")) {
-    _config.set_ap_password(_server.arg("c_ap").c_str(), false);
+  if(_server.hasArg(FORM_NAME_AP_LOGIN)) {
+    _config.set_ap_password(_server.arg(FORM_NAME_AP_LOGIN).c_str(), false);
   }
-  if(_server.hasArg("c_ws")) {
-    _config.set_wifi_ssid(_server.arg("c_ws").c_str(), false);
+  if(_server.hasArg(FORM_NAME_WIFI_SSID)) {
+    _config.set_wifi_ssid(_server.arg(FORM_NAME_WIFI_SSID).c_str(), false);
   }
-  if(_server.hasArg("c_wp")) {
-    _config.set_wifi_password(_server.arg("c_wp").c_str(), false);
+  if(_server.hasArg(FORM_NAME_WIFI_PASS)) {
+    _config.set_wifi_password(_server.arg(FORM_NAME_WIFI_PASS).c_str(), false);
   }
-  if(_server.hasArg("c_ak")) {
-    _config.set_api_key(_server.arg("c_ak").c_str(), false);
+  if(_server.hasArg(FORM_NAME_API_KEY)) {
+    _config.set_api_key(_server.arg(FORM_NAME_API_KEY).c_str(), false);
   }
-  if(_server.hasArg("c_ud")) {
-    _config.set_use_dev(_server.arg("c_ud") == "1", false);
+  if(_server.hasArg(FORM_NAME_USE_DEV)) {
+    _config.set_use_dev(_server.arg(FORM_NAME_USE_DEV) == "1", false);
   }
-  if(_server.hasArg("c_df")) {
-    _config.set_dev_sped_up(_server.arg("c_df") == "1", false);
+  if(_server.hasArg(FORM_NAME_DEV_FREQ)) {
+    _config.set_dev_sped_up(_server.arg(FORM_NAME_DEV_FREQ) == "1", false);
   }
-  if(_server.hasArg("d_li")) {
-    _config.set_led_color_intensity(clamp<uint8_t>(_server.arg("d_li").toInt(), 5, 100), false);
+  if(_server.hasArg(FORM_NAME_LED_INTENSITY)) {
+    _config.set_led_color_intensity(clamp<uint8_t>(_server.arg(FORM_NAME_LED_INTENSITY).toInt(), 5, 100), false);
   }
-  if(_server.hasArg("d_lc")) {
-    _config.set_led_color_blind(strcmp(_server.arg("d_lc").c_str(), "1") == 0, false);
+  if(_server.hasArg(FORM_NAME_LED_COLOR)) {
+    _config.set_led_color_blind(strcmp(_server.arg(FORM_NAME_LED_COLOR).c_str(), "1") == 0, false);
   }
-  if(_server.hasArg("l_uh")) {
-    _config.set_use_home_location(strcmp(_server.arg("l_uh").c_str(), "1") == 0, false);
+  if(_server.hasArg(FORM_NAME_LOC_HOME)) {
+    _config.set_use_home_location(strcmp(_server.arg(FORM_NAME_LOC_HOME).c_str(), "1") == 0, false);
   }
-  if(_server.hasArg("l_ha")) {
-    _config.set_home_latitude(clamp<double>(_server.arg("l_ha").toDouble(), -90.0, 90.0), false);
+  if(_server.hasArg(FORM_NAME_LOC_HOME_LAT)) {
+    _config.set_home_latitude(clamp<double>(_server.arg(FORM_NAME_LOC_HOME_LAT).toDouble(), -90.0, 90.0), false);
   }
-  if(_server.hasArg("l_ho")) {
-    _config.set_home_longitude(clamp<double>(_server.arg("l_ho").toDouble(), -180.0, 180.0), false);
+  if(_server.hasArg(FORM_NAME_LOC_HOME_LON)) {
+    _config.set_home_longitude(clamp<double>(_server.arg(FORM_NAME_LOC_HOME_LON).toDouble(), -180.0, 180.0), false);
   }
 
   _server.sendHeader("Location", _server.arg("next") + "?success=true");
@@ -237,7 +244,11 @@ void ConfigWebServer::handle_update_uploading() {
   switch(upload.status) {
     case UPLOAD_FILE_START: {
       DEBUG_PRINTF("Update: %s\n", upload.filename.c_str());
-      Update.begin(UPDATE_SIZE_UNKNOWN) ? DEBUG_PRINTLN("Starting update") : DEBUG_PRINTLN("Unable to start update");
+      if(Update.begin(UPDATE_SIZE_UNKNOWN)) {
+        DEBUG_PRINTLN("Starting update");
+      } else {
+        DEBUG_PRINTLN("Unable to start update");
+      }
       break;
     }
     case UPLOAD_FILE_WRITE: {
@@ -264,4 +275,3 @@ void ConfigWebServer::handle_update_uploading() {
     }
   }
 }
-

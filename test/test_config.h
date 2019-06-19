@@ -14,6 +14,7 @@ class TestEspConfig : public IEspConfig {
   virtual ~TestEspConfig() = default;
 
   void set_all() {
+    _device_id = 1234;
     strcpy(_ap_password, D_ACCESS_POINT_PASSWORD);
     strcpy(_wifi_ssid, D_WIFI_SSID);
     strcpy(_wifi_password, D_WIFI_PASSWORD);

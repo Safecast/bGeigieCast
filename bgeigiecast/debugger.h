@@ -23,11 +23,11 @@
 
 #else
 
-#define DEBUG_BEGIN(...) (void*) nullptr
-#define DEBUG_PRINT(val) (void*) nullptr
-#define DEBUG_PRINTLN(val) (void*) nullptr
-#define DEBUG_PRINTF(format, ...) (void*) nullptr
-#define DEBUG_FLUSH() (void*) nullptr
+#define DEBUG_BEGIN(...)
+#define DEBUG_PRINT(val)
+#define DEBUG_PRINTLN(val)
+#define DEBUG_PRINTF(format, ...)
+#define DEBUG_FLUSH()
 
 #endif
 

@@ -6,6 +6,18 @@
 #define PURE_CSS_SIZE 3929
 #define FAVICON_SIZE 696
 
+#define FORM_NAME_WIFI_SSID "c_ws"
+#define FORM_NAME_WIFI_PASS "c_wp"
+#define FORM_NAME_API_KEY "c_ak"
+#define FORM_NAME_USE_DEV "c_ud"
+#define FORM_NAME_DEV_FREQ "c_df"
+#define FORM_NAME_AP_LOGIN "d_ap"
+#define FORM_NAME_LED_INTENSITY "d_li"
+#define FORM_NAME_LED_COLOR "d_lc"
+#define FORM_NAME_LOC_HOME "l_uh"
+#define FORM_NAME_LOC_HOME_LAT "l_ha"
+#define FORM_NAME_LOC_HOME_LON "l_ho"
+
 class HttpPages {
  public:
   HttpPages() = delete;

@@ -133,7 +133,7 @@ void SetupServerState::entry_action() {
 }
 
 void SetupServerState::do_activity() {
-  if(controller._ap_server.initialize()) {
+  if(controller._ap_server.connect()) {
     controller.schedule_event(Event_enum::e_c_server_initialized);
   }
 }
@@ -162,6 +162,7 @@ ServerActiveState::ServerActiveState(Controller& context) : ConfigModeState(cont
 void ServerActiveState::entry_action() {
   DEBUG_PRINTLN("-- Entered state ServerActive");
   controller._mode_led.set_color(ModeLED::ModeColor::config);
+  controller._ap_server.start_server();
 }
 
 void ServerActiveState::do_activity() {
