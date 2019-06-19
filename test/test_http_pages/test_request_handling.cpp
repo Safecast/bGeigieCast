@@ -7,7 +7,7 @@
 // Run server
 void run_server(void* server_arg) {
   ConfigWebServer* server = (ConfigWebServer*) server_arg;
-  while(server->running()) {
+  while(server && server->running()) {
     server->handle_requests();
     delay(10);
   }
@@ -29,9 +29,6 @@ void test_http_get_home() {
 
   TEST_ASSERT_TRUE(client.begin("http://127.0.0.1/"))
   TEST_ASSERT_EQUAL(200, client.GET());
-
-  server.stop();
-  delay(100);
 }
 
 void test_http_post_device_config() {
@@ -78,8 +75,6 @@ void test_http_post_device_config() {
   TEST_ASSERT_EQUAL_STRING(new_ap_password, config.get_ap_password());
   TEST_ASSERT_EQUAL(new_led_color_intensity, config.get_led_color_intensity());
   TEST_ASSERT_EQUAL(new_led_color_blind, config.is_led_color_blind());
-
-  server.stop();
 }
 
 void test_http_post_connection_config() {
@@ -136,8 +131,6 @@ void test_http_post_connection_config() {
   TEST_ASSERT_EQUAL_STRING(new_api_key, config.get_api_key());
   TEST_ASSERT_EQUAL(new_use_dev, config.get_use_dev());
   TEST_ASSERT_EQUAL(new_dev_sped_up, config.get_dev_sped_up());
-
-  server.stop();
 }
 
 void test_http_post_location_config() {
@@ -184,6 +177,4 @@ void test_http_post_location_config() {
   TEST_ASSERT_EQUAL(new_use_home_location, config.get_use_home_location());
   TEST_ASSERT_EQUAL_FLOAT(new_home_longitude, config.get_home_longitude());
   TEST_ASSERT_EQUAL_FLOAT(new_home_latitude, config.get_home_latitude());
-
-  server.stop();
 }

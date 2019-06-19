@@ -59,7 +59,7 @@ void ConfigWebServer::stop() {
     _running = false;
     _server.stop();
     WiFi.softAPdisconnect(true);
-    delay(10);
+    delay(20);
   }
 }
 
