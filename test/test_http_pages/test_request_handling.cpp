@@ -11,7 +11,7 @@ void run_server(void* server_arg) {
     server->handle_requests();
     delay(10);
   }
-  vTaskDelete(NULL);
+  vTaskDelete(nullptr);
 }
 
 void test_http_get_home() {
@@ -21,7 +21,7 @@ void test_http_get_home() {
   ConfigWebServer server(config);
   TEST_ASSERT_TRUE(server.connect(false));
   server.start_server();
-  TaskHandle_t xHandle = NULL;
+  TaskHandle_t xHandle = nullptr;
   xTaskCreate(run_server, "WebServer", 50000, &server, 1, &xHandle);
   configASSERT(xHandle);
 
