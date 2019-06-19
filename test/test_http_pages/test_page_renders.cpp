@@ -1,19 +1,19 @@
 #include <unity.h>
 #include <http_pages.h>
 
-void test_get_home_page() {
+void test_render_home_page() {
   TEST_ASSERT_NOT_NULL(HttpPages::get_home_page(
     1234
   ));
 }
 
-void test_get_update_page() {
+void test_render_update_page() {
   TEST_ASSERT_NOT_NULL(HttpPages::get_update_page(
     1234
   ));
 }
 
-void test_get_config_device_page() {
+void test_render_config_device_page() {
   TEST_ASSERT_NOT_NULL(HttpPages::get_config_device_page(
       false,
       1234,
@@ -28,7 +28,7 @@ void test_get_config_device_page() {
   ));
 }
 
-void test_get_config_connection_page() {
+void test_render_config_connection_page() {
   TEST_ASSERT_NOT_NULL(HttpPages::get_config_connection_page(
       false,
       1234,
@@ -51,7 +51,7 @@ void test_get_config_connection_page() {
   ));
 }
 
-void test_get_config_location_page() {
+void test_render_config_location_page() {
   TEST_ASSERT_NOT_NULL(HttpPages::get_config_location_page(
       false,
       1234,

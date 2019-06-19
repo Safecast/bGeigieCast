@@ -55,7 +55,6 @@ bool ConfigWebServer::connect(bool try_wifi) {
 }
 
 void ConfigWebServer::stop() {
-  Serial.printf("Stopping server..");
   if(_running) {
     _running = false;
     _server.stop();

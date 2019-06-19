@@ -14,7 +14,7 @@ void run_server(void* server_arg) {
   vTaskDelete(NULL);
 }
 
-void test_get_home() {
+void test_http_get_home() {
   TestEspConfig config;
   config.set_all();
 
@@ -34,7 +34,7 @@ void test_get_home() {
   delay(100);
 }
 
-void test_post_device_config() {
+void test_http_post_device_config() {
   TestEspConfig config;
   config.set_all();
   ConfigWebServer server(config);
@@ -43,8 +43,8 @@ void test_post_device_config() {
 
   // New values to set
   const char* new_ap_password = "newappassword";
+  uint8_t new_led_color_intensity = 50;
   bool new_led_color_blind = !D_LED_COLOR_BLIND;
-  bool new_led_color_intensity = !D_LED_COLOR_INTENSITY;
 
   // Start server
   TEST_ASSERT_TRUE(server.connect(false));
@@ -61,32 +61,28 @@ void test_post_device_config() {
   // Set post data
   sprintf(
       buffer,
-      "{"
-      "\"%s\": \"%s\","
-      "\"%s\": %d,"
-      "\"%s\": %d"
-      "}",
+      "%s=%s&"
+      "%s=%d&"
+      "%s=%d",
       FORM_NAME_AP_LOGIN, new_ap_password,
-      FORM_NAME_LED_INTENSITY, new_led_color_blind,
-      FORM_NAME_LED_COLOR, new_led_color_intensity
+      FORM_NAME_LED_INTENSITY, new_led_color_intensity,
+      FORM_NAME_LED_COLOR, new_led_color_blind
   );
-
-  Serial.println(buffer);
 
   // Post device settings
   TEST_ASSERT_TRUE(client.begin("http://127.0.0.1/save"));
-  client.addHeader("Content-Type", "application/json");
+  client.addHeader("Content-Type", "application/x-www-form-urlencoded");
   TEST_ASSERT_EQUAL(302, client.POST(reinterpret_cast<uint8_t*>(buffer), strlen(buffer)));
 
   // Check new settings
   TEST_ASSERT_EQUAL_STRING(new_ap_password, config.get_ap_password());
-  TEST_ASSERT_EQUAL(new_led_color_blind, config.is_led_color_blind());
   TEST_ASSERT_EQUAL(new_led_color_intensity, config.get_led_color_intensity());
+  TEST_ASSERT_EQUAL(new_led_color_blind, config.is_led_color_blind());
 
   server.stop();
 }
 
-void test_post_connection_config() {
+void test_http_post_connection_config() {
   TestEspConfig config;
   config.set_all();
   ConfigWebServer server(config);
@@ -117,13 +113,11 @@ void test_post_connection_config() {
   // Set post data
   sprintf(
       buffer,
-      "{"
-      "\"%s\": \"%s\","
-      "\"%s\": \"%s\","
-      "\"%s\": \"%s\","
-      "\"%s\": %d,"
-      "\"%s\": %d"
-      "}",
+      "%s=%s&"
+      "%s=%s&"
+      "%s=%s&"
+      "%s=%d&"
+      "%s=%d",
       FORM_NAME_WIFI_SSID, new_wifi_ssid,
       FORM_NAME_WIFI_PASS, new_wifi_password,
       FORM_NAME_API_KEY, new_api_key,
@@ -131,10 +125,9 @@ void test_post_connection_config() {
       FORM_NAME_DEV_FREQ, new_dev_sped_up
   );
 
-  Serial.println(buffer);
-
   // Post connection settings
-  TEST_ASSERT_TRUE(client.begin("http://127.0.0.1/save"))
+  TEST_ASSERT_TRUE(client.begin("http://127.0.0.1/save"));
+  client.addHeader("Content-Type", "application/x-www-form-urlencoded");
   TEST_ASSERT_EQUAL(302, client.POST(reinterpret_cast<uint8_t*>(buffer), strlen(buffer)));
 
   // Check new settings
@@ -147,7 +140,7 @@ void test_post_connection_config() {
   server.stop();
 }
 
-void test_post_location_config() {
+void test_http_post_location_config() {
   TestEspConfig config;
   config.set_all();
   ConfigWebServer server(config);
@@ -174,25 +167,23 @@ void test_post_location_config() {
   // Set post data
   sprintf(
       buffer,
-      buffer,
-      "{"
-      "\"%s\": %d,"
-      "\"%s\": %f,"
-      "\"%s\": %f"
-      "}",
+      "%s=%d&"
+      "%s=%f&"
+      "%s=%f",
       FORM_NAME_LOC_HOME, new_use_home_location,
-      FORM_NAME_LOC_HOME_LAT, new_home_longitude,
-      FORM_NAME_LOC_HOME_LON, new_home_latitude
+      FORM_NAME_LOC_HOME_LAT, new_home_latitude,
+      FORM_NAME_LOC_HOME_LON, new_home_longitude
   );
 
   // Post location settings
-  TEST_ASSERT_TRUE(client.begin("http://127.0.0.1/save"))
+  TEST_ASSERT_TRUE(client.begin("http://127.0.0.1/save"));
+  client.addHeader("Content-Type", "application/x-www-form-urlencoded");
   TEST_ASSERT_EQUAL(302, client.POST(reinterpret_cast<uint8_t*>(buffer), strlen(buffer)));
 
   // Check new settings
   TEST_ASSERT_EQUAL(new_use_home_location, config.get_use_home_location());
-  TEST_ASSERT_EQUAL(new_home_longitude, config.get_home_longitude());
-  TEST_ASSERT_EQUAL(new_home_latitude, config.get_home_latitude());
+  TEST_ASSERT_EQUAL_FLOAT(new_home_longitude, config.get_home_longitude());
+  TEST_ASSERT_EQUAL_FLOAT(new_home_latitude, config.get_home_latitude());
 
   server.stop();
 }
