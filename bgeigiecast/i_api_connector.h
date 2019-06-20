@@ -23,7 +23,7 @@ class IApiConnector : public Context {
     k_report_success,
   } ReportApiStatus;
 
-  explicit IApiConnector(IEspConfig& config, ApiConnectionObserver* observer);
+  explicit IApiConnector(IEspConfig& config, ApiConnectionObserver* observer = nullptr);
   virtual ~IApiConnector() = default;
 
   /**

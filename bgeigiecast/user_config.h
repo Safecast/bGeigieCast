@@ -1,7 +1,7 @@
 #ifndef USER_CONFIG_H
 #define USER_CONFIG_H
 
-#define VERSION "1.0"
+#define BGEIGIECAST_VERSION "1.0"
 
 /** System config **/
 #define ENABLE_DEBUG 1
@@ -10,6 +10,8 @@
 #define BGEIGIE_CONNECTION_BAUD 9600
 #define USE_SLEEP 0
 
+#define POST_INITIALIZE_DURATION 4000
+
 /** Hardware pins settings **/
 #define RGB_LED_PIN_R A18
 #define RGB_LED_PIN_G A4
@@ -17,10 +19,11 @@
 
 #define MODE_BUTTON_PIN 0
 
+
 /** API connector settings **/
 #define API_HOST "tt.safecast.org"
 #define HEADER_API_CONTENT_TYPE "application/json"
-#define HEADER_API_USER_AGENT "bGeigieCast/" VERSION
+#define HEADER_API_USER_AGENT "bGeigieCast/" BGEIGIECAST_VERSION
 #define API_MEASUREMENTS_ENDPOINT "http://" API_HOST "/measurements.json"
 #define API_SEND_FREQUENCY_SECONDS 300 // 5 minutes
 #define API_SEND_FREQUENCY_SECONDS_ALERT 60 // 1 minute

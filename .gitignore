@@ -227,6 +227,7 @@ local.properties
 # Notepad++ backups #
 
 ### PlatformIO ###
+.pio
 .pioenvs
 .piolibdeps
 .clang_complete

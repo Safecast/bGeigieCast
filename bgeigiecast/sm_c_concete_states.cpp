@@ -73,8 +73,6 @@ void InitReadingState::handle_event(Event_enum event_id) {
 
 // region PostInitializeState
 
-#define POST_INIT_DURATION_MILLIS 3000
-
 PostInitializeState::PostInitializeState(Controller& context) : ControllerState(context), timer(0) {
 }
 
@@ -85,7 +83,7 @@ void PostInitializeState::entry_action() {
 }
 
 void PostInitializeState::do_activity() {
-  if(millis() - timer > POST_INIT_DURATION_MILLIS) {
+  if(millis() - timer > POST_INITIALIZE_DURATION) {
     controller.schedule_event(e_c_post_init_time_passed);
   }
 }
@@ -135,7 +133,7 @@ void SetupServerState::entry_action() {
 }
 
 void SetupServerState::do_activity() {
-  if(controller._ap_server.initialize()) {
+  if(controller._ap_server.connect()) {
     controller.schedule_event(Event_enum::e_c_server_initialized);
   }
 }
@@ -164,6 +162,7 @@ ServerActiveState::ServerActiveState(Controller& context) : ConfigModeState(cont
 void ServerActiveState::entry_action() {
   DEBUG_PRINTLN("-- Entered state ServerActive");
   controller._mode_led.set_color(ModeLED::ModeColor::config);
+  controller._ap_server.start_server();
 }
 
 void ServerActiveState::do_activity() {
