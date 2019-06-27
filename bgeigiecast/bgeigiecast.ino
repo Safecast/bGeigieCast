@@ -46,6 +46,12 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
 HardwareSerial& bGeigieSerialConnection = Serial2;
 
+EspConfig config;
+ApiConnector api_conn(config);
+BluetoohConnector bt_conn;
+
+#if USE_SLEEP
+
 void controller_sleep(uint32_t millis_to_sleep) {
   esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_TIMER);
   esp_sleep_enable_timer_wakeup(millis_to_sleep * 1000);
@@ -67,11 +73,6 @@ void controller_sleep(uint32_t millis_to_sleep) {
   }
 }
 
-EspConfig config;
-ApiConnector api_conn(config);
-BluetoohConnector bt_conn;
-
-#if USE_SLEEP
 Controller controller(config, bGeigieSerialConnection, api_conn, bt_conn, &controller_sleep);
 #else
 Controller controller(config, bGeigieSerialConnection, api_conn, bt_conn);
