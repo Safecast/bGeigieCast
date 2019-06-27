@@ -13,9 +13,9 @@
 #define POST_INITIALIZE_DURATION 4000
 
 /** Hardware pins settings **/
-#define RGB_LED_PIN_R A18
+#define RGB_LED_PIN_R A5
 #define RGB_LED_PIN_G A4
-#define RGB_LED_PIN_B A5
+#define RGB_LED_PIN_B A18
 
 #define MODE_BUTTON_PIN 0
 

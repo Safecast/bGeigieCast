@@ -1,3 +1,0 @@
-(fp_lib_table
-  (lib (name ESP32-footprints-Lib)(type KiCad)(uri ${KISYSMOD}/ESP32-footprints-Lib.pretty)(options "")(descr ""))
-)

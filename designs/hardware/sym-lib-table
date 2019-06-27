@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name xbee-eagle-import)(type Legacy)(uri ${KIPRJMOD}/xbee-eagle-import.lib)(options "")(descr ""))
+  (lib (name xbee-rescue)(type Legacy)(uri ${KIPRJMOD}/xbee-rescue.lib)(options "")(descr ""))
+)
