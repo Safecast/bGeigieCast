@@ -30,10 +30,10 @@ void Controller::run() {
 }
 
 void Controller::initialize() {
+  _config.set_all();
   _mode_button.activate();
   _mode_button.set_observer(this);
   _reporter.set_observer(this);
-  _config.set_all();
 
   schedule_event(Event_enum::e_c_controller_initialized);
 }

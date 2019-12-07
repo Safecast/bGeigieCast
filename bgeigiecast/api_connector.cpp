@@ -67,8 +67,11 @@ bool ApiConnector::send_reading(Reading& reading) {
   HTTPClient http;
 
   char url[100];
-  sprintf(url, "%s%s", API_MEASUREMENTS_ENDPOINT,
-          _config.get_use_dev() ? "?test=true" : "");
+  sprintf(url,
+          "%s?api_key=%s&%s",
+          API_MEASUREMENTS_ENDPOINT,
+          _config.get_api_key(),
+          _config.get_use_dev() ? "test=true" : "");
 
   //Specify destination for HTTP request
   if(!http.begin(url)) {
