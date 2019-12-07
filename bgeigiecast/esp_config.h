@@ -2,41 +2,92 @@
 #define BGEIGIECAST_ESP_CONFIG_H
 
 #include <Preferences.h>
-#include "i_esp_config.h"
+
+#define CONFIG_VAL_MAX 32
 
 /**
  * Configurations for the ESP32, stored in the flash memory
  */
-class EspConfig : public IEspConfig {
+class EspConfig {
  public:
   EspConfig();
   virtual ~EspConfig() = default;
 
   /**
-   * Read and set all settings from memory
+   * Read all settings
    */
-  void set_all() override;
+  virtual void set_all();
+
+  /**
+   * Reset settings to default (defined in user_config)
+   */
+  void reset_defaults();
 
   // Getters and setters
-  void set_device_id(uint16_t device_id, bool force) override;
-  void set_ap_password(const char* ap_password, bool force) override;
-  void set_wifi_ssid(const char* wifi_ssid, bool force) override;
-  void set_wifi_password(const char* wifi_password, bool force) override;
-  void set_api_key(const char* api_key, bool force) override;
-  void set_use_dev(bool use_dev, bool force) override;
-  void set_dev_sped_up(bool sped_up, bool force) override;
-  void set_led_color_blind(bool led_color_blind, bool force) override;
-  void set_led_color_intensity(uint8_t led_color_intensity, bool force) override;
-  void set_saved_state(uint8_t init_fixed, bool force) override;
-  void set_use_home_location(bool use_home_location, bool force) override;
-  void set_home_longitude(double home_longitude, bool force) override;
-  void set_home_latitude(double home_latitude, bool force) override;
-  void set_last_longitude(double current_longitude, bool force) override;
-  void set_last_latitude(double current_latitude, bool force) override;
+  virtual uint16_t get_device_id() const final;
+  virtual const char* get_ap_password() const final;
+  virtual const char* get_wifi_ssid() const final;
+  virtual const char* get_wifi_password() const final;
+  virtual const char* get_api_key() const final;
+  virtual bool get_use_dev() const final;
+  virtual bool is_led_color_blind() const final;
+  virtual uint8_t get_led_color_intensity() const final;
+  virtual uint8_t get_saved_state() const final;
+
+  virtual bool get_use_home_location() const final;
+  virtual double get_home_longitude() const final;
+  virtual double get_home_latitude() const final;
+  virtual double get_last_longitude() const final;
+  virtual double get_last_latitude() const final;
+
+  virtual void set_device_id(uint16_t device_id, bool force);
+  virtual void set_ap_password(const char* ap_password, bool force);
+  virtual void set_wifi_ssid(const char* wifi_ssid, bool force);
+  virtual void set_wifi_password(const char* wifi_password, bool force);
+  virtual void set_api_key(const char* api_key, bool force);
+  virtual void set_use_dev(bool use_dev, bool force);
+  virtual void set_led_color_blind(bool led_color_blind, bool force);
+  virtual void set_led_color_intensity(uint8_t led_color_intensity, bool force);
+  virtual void set_saved_state(uint8_t saved_state, bool force);
+  virtual void set_use_home_location(bool use_home_location, bool force);
+  virtual void set_home_longitude(double home_longitude, bool force);
+  virtual void set_home_latitude(double home_latitude, bool force);
+  virtual void set_last_longitude(double last_longitude, bool force);
+  virtual void set_last_latitude(double last_latitude, bool force);
+
  protected:
-  bool clear() override;
+  virtual bool clear();
 
  private:
+  // Device
+  uint16_t _device_id;
+
+  // Access point config (for web _ap_server)
+  char _ap_password[CONFIG_VAL_MAX];
+
+  // Wifi config (to connect to the internet)
+  char _wifi_ssid[CONFIG_VAL_MAX];
+  char _wifi_password[CONFIG_VAL_MAX];
+
+  // API config (to connect to the API)
+  char _api_key[CONFIG_VAL_MAX];
+  bool _use_dev;
+
+  // RGB LED config
+  bool _led_color_blind;
+  uint8_t _led_color_intensity;
+
+  // Flag if fixed or mobile mode is started after init
+  uint8_t _saved_state;
+
+  // Home location configs
+  bool _use_home_location;
+  double _home_longitude;
+  double _home_latitude;
+
+  double _last_longitude;
+  double _last_latitude;
+
   Preferences _memory;
 
 };

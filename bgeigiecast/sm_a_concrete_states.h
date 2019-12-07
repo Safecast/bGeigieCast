@@ -4,9 +4,9 @@
 
 #include "sm_a_state.h"
 
-class ApiProcessReadingState : public ApiReporterState {
+class ApiProcessReadingState : public ApiReporterReadingState {
  public:
-  explicit ApiProcessReadingState(IApiConnector& context, Reading* reading);
+  explicit ApiProcessReadingState(IApiConnector& context, Reading& reading);
   virtual ~ApiProcessReadingState() = default;
 
   void entry_action() override;
@@ -15,9 +15,9 @@ class ApiProcessReadingState : public ApiReporterState {
   void handle_event(Event_enum event_id) override;
 };
 
-class ConnectWiFiState : public ApiReporterState {
+class ConnectWiFiState : public ApiReporterReadingState {
  public:
-  explicit ConnectWiFiState(IApiConnector& context, Reading* reading);
+  explicit ConnectWiFiState(IApiConnector& context, Reading& reading);
   virtual ~ConnectWiFiState() = default;
 
   void entry_action() override;
@@ -29,9 +29,9 @@ class ConnectWiFiState : public ApiReporterState {
   uint32_t _last_connect_try;
 };
 
-class PublishApiState : public ApiReporterState {
+class PublishApiState : public ApiReporterReadingState {
  public:
-  explicit PublishApiState(IApiConnector& context, Reading* reading);
+  explicit PublishApiState(IApiConnector& context, Reading& reading);
   virtual ~PublishApiState() = default;
 
   void entry_action() override;
@@ -40,9 +40,9 @@ class PublishApiState : public ApiReporterState {
   void handle_event(Event_enum event_id) override;
 };
 
-class ApiReportFailedState : public ApiReporterState {
+class ApiReportFailedState : public ApiReporterReadingState {
  public:
-  explicit ApiReportFailedState(IApiConnector& context, Reading* reading);
+  explicit ApiReportFailedState(IApiConnector& context, Reading& reading);
   virtual ~ApiReportFailedState() = default;
 
   void entry_action() override;
@@ -53,7 +53,7 @@ class ApiReportFailedState : public ApiReporterState {
 
 class PublishSavedApiState : public PublishApiState {
  public:
-  explicit PublishSavedApiState(IApiConnector& context, Reading* reading);
+  explicit PublishSavedApiState(IApiConnector& context, Reading& reading);
   virtual ~PublishSavedApiState() = default;
 
   void handle_event(Event_enum event_id) override;
@@ -61,7 +61,7 @@ class PublishSavedApiState : public PublishApiState {
 
 class ApiReportSavedFailedState : public ApiReportFailedState {
  public:
-  explicit ApiReportSavedFailedState(IApiConnector& context, Reading* reading);
+  explicit ApiReportSavedFailedState(IApiConnector& context, Reading& reading);
   virtual ~ApiReportSavedFailedState() = default;
 
   void handle_event(Event_enum event_id) override;

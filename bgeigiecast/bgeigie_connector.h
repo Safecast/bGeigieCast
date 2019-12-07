@@ -18,7 +18,7 @@ class BGeigieConnector {
    * @param out: output for the reading
    * @return: true if a reading was read
    */
-  bool get_reading(Reading** out);
+  bool get_reading(Reading& out);
 
  private:
   Stream& _serial_connection;

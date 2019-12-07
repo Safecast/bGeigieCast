@@ -6,17 +6,17 @@
 #define BGEIGIE_READING_SLACK 500
 #define READING_DELAY (BGEIGIE_MEASUREMENTS_SECONDS * 1000) - BGEIGIE_READING_SLACK
 
-Reporter::Reporter(IEspConfig& config,
+Reporter::Reporter(EspConfig& config,
                    Stream& bgeigie_connection,
                    IApiConnector& api_connector,
-                   IBluetoohConnector& bluetooth_connector,
+                   BluetoohConnector& bluetooth_connector,
                    ReporterObserver* observer) :
     _bgeigie_connector(bgeigie_connection),
     _config(config),
     _api_connector(api_connector),
     _bluetooth(bluetooth_connector),
     _observer(observer),
-    _last_reading(nullptr),
+    _last_reading(),
     _last_reading_moment(0),
     _report_bt(false),
     _report_api(false),
@@ -41,17 +41,14 @@ uint32_t Reporter::time_till_next_reading(uint32_t current) const {
 }
 
 void Reporter::get_new_reading() {
-  Reading* output;
-  if(_bgeigie_connector.get_reading(&output) && output) {
-    delete _last_reading;
-    _last_reading = output;
+  if(_bgeigie_connector.get_reading(_last_reading)) {
     _last_reading_moment = millis();
-    _last_reading->get_status() & k_reading_valid ? schedule_event(e_r_reading_received) : schedule_event(e_r_reading_invalid);
-    if(_last_reading->get_device_id() > 0) {
-      _config.set_device_id(_last_reading->get_device_id(), false);
+    _last_reading.get_status() & k_reading_valid ? schedule_event(e_r_reading_received) : schedule_event(e_r_reading_invalid);
+    if(_last_reading.get_device_id() > 0) {
+      _config.set_device_id(_last_reading.get_device_id(), false);
     }
-    _config.set_last_latitude(_last_reading->get_latitude(), false);
-    _config.set_last_longitude(_last_reading->get_longitude(), false);
+    _config.set_last_latitude(_last_reading.get_latitude(), false);
+    _config.set_last_longitude(_last_reading.get_longitude(), false);
   }
 }
 
@@ -60,8 +57,8 @@ bool Reporter::is_idle() const {
 }
 
 void Reporter::init_bluetooth_connector() {
-  if(_last_reading) {
-    _bluetooth.init(_last_reading->get_device_id());
+  if(_last_reading.get_device_id()) {
+    _bluetooth.init(_last_reading.get_device_id());
     schedule_event(e_r_bluetooth_initialized);
   }
 }
@@ -105,6 +102,6 @@ void Reporter::report_complete(ReporterStatus status) {
   schedule_event(e_r_reading_reported);
 }
 
-Reading* Reporter::get_last_reading() const {
+const Reading& Reporter::get_last_reading() const {
   return _last_reading;
 }

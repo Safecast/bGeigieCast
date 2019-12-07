@@ -2,7 +2,7 @@
 #define BGEIGIECAST_STATE_LED_H
 
 #include "rgb_led.h"
-#include "i_esp_config.h"
+#include "esp_config.h"
 
 /**
  * Controls the LED to visualize the current state
@@ -22,7 +22,7 @@ class ModeLED : private RGBLed{
   } ModeColor;
 
 
-  explicit ModeLED(IEspConfig& config);
+  explicit ModeLED(EspConfig& config);
   virtual ~ModeLED() = default;
 
   void set_color(ModeColor color);
@@ -37,7 +37,7 @@ class ModeLED : private RGBLed{
 
   uint8_t get_intensity() const override;
 
-  const IEspConfig& _config;
+  const EspConfig& _config;
   bool _blink_state;
   const ColorType _colorTypes[ModeColor::COUNT];
 };

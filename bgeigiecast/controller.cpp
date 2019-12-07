@@ -4,10 +4,10 @@
 
 #define BUTTON_LONG_PRESSED_MILLIS_TRESHOLD 4000
 
-Controller::Controller(IEspConfig& config,
+Controller::Controller(EspConfig& config,
                        Stream& bgeigie_connection,
                        IApiConnector& api_connector,
-                       IBluetoohConnector& bluetooth_connector,
+                       BluetoohConnector& bluetooth_connector,
                        sleep_fn_t sleep_fn) :
     Context(),
     ButtonObserver(),

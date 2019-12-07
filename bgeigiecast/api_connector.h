@@ -12,7 +12,7 @@
 class ApiConnector : public IApiConnector {
  public:
 
-  explicit ApiConnector(IEspConfig& config, ApiConnectionObserver* observer = nullptr);
+  explicit ApiConnector(EspConfig& config, ApiConnectionObserver* observer = nullptr);
   virtual ~ApiConnector() = default;
 
   /**
@@ -45,7 +45,7 @@ class ApiConnector : public IApiConnector {
    * @param reading: reading to send
    * @return: true if the API call was successful
    */
-  bool send_reading(Reading* reading) override;
+  bool send_reading(Reading& reading) override;
 };
 
 #endif //BGEIGIECAST_APICONNECTOR_H

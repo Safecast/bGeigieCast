@@ -28,6 +28,7 @@ class Reading {
   explicit Reading(const char* reading_str);
   virtual ~Reading() = default;
   Reading(const Reading& copy);
+  Reading& operator=(const char* reading_str);
   Reading& operator=(const Reading& other);
 
   /**

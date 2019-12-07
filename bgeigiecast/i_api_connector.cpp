@@ -5,9 +5,9 @@
 
 #define API_SEND(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT : API_SEND_FREQUENCY_SECONDS)
 #define API_SEND_DEV(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT_DEV : API_SEND_FREQUENCY_SECONDS_DEV)
-#define API_SEND_FREQUENCY(alert, dev, sped) (((dev && sped ? API_SEND_DEV(alert) : API_SEND(alert)) * 1000) - 2000)
+#define API_SEND_FREQUENCY(alert, dev) (((dev ? API_SEND_DEV(alert) : API_SEND(alert)) * 1000) - 2000)
 
-IApiConnector::IApiConnector(IEspConfig& config, ApiConnectionObserver* observer) :
+IApiConnector::IApiConnector(EspConfig& config, ApiConnectionObserver* observer) :
     _config(config),
     _saved_readings(),
     _last_send(0),
@@ -17,16 +17,16 @@ IApiConnector::IApiConnector(IEspConfig& config, ApiConnectionObserver* observer
 }
 
 bool IApiConnector::time_to_send() const {
-  return millis() - _last_send > API_SEND_FREQUENCY(_alert, _config.get_use_dev(), _config.get_dev_sped_up());
+  return millis() - _last_send > API_SEND_FREQUENCY(_alert, _config.get_use_dev());
 }
 
-void IApiConnector::init_reading_report(Reading* reading) {
+void IApiConnector::init_reading_report(Reading& reading) {
   set_state(new ApiProcessReadingState(*this, reading));
-  _alert = reading->get_cpm() > 100; // TODO: configurable value
+  _alert = reading.get_cpm() > 100; // TODO: configurable value
 }
 
-void IApiConnector::process_reading(Reading* reading) {
-  _merged_reading += *reading;
+void IApiConnector::process_reading(Reading& reading) {
+  _merged_reading += reading;
   if(time_to_send()) {
     _last_send = millis();
     if(_config.get_use_home_location()) {
@@ -44,14 +44,10 @@ void IApiConnector::process_reading(Reading* reading) {
   }
 }
 
-void IApiConnector::save_reading(Reading* reading) {
+void IApiConnector::save_reading(Reading& reading) {
   DEBUG_PRINTLN("Could not upload reading, trying again later");
-  if(reading) {
-    if(_saved_readings.get_count() == MAX_MISSED_READINGS) {
-      // Delete oldest reading, else mem leak
-      delete _saved_readings.get();
-    }
-    _saved_readings.add(new Reading(*reading));
+  if(reading.valid_reading()) {
+    _saved_readings.add(reading);
   }
   schedule_event(e_a_reading_saved);
 }

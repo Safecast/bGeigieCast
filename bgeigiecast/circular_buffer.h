@@ -7,9 +7,8 @@
  * Simple circular buffer
  * @tparam T: Type of the buffer
  * @tparam max: max items in buffer
- * @tparam null_value: return value if you get but no items are in the buffer
  */
-template<typename T, uint16_t max, T null_value = nullptr>
+template<typename T, uint16_t max>
 class CircularBuffer {
  public:
   CircularBuffer() : buffer(), count(0), current(0) {};
@@ -17,13 +16,10 @@ class CircularBuffer {
 
   /**
    * Get the next value from the buffer, should check if buffer is not empty before calling this
-   * @return: next value T or null_value if the buffer is empty
+   * @return: next value T
    */
-  T get() {
-    if(empty()) {
-      return null_value;
-    }
-    T val = buffer[current];
+  T& get() {
+    T& val = buffer[current];
     --count;
     ++current;
     current %= max;

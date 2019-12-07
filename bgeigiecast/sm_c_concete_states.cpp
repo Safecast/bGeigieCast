@@ -48,7 +48,7 @@ void InitReadingState::entry_action() {
 void InitReadingState::do_activity() {
   controller._mode_led.blink(ModeLED::ModeColor::init, BLINK_FREQUENCY, BLINK_DURATION_PERCENTAGE);
   controller._reporter.run();
-  if(controller._reporter.get_last_reading()) {
+  if(controller._reporter.get_last_reading().get_device_id()) {
     controller.schedule_event(e_c_reading_initialized);
   }
 }

@@ -10,7 +10,6 @@
 #define FORM_NAME_WIFI_PASS "c_wp"
 #define FORM_NAME_API_KEY "c_ak"
 #define FORM_NAME_USE_DEV "c_ud"
-#define FORM_NAME_DEV_FREQ "c_df"
 #define FORM_NAME_AP_LOGIN "d_ap"
 #define FORM_NAME_LED_INTENSITY "d_li"
 #define FORM_NAME_LED_COLOR "d_lc"
@@ -63,8 +62,7 @@ class HttpPages {
    * @param wifi_ssid 
    * @param wifi_password 
    * @param api_key 
-   * @param use_dev 
-   * @param sped_up 
+   * @param use_dev
    * @return complete page rendered
    */
   static const char* get_config_connection_page(
@@ -74,8 +72,7 @@ class HttpPages {
       const char* wifi_ssid,
       const char* wifi_password,
       const char* api_key,
-      bool use_dev,
-      bool sped_up
+      bool use_dev
   );
 
   /**

@@ -5,7 +5,7 @@
 
 #include "circular_buffer.h"
 #include "user_config.h"
-#include "i_esp_config.h"
+#include "esp_config.h"
 #include "reading.h"
 #include "sm_context.h"
 
@@ -23,7 +23,7 @@ class IApiConnector : public Context {
     k_report_success,
   } ReportApiStatus;
 
-  explicit IApiConnector(IEspConfig& config, ApiConnectionObserver* observer = nullptr);
+  explicit IApiConnector(EspConfig& config, ApiConnectionObserver* observer = nullptr);
   virtual ~IApiConnector() = default;
 
   /**
@@ -54,7 +54,7 @@ class IApiConnector : public Context {
    * Initialize the process of a new reading.
    * @param reading: new reading to process
    */
-  virtual void init_reading_report(Reading* reading) final;
+  virtual void init_reading_report(Reading& reading) final;
 
   /**
    * Check if enough time has passed to send the latest reading to api
@@ -74,23 +74,23 @@ class IApiConnector : public Context {
    * Process a new reading. will merge with existing readings and if its time, it will be posted to the API
    * @param reading: new reading to process
    */
-  virtual void process_reading(Reading* reading) final;
+  virtual void process_reading(Reading& reading) final;
 
   /**
    * Send a reading to the API
    * @param reading: reading to send
    * @return: true if the API call was successful
    */
-  virtual bool send_reading(Reading* reading) = 0;
+  virtual bool send_reading(Reading& reading) = 0;
 
   /**
    * When a reading cannot be send to the API, we save it to send later..
    * @param reading: reading to save
    */
-  virtual void save_reading(Reading* reading) final;
+  virtual void save_reading(Reading& reading) final;
 
-  IEspConfig& _config;
-  CircularBuffer<Reading*, MAX_MISSED_READINGS> _saved_readings;
+  EspConfig& _config;
+  CircularBuffer<Reading, MAX_MISSED_READINGS> _saved_readings;
   uint32_t _last_send;
   Reading _merged_reading;
 

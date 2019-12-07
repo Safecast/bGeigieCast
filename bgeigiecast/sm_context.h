@@ -50,7 +50,7 @@ class Context {
  private:
 
   State* _current_state;
-  CircularBuffer<Event_enum, MAX_EVENTS, Event_enum::e_undefined> _event_queue;
+  CircularBuffer<Event_enum, MAX_EVENTS> _event_queue;
 };
 
 #endif //BGEIGIECAST_CONTEXT_H

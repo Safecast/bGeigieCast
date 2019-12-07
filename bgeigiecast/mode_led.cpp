@@ -6,7 +6,7 @@
 // Set this to true if we use anode LED
 #define RGB_STATE_LED_REVERSED true
 
-ModeLED::ModeLED(IEspConfig& config) :
+ModeLED::ModeLED(EspConfig& config) :
     RGBLed(RGB_LED_PIN_R, RGB_LED_PIN_G, RGB_LED_PIN_B, RGB_STATE_LED_REVERSED),
     _config(config),
     _blink_state(false),

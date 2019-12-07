@@ -5,7 +5,7 @@
 #include "bluetooth_connector.h"
 #include "debugger.h"
 
-BluetoohConnector::BluetoohConnector() : IBluetoohConnector() {
+BluetoohConnector::BluetoohConnector() : initialized(false), pDataRXCharacteristic(nullptr) {
 }
 
 bool BluetoohConnector::init(uint16_t device_id) {
@@ -158,12 +158,12 @@ void BluetoohConnector::create_ble_data_service(BLEServer* pServer) {
   pDataService->start();
 }
 
-void BluetoohConnector::send_reading(Reading* reading) {
+void BluetoohConnector::send_reading(Reading& reading) {
   if(!initialized) {
-    init(reading->get_device_id());
+    init(reading.get_device_id());
   }
   DEBUG_PRINTLN("Sending reading over Bluetooth");
-  const char* reading_str = reading->get_reading_str();
+  const char* reading_str = reading.get_reading_str();
   size_t size = strlen(reading_str);
 
   int segment = 0;

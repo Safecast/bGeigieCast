@@ -12,7 +12,7 @@
  */
 class ConfigWebServer {
  public:
-  explicit ConfigWebServer(IEspConfig& config);
+  explicit ConfigWebServer(EspConfig& config);
   virtual ~ConfigWebServer();
 
   /**
@@ -65,7 +65,7 @@ class ConfigWebServer {
   void handle_update_uploading();
 
   WebServer _server;
-  IEspConfig& _config;
+  EspConfig& _config;
 
   bool _running;
 };

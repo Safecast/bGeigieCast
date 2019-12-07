@@ -14,7 +14,6 @@ const char* key_wifi_ssid = "wifi_ssid";
 const char* key_wifi_password = "wifi_password";
 const char* key_api_key = "api_key";
 const char* key_use_dev = "use_dev";
-const char* key_sped_up = "sped_up";
 const char* key_led_color_blind = "led_color_blind";
 const char* key_led_color_intensity = "led_intensity";
 const char* key_saved_state = "saved_state";
@@ -24,8 +23,97 @@ const char* key_last_longtitude = "last_longtitude";
 const char* key_last_latitude = "last_latitude";
 
 EspConfig::EspConfig() :
-    IEspConfig::IEspConfig(),
-    _memory() {
+    _device_id(0),
+    _ap_password(""),
+    _wifi_ssid(""),
+    _wifi_password(""),
+    _api_key(""),
+    _use_dev(D_USE_DEV_SERVER),
+    _led_color_blind(D_LED_COLOR_BLIND),
+    _led_color_intensity(D_LED_COLOR_INTENSITY),
+    _saved_state(D_SAVED_STATE),
+    _use_home_location(false),
+    _home_longitude(0),
+    _home_latitude(0),
+    _last_longitude(0),
+    _last_latitude(0),
+    _memory()
+{
+}
+
+void EspConfig::reset_defaults() {
+  if(clear()) {
+    set_device_id(D_DEVICE_ID, true);
+    set_ap_password(D_ACCESS_POINT_PASSWORD, true);
+    set_wifi_ssid(D_WIFI_SSID, true);
+    set_wifi_password(D_WIFI_PASSWORD, true);
+    set_api_key(D_APIKEY, true);
+    set_use_dev(D_USE_DEV_SERVER, true);
+    set_led_color_blind(D_LED_COLOR_BLIND, true);
+    set_led_color_intensity(D_LED_COLOR_INTENSITY, true);
+    set_saved_state(D_SAVED_STATE, true);
+    set_use_home_location(false, true);
+    set_home_longitude(0, true);
+    set_home_latitude(0, true);
+    set_last_longitude(0, true);
+    set_last_latitude(0, true);
+  }
+}
+
+uint16_t EspConfig::get_device_id() const {
+  return _device_id;
+}
+
+const char* EspConfig::get_ap_password() const {
+  return _ap_password;
+}
+
+const char* EspConfig::get_wifi_ssid() const {
+  return _wifi_ssid;
+}
+
+const char* EspConfig::get_wifi_password() const {
+  return _wifi_password;
+}
+
+const char* EspConfig::get_api_key() const {
+  return _api_key;
+}
+
+uint8_t EspConfig::get_saved_state() const {
+  return _saved_state;
+}
+
+bool EspConfig::is_led_color_blind() const {
+  return _led_color_blind;
+}
+
+uint8_t EspConfig::get_led_color_intensity() const {
+  return _led_color_intensity;
+}
+
+bool EspConfig::get_use_dev() const {
+  return _use_dev;
+}
+
+bool EspConfig::get_use_home_location() const {
+  return _use_home_location;
+}
+
+double EspConfig::get_home_longitude() const {
+  return _home_longitude;
+}
+
+double EspConfig::get_home_latitude() const {
+  return _home_latitude;
+}
+
+double EspConfig::get_last_longitude() const {
+  return _last_longitude;
+}
+
+double EspConfig::get_last_latitude() const {
+  return _last_latitude;
 }
 
 void EspConfig::set_all() {
@@ -44,7 +132,6 @@ void EspConfig::set_all() {
     strcpy(_api_key, D_APIKEY);
   }
   _use_dev = _memory.getBool(key_use_dev, D_USE_DEV_SERVER);
-  _dev_sped_up = _memory.getBool(key_sped_up, false);
   _led_color_blind = _memory.getBool(key_led_color_blind, D_LED_COLOR_BLIND);
   _led_color_intensity = _memory.getUChar(key_led_color_intensity, D_LED_COLOR_INTENSITY);
   _saved_state = _memory.getUChar(key_saved_state, D_SAVED_STATE);
@@ -133,18 +220,6 @@ void EspConfig::set_use_dev(bool use_dev, bool force) {
       _memory.end();
     } else {
       DEBUG_PRINTLN("unable to save new value for use_dev");
-    }
-  }
-}
-
-void EspConfig::set_dev_sped_up(bool sped_up, bool force) {
-  if(force || (sped_up != _dev_sped_up)) {
-    if(_memory.begin(memory_name)) {
-      _dev_sped_up = sped_up;
-      _memory.putBool(key_sped_up, sped_up);
-      _memory.end();
-    } else {
-      DEBUG_PRINTLN("unable to save new value for sped_up");
     }
   }
 }

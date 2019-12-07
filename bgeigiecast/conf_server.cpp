@@ -12,7 +12,7 @@ T clamp(T2 val, T min, T max) {
   return _val < min ? min : _val > max ? max : _val;
 }
 
-ConfigWebServer::ConfigWebServer(IEspConfig& config) : _server(SERVER_WIFI_PORT), _config(config), _running(false) {
+ConfigWebServer::ConfigWebServer(EspConfig& config) : _server(SERVER_WIFI_PORT), _config(config), _running(false) {
 }
 
 ConfigWebServer::~ConfigWebServer() {
@@ -127,8 +127,7 @@ void ConfigWebServer::start_server() {
         _config.get_wifi_ssid(),
         _config.get_wifi_password(),
         _config.get_api_key(),
-        _config.get_use_dev(),
-        _config.get_dev_sped_up()
+        _config.get_use_dev()
     ));
   });
 
@@ -213,9 +212,6 @@ void ConfigWebServer::handle_save() {
   }
   if(_server.hasArg(FORM_NAME_USE_DEV)) {
     _config.set_use_dev(_server.arg(FORM_NAME_USE_DEV) == "1", false);
-  }
-  if(_server.hasArg(FORM_NAME_DEV_FREQ)) {
-    _config.set_dev_sped_up(_server.arg(FORM_NAME_DEV_FREQ) == "1", false);
   }
   if(_server.hasArg(FORM_NAME_LED_INTENSITY)) {
     _config.set_led_color_intensity(clamp<uint8_t>(_server.arg(FORM_NAME_LED_INTENSITY).toInt(), 5, 100), false);

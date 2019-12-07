@@ -2,13 +2,13 @@
 #define BGEIGIE_POINTCAST_TEST_CONFIG_H
 
 #include <string.h>
-#include <i_esp_config.h>
+#include <esp_config.h>
 #include <user_config.h>
 
 /**
  * Test class to inject in the test controller
  */
-class TestEspConfig : public IEspConfig {
+class TestEspConfig : public EspConfig {
  public:
   TestEspConfig() = default;
   virtual ~TestEspConfig() = default;

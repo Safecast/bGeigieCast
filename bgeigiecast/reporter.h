@@ -3,7 +3,7 @@
 
 #include <Stream.h>
 
-#include "i_bluetooth_connector.h"
+#include "bluetooth_connector.h"
 #include "i_api_connector.h"
 #include "bgeigie_connector.h"
 #include "sm_context.h"
@@ -33,7 +33,7 @@ class Reporter : public Context, private ApiConnectionObserver {
    * @param bluetooth_connector : Bluetooth connector
    * @param observer : Some instance to report to, default null
    */
-  Reporter(IEspConfig& config, Stream& bgeigie_connection, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector, ReporterObserver* observer = nullptr);
+  Reporter(EspConfig& config, Stream& bgeigie_connection, IApiConnector& api_connector, BluetoohConnector& bluetooth_connector, ReporterObserver* observer = nullptr);
   virtual ~Reporter() = default;
 
   /**
@@ -54,7 +54,7 @@ class Reporter : public Context, private ApiConnectionObserver {
 
   void set_observer(ReporterObserver* _observer);
 
-  Reading* get_last_reading() const;
+  const Reading& get_last_reading() const;
 
  private:
   void api_reported(IApiConnector::ReportApiStatus status) override;
@@ -88,13 +88,13 @@ class Reporter : public Context, private ApiConnectionObserver {
 
 
   BGeigieConnector _bgeigie_connector;
-  IEspConfig& _config;
+  EspConfig& _config;
   IApiConnector& _api_connector;
-  IBluetoohConnector& _bluetooth;
+  BluetoohConnector& _bluetooth;
 
   ReporterObserver* _observer;
 
-  Reading* _last_reading;
+  Reading _last_reading;
   uint32_t _last_reading_moment;
 
   bool _report_bt;

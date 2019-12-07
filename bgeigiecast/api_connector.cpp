@@ -4,7 +4,7 @@
 
 #define API_SEND_FREQUENCY (API_SEND_FREQUENCY_MINUTES * 60 * 1000)
 
-ApiConnector::ApiConnector(IEspConfig& config, ApiConnectionObserver* observer) : IApiConnector(config, observer) {
+ApiConnector::ApiConnector(EspConfig& config, ApiConnectionObserver* observer) : IApiConnector(config, observer) {
 }
 
 bool ApiConnector::start_connect(bool initial) {
@@ -49,9 +49,9 @@ bool ApiConnector::is_connected() {
   return WiFi.status() == WL_CONNECTED;
 }
 
-bool ApiConnector::send_reading(Reading* reading) {
+bool ApiConnector::send_reading(Reading& reading) {
   char json_str[200];
-  if(!reading->as_json(json_str)) {
+  if(!reading.as_json(json_str)) {
     // This whole reading is invalid
     DEBUG_PRINTLN("Unable to send reading, its not valid at all!");
     schedule_event(e_a_api_post_failed);
@@ -67,11 +67,8 @@ bool ApiConnector::send_reading(Reading* reading) {
   HTTPClient http;
 
   char url[100];
-  sprintf(url,
-          "%s?api_key=%s&%s",
-          API_MEASUREMENTS_ENDPOINT,
-          _config.get_api_key(),
-          _config.get_use_dev() ? "test=true" : "");
+  sprintf(url, "%s%s", API_MEASUREMENTS_ENDPOINT,
+          _config.get_use_dev() ? "?test=true" : "");
 
   //Specify destination for HTTP request
   if(!http.begin(url)) {

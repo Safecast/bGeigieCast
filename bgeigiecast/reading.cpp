@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <HardwareSerial.h>
 
-#include "dms_dd.h"
-
 #include "reading.h"
 #include "debugger.h"
 
@@ -11,6 +9,14 @@
 #define VALID_BGEIGIE_ID(id) (id >= 1000 && id < 10000)
 
 #define LONG_LAT_PRECISION 0.001
+
+
+double dm_to_dd(double dm) {
+  double degree = static_cast<int>(dm / 100);
+  double minutes = dm - (degree * 100);
+  return degree + minutes/60;
+}
+
 
 Reading::Reading() :
     _reading_str(""),
@@ -62,6 +68,13 @@ Reading::Reading(const Reading& copy) :
     _precision(copy._precision) {
   strcpy(_reading_str, copy._reading_str);
   strcpy(_iso_timestr, copy._iso_timestr);
+}
+
+Reading& Reading::operator=(const char* reading_str) {
+  reset();
+  strcpy(_reading_str, reading_str);
+  parse_values();
+  return *this;
 }
 
 Reading& Reading::operator=(const Reading& other) {
@@ -230,7 +243,7 @@ void Reading::parse_values() {
 }
 
 bool Reading::valid_reading() const {
-  return _status & k_reading_sensor_ok && _status & k_reading_gps_ok;
+  return _average_of > 0 && _status & k_reading_sensor_ok && _status & k_reading_gps_ok;
 }
 
 const char* Reading::get_reading_str() const {
@@ -272,3 +285,4 @@ int Reading::get_sat_count() const {
 float Reading::get_precision() const {
   return _precision;
 }
+

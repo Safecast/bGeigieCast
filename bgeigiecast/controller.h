@@ -6,7 +6,7 @@
 #include "conf_server.h"
 #include "bgeigie_connector.h"
 #include "i_api_connector.h"
-#include "i_bluetooth_connector.h"
+#include "bluetooth_connector.h"
 #include "mode_led.h"
 #include "reporter.h"
 
@@ -17,7 +17,7 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
  public:
   typedef void (*sleep_fn_t)(uint32_t millis_to_sleep);
 
-  Controller(IEspConfig& config, Stream& bgeigie_connection, IApiConnector& api_connector, IBluetoohConnector& bluetooth_connector, sleep_fn_t sleep_fn = nullptr);
+  Controller(EspConfig& config, Stream& bgeigie_connection, IApiConnector& api_connector, BluetoohConnector& bluetooth_connector, sleep_fn_t sleep_fn = nullptr);
   virtual ~Controller() = default;
 
   /**
@@ -71,7 +71,7 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
   void reading_reported(Reporter::ReporterStatus status) override;
 
  private:
-  IEspConfig& _config;
+  EspConfig& _config;
   Reporter _reporter;
   ConfigWebServer _ap_server;
   Button _mode_button;

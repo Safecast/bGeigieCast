@@ -2,7 +2,7 @@
 
 // region ApiProcessReadingState
 
-ApiProcessReadingState::ApiProcessReadingState(IApiConnector& context, Reading* reading) : ApiReporterState(context, reading) {}
+ApiProcessReadingState::ApiProcessReadingState(IApiConnector& context, Reading& reading) : ApiReporterReadingState(context, reading) {}
 
 void ApiProcessReadingState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
@@ -19,7 +19,7 @@ void ApiProcessReadingState::exit_action() {}
 void ApiProcessReadingState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_a_report_reading:
-      api_connector.set_state(new ConnectWiFiState(api_connector, &api_connector._merged_reading));
+      api_connector.set_state(new ConnectWiFiState(api_connector, api_connector._merged_reading));
       break;
     case e_a_not_reporting:
       api_connector.set_state(new ApiReportDoneState(api_connector, IApiConnector::k_report_skipped));
@@ -38,7 +38,7 @@ void ApiProcessReadingState::handle_event(Event_enum event_id) {
 #define RETRY_CONNECTION 1000
 #define CONNECTION_TIMEOUT 3000
 
-ConnectWiFiState::ConnectWiFiState(IApiConnector& context, Reading* reading) : ApiReporterState(context, reading), _start_time(0), _last_connect_try(0) {}
+ConnectWiFiState::ConnectWiFiState(IApiConnector& context, Reading& reading) : ApiReporterReadingState(context, reading), _start_time(0), _last_connect_try(0) {}
 
 void ConnectWiFiState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
@@ -80,7 +80,7 @@ void ConnectWiFiState::handle_event(Event_enum event_id) {
 
 // region PublishApiState
 
-PublishApiState::PublishApiState(IApiConnector& context, Reading* reading) : ApiReporterState(context, reading) {}
+PublishApiState::PublishApiState(IApiConnector& context, Reading& reading) : ApiReporterReadingState(context, reading) {}
 
 void PublishApiState::entry_action() {}
 
@@ -97,7 +97,7 @@ void PublishApiState::handle_event(Event_enum event_id) {
       break;
     case e_a_reading_posted:
       if(api_connector._saved_readings.get_count() > 0) {
-        Reading* next_saved = api_connector._saved_readings.get();
+        Reading& next_saved = api_connector._saved_readings.get();
         api_connector.set_state(new PublishSavedApiState(api_connector, next_saved));
       } else {
         api_connector.set_state(new ApiReportDoneState(api_connector, IApiConnector::k_report_success));
@@ -113,7 +113,7 @@ void PublishApiState::handle_event(Event_enum event_id) {
 
 // region ApiReportFailedState
 
-ApiReportFailedState::ApiReportFailedState(IApiConnector& context, Reading* reading) : ApiReporterState(context, reading) {}
+ApiReportFailedState::ApiReportFailedState(IApiConnector& context, Reading& reading) : ApiReporterReadingState(context, reading) {}
 
 void ApiReportFailedState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
@@ -142,7 +142,7 @@ void ApiReportFailedState::handle_event(Event_enum event_id) {
 
 // region PublishSavedApiState
 
-PublishSavedApiState::PublishSavedApiState(IApiConnector& context, Reading* reading) : PublishApiState(context, reading) {}
+PublishSavedApiState::PublishSavedApiState(IApiConnector& context, Reading& reading) : PublishApiState(context, reading) {}
 
 void PublishSavedApiState::handle_event(Event_enum event_id) {
   switch(event_id) {
@@ -151,7 +151,6 @@ void PublishSavedApiState::handle_event(Event_enum event_id) {
       break;
     case e_a_reading_posted:
       PublishApiState::handle_event(event_id);
-      delete reading;
       break;
     default:
       PublishApiState::handle_event(event_id);
@@ -159,13 +158,12 @@ void PublishSavedApiState::handle_event(Event_enum event_id) {
   }
 }
 
-ApiReportSavedFailedState::ApiReportSavedFailedState(IApiConnector& context, Reading* reading) : ApiReportFailedState(context, reading) {}
+ApiReportSavedFailedState::ApiReportSavedFailedState(IApiConnector& context, Reading& reading) : ApiReportFailedState(context, reading) {}
 
 void ApiReportSavedFailedState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_a_reading_saved:
       ApiReportFailedState::handle_event(event_id);
-      delete reading;
       break;
     default:
       ApiReportFailedState::handle_event(event_id);
@@ -178,7 +176,7 @@ void ApiReportSavedFailedState::handle_event(Event_enum event_id) {
 // region ApiReportDoneState
 
 ApiReportDoneState::ApiReportDoneState(IApiConnector& context, IApiConnector::ReportApiStatus status)
-    : ApiReporterState(context, nullptr), status(status) {}
+    : ApiReporterState(context), status(status) {}
 
 void ApiReportDoneState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS

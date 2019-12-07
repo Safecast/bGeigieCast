@@ -241,8 +241,7 @@ const char* HttpPages::get_config_connection_page(
     const char* wifi_ssid,
     const char* wifi_password,
     const char* api_key,
-    bool use_dev,
-    bool sped_up
+    bool use_dev
 ) {
   return render_full_page(
       device_id,
@@ -280,16 +279,6 @@ const char* HttpPages::get_config_connection_page(
       "</label>"
       "<span class='pure-form-message'>Use development for testing your device</span>"
 
-      // Dev frequency
-      "<label>Send frequency</label>"
-      "<label for='" FORM_NAME_DEV_FREQ "0' class='pure-radio'>"
-      "<input id='" FORM_NAME_DEV_FREQ "0' type='radio' name='" FORM_NAME_DEV_FREQ "' value='0' %s>5 minutes"
-      "</label>"
-      "<label for='" FORM_NAME_DEV_FREQ "1' class='pure-radio'>"
-      "<input id='" FORM_NAME_DEV_FREQ "1' type='radio' name='" FORM_NAME_DEV_FREQ "' value='1' %s>30 seconds"
-      "</label>"
-      "<span class='pure-form-message'>Only works when publishing to development</span>"
-
       "<button type='submit' class='pure-button pure-button-primary'>Save</button>"
       "</fieldset>"
       "</form>"
@@ -300,8 +289,6 @@ const char* HttpPages::get_config_connection_page(
       api_key,
       use_dev ? "" : "checked",
       use_dev ? "checked" : "",
-      sped_up ? "" : "checked",
-      sped_up ? "checked" : "",
       display_success ? success_message : ""
   );
 }
