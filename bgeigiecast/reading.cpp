@@ -71,7 +71,7 @@ Reading::Reading(const Reading& copy) :
 }
 
 Reading& Reading::operator=(const char* reading_str) {
-  reset();
+  _average_of = 1;
   strcpy(_reading_str, reading_str);
   parse_values();
   return *this;
@@ -97,7 +97,7 @@ Reading& Reading::operator=(const Reading& other) {
 }
 
 Reading& Reading::operator+=(const Reading& o) {
-  if(!(o._status & k_reading_valid)) {
+  if(!(o._status & k_reading_complete)) {
     // Do nothing with the other, not valid
     return *this;
   }
@@ -112,7 +112,7 @@ Reading& Reading::operator+=(const Reading& o) {
   _total_count = o._total_count;
 
   // Maybe do something smarter with the validity...?
-  _status |= o._status & k_reading_valid;
+  _status |= o._status & k_reading_complete;
 
   uint16_t o_cpm = o._cpm, o_cpb = o._cpb;
 
@@ -129,25 +129,13 @@ Reading& Reading::operator+=(const Reading& o) {
   _cpm = ((_cpm * _average_of) + (o_cpm * o._average_of)) / (_average_of + o._average_of);
   _cpb = ((_cpb * _average_of) + (o_cpb * o._average_of)) / (_average_of + o._average_of);
 
-  double o_lat = o._latitude, o_long = o._longitude, o_alt = o._altitude;
-
-  if(!(_status & k_reading_gps_ok) && o._status & k_reading_gps_ok) {
+  // Use latest gps location
+  if(o._status & k_reading_gps_ok) {
     _status |= k_reading_gps_ok;
-    _latitude = o_lat;
-    _longitude = o_long;
-    _altitude = o_alt;
-  } else if(_status & k_reading_gps_ok && !(o._status & k_reading_gps_ok)) {
-    o_lat = _latitude;
-    o_long = _longitude;
-    o_alt = _altitude;
+    _latitude = o._latitude;
+    _longitude = o._longitude;
+    _altitude = o._altitude;
   }
-
-  // Location data
-  _latitude = ((_latitude * _average_of) + (o_lat * o._average_of)) / (_average_of + o._average_of);
-  _longitude = ((_longitude * _average_of) + (o_long * o._average_of)) / (_average_of + o._average_of);
-  _altitude = ((_altitude * _average_of) + (o_alt * o._average_of)) / (_average_of + o._average_of);
-  _sat_count = ((_sat_count * _average_of) + (o._sat_count * o._average_of)) / (_average_of + o._average_of);
-  _precision = ((_precision * _average_of) + (o._precision * o._average_of)) / (_average_of + o._average_of);
 
   // Update count of readings merged with this
   _average_of += o._average_of;
@@ -221,7 +209,7 @@ void Reading::parse_values() {
   _status |= k_reading_parsed;
 
   if(parse_result == EXPECTED_PARSE_RESULT_COUNT && VALID_BGEIGIE_ID(_device_id)) { // 15 values to be parsed
-    _status |= k_reading_valid;
+    _status |= k_reading_complete;
     if(sensor_status == 'A') {
       _status |= k_reading_sensor_ok;
     }
@@ -237,7 +225,7 @@ void Reading::parse_values() {
 
     // TODO Validate checksum?
     if(checksum > 0) {
-      _status |= k_reading_checksum_ok;
+      _status |= k_reading_valid;
     }
   }
 }
@@ -249,7 +237,7 @@ bool Reading::valid_reading() const {
 const char* Reading::get_reading_str() const {
   return _reading_str;
 }
-int8_t Reading::get_status() const {
+uint8_t Reading::get_status() const {
   return _status;
 }
 uint16_t Reading::get_device_id() const {

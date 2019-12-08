@@ -94,7 +94,7 @@ class Reporter : public Context, private ApiConnectionObserver {
 
   ReporterObserver* _observer;
 
-  Reading _last_reading;
+  Reading _reading;
   uint32_t _last_reading_moment;
 
   bool _report_bt;

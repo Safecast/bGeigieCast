@@ -36,7 +36,7 @@ class RGBLed {
   void set_channel(uint8_t channel, uint8_t value);
 
   bool _reversed;
-  uint8_t _intensity;
+  uint8_t config_intensity;
 };
 
 #endif //BGEIGIECAST_ESP_LED_H

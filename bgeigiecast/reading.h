@@ -5,11 +5,11 @@
 
 #define READING_STR_MAX 100
 
-constexpr int8_t k_reading_parsed = 0x1 << 0;
-constexpr int8_t k_reading_valid = 0x1 << 1;
-constexpr int8_t k_reading_sensor_ok = 0x1 << 2;
-constexpr int8_t k_reading_gps_ok = 0x1 << 3;
-constexpr int8_t k_reading_checksum_ok = 0x1 << 4;
+constexpr uint8_t k_reading_parsed = 0x1u << 0u;
+constexpr uint8_t k_reading_complete = 0x1u << 1u;
+constexpr uint8_t k_reading_sensor_ok = 0x1u << 2u;
+constexpr uint8_t k_reading_gps_ok = 0x1u << 3u;
+constexpr uint8_t k_reading_valid = 0x1u << 4u;
 
 /**
  * Container for a reading from the bGeigie, with some extra functions
@@ -64,7 +64,7 @@ class Reading {
   void apply_home_location(double home_lat, double home_long);
 
   const char* get_reading_str() const;
-  int8_t get_status() const;
+  uint8_t get_status() const;
   uint16_t get_device_id() const;
   uint32_t get_fixed_device_id() const;
   const char* get_iso_timestr() const;
@@ -84,7 +84,7 @@ class Reading {
   void parse_values();
 
   char _reading_str[READING_STR_MAX];
-  int8_t _status;
+  uint8_t _status;
   uint16_t _average_of;
 
   // Reading content

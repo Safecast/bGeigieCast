@@ -15,8 +15,7 @@ Reporter::Reporter(EspConfig& config,
     _config(config),
     _api_connector(api_connector),
     _bluetooth(bluetooth_connector),
-    _observer(observer),
-    _last_reading(),
+    _observer(observer), _reading(),
     _last_reading_moment(0),
     _report_bt(false),
     _report_api(false),
@@ -41,14 +40,15 @@ uint32_t Reporter::time_till_next_reading(uint32_t current) const {
 }
 
 void Reporter::get_new_reading() {
-  if(_bgeigie_connector.get_reading(_last_reading)) {
+  if(_bgeigie_connector.get_reading(_reading)) {
     _last_reading_moment = millis();
-    _last_reading.get_status() & k_reading_valid ? schedule_event(e_r_reading_received) : schedule_event(e_r_reading_invalid);
-    if(_last_reading.get_device_id() > 0) {
-      _config.set_device_id(_last_reading.get_device_id(), false);
+    _reading.get_status() & k_reading_complete
+        ? schedule_event(e_r_reading_received) : schedule_event(e_r_reading_invalid);
+    if(_reading.get_device_id() > 0) {
+      _config.set_device_id(_reading.get_device_id(), false);
     }
-    _config.set_last_latitude(_last_reading.get_latitude(), false);
-    _config.set_last_longitude(_last_reading.get_longitude(), false);
+    _config.set_last_latitude(_reading.get_latitude(), false);
+    _config.set_last_longitude(_reading.get_longitude(), false);
   }
 }
 
@@ -57,19 +57,19 @@ bool Reporter::is_idle() const {
 }
 
 void Reporter::init_bluetooth_connector() {
-  if(_last_reading.get_device_id()) {
-    _bluetooth.init(_last_reading.get_device_id());
+  if(_reading.get_status() & k_reading_complete) {
+    _bluetooth.init(_reading.get_device_id());
     schedule_event(e_r_bluetooth_initialized);
   }
 }
 
 void Reporter::run_bluetooth_connector() {
-  _bluetooth.send_reading(_last_reading);
+  _bluetooth.send_reading(_reading);
   schedule_event(e_r_reading_reported_bt);
 }
 
 void Reporter::init_api_connector() {
-  _api_connector.init_reading_report(_last_reading);
+  _api_connector.init_reading_report(_reading);
   schedule_event(e_r_api_connector_initialized);
 }
 
@@ -103,5 +103,5 @@ void Reporter::report_complete(ReporterStatus status) {
 }
 
 const Reading& Reporter::get_last_reading() const {
-  return _last_reading;
+  return _reading;
 }
