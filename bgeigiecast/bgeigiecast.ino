@@ -48,7 +48,7 @@ HardwareSerial& bGeigieSerialConnection = Serial2;
 
 void controller_sleep(uint32_t millis_to_sleep) {
   esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_TIMER);
-  esp_sleep_enable_timer_wakeup(millis_to_sleep * 1000);
+  esp_sleep_enable_timer_wakeup(millis_to_sleep*1000);
 
   DEBUG_PRINTLN("-----\nEntering sleep");
   DEBUG_FLUSH();
@@ -60,7 +60,8 @@ void controller_sleep(uint32_t millis_to_sleep) {
       break;
     case ESP_SLEEP_WAKEUP_GPIO:
       gpio_wakeup_disable((gpio_num_t) MODE_BUTTON_PIN);
-      gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN, digitalRead(MODE_BUTTON_PIN) ? GPIO_INTR_LOW_LEVEL : GPIO_INTR_HIGH_LEVEL);
+      gpio_wakeup_enable((gpio_num_t) MODE_BUTTON_PIN,
+                         digitalRead(MODE_BUTTON_PIN) ? GPIO_INTR_LOW_LEVEL : GPIO_INTR_HIGH_LEVEL);
       break;
     default:
       break;

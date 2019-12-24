@@ -12,7 +12,7 @@ void buttonTrigger(void* arg) {
 
 Button::Button(uint8_t pin, uint8_t pull_type) :
     _pin(pin),
-    _pull_type_mode(pull_type == PULLDOWN ? HIGH : LOW),
+    _pull_type_mode(pull_type==PULLDOWN ? HIGH : LOW),
     _observer(nullptr),
     _current_state(false),
     _last_state_change(0),
@@ -28,7 +28,7 @@ Button::~Button() {
 void Button::activate() {
   gpio_set_intr_type((gpio_num_t) _pin, GPIO_INTR_ANYEDGE);
   gpio_isr_handler_add((gpio_num_t) _pin, buttonTrigger, this);
-  _current_state = digitalRead(_pin) == _pull_type_mode;
+  _current_state = digitalRead(_pin)==_pull_type_mode;
 }
 
 void Button::set_observer(ButtonObserver* observer) {
@@ -40,8 +40,8 @@ bool Button::currently_pressed() const {
 }
 
 bool Button::state_changed(int state, uint32_t time) {
-  bool new_state = state == _pull_type_mode;
-  if(new_state == _current_state || _last_state_change + BUTTON_DEBOUNCE_TIME_MILLIS > time) {
+  bool new_state = state==_pull_type_mode;
+  if(new_state==_current_state || _last_state_change + BUTTON_DEBOUNCE_TIME_MILLIS > time) {
     _current_state = new_state;
     return false;
   }
@@ -50,7 +50,7 @@ bool Button::state_changed(int state, uint32_t time) {
   if(_current_state) {
     if(_observer) { _observer->on_button_down(this); }
     if(_on_button_down_fn) { _on_button_down_fn(this); }
-  } else if(_last_state_change != 0) { // Ignore initial presses at startups
+  } else if(_last_state_change!=0) { // Ignore initial presses at startups
     if(_observer) { _observer->on_button_release(this); }
     if(_on_button_release_fn) { _on_button_release_fn(this); }
     if(_observer) { _observer->on_button_pressed(this, time - _last_state_change); }

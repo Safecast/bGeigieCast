@@ -25,12 +25,13 @@ class BluetoohConnector {
    * Send a new reading over bluetooth
    * @param reading : reading object to send
    */
-  virtual void send_reading(Reading& reading);
+  virtual bool send_reading(Reading& reading);
  private:
   void create_ble_profile_service(BLEServer* pServer);
   void create_ble_device_service(BLEServer* pServer);
   void create_ble_data_service(BLEServer* pServer);
 
+  BLEServer* pServer;
   bool initialized;
   BLECharacteristic* pDataRXCharacteristic;
 

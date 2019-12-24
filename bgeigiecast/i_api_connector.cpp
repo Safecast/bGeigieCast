@@ -13,7 +13,7 @@ IApiConnector::IApiConnector(EspConfig& config, ApiConnectionObserver* observer)
     _last_send(0),
     _merged_reading(),
     _observer(observer),
-    _alert(false){
+    _alert(false) {
 }
 
 bool IApiConnector::time_to_send() const {
@@ -32,22 +32,22 @@ void IApiConnector::process_reading(Reading& reading) {
     if(_config.get_use_home_location()) {
       _merged_reading.apply_home_location(_config.get_home_latitude(), _config.get_home_longitude());
     }
-    if(_merged_reading.valid_reading()){
+    if(_merged_reading.valid_reading()) {
       schedule_event(e_a_report_reading);
     } else {
       // Invalid reading, no need to send this.
       schedule_event(e_a_not_reporting);
       _merged_reading.reset();
     }
-  } else{
+  } else {
     schedule_event(e_a_not_reporting);
   }
 }
 
-void IApiConnector::save_reading(Reading& reading) {
+void IApiConnector::save_reading() {
   DEBUG_PRINTLN("Could not upload reading, trying again later");
-  if(reading.valid_reading()) {
-    _saved_readings.add(reading);
+  if(_merged_reading.valid_reading()) {
+    _saved_readings.add(_merged_reading);
   }
   schedule_event(e_a_reading_saved);
 }

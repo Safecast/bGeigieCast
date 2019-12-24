@@ -7,9 +7,9 @@
 /**
  * State with reporter context, so the states can control the reporter
  */
-class ReporterState: public State {
+class ReporterState : public State {
  public:
-  explicit ReporterState(Reporter& context): reporter(context){};
+  explicit ReporterState(Reporter& context) : reporter(context) {};
   virtual ~ReporterState() = default;
  protected:
   Reporter& reporter;

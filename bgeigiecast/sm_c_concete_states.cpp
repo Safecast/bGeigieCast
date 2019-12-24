@@ -108,7 +108,7 @@ void PostInitializeState::handle_event(Event_enum event_id) {
 
 // region ConfigModeState
 
-ConfigModeState::ConfigModeState(Controller& context): ControllerState(context) {
+ConfigModeState::ConfigModeState(Controller& context) : ControllerState(context) {
 }
 
 void ConfigModeState::handle_event(Event_enum event_id) {
@@ -187,7 +187,7 @@ void ServerActiveState::handle_event(Event_enum event_id) {
 
 // region ActiveState
 
-ActiveState::ActiveState(Controller& context): ControllerState(context) {
+ActiveState::ActiveState(Controller& context) : ControllerState(context) {
 }
 
 void ActiveState::do_activity() {
@@ -244,7 +244,7 @@ void InitActiveState::handle_event(Event_enum event_id) {
 
 // region MobileModeState
 
-MobileModeState::MobileModeState(Controller& context): ActiveState(context) {
+MobileModeState::MobileModeState(Controller& context) : ActiveState(context) {
 }
 
 void MobileModeState::entry_action() {
@@ -302,7 +302,7 @@ void FixedModeState::handle_event(Event_enum event_id) {
 
 // region DisconnectedState
 
-DisconnectedState::DisconnectedState(Controller& context): FixedModeState(context), state_entry_moment(0) {
+DisconnectedState::DisconnectedState(Controller& context) : FixedModeState(context), state_entry_moment(0) {
 }
 
 void DisconnectedState::entry_action() {
@@ -337,7 +337,7 @@ void DisconnectedState::handle_event(Event_enum event_id) {
 
 // region ConnectedState
 
-ConnectedState::ConnectedState(Controller& context): FixedModeState(context) {
+ConnectedState::ConnectedState(Controller& context) : FixedModeState(context) {
 }
 
 void ConnectedState::entry_action() {
@@ -370,7 +370,7 @@ void ConnectedState::handle_event(Event_enum event_id) {
 
 // region ConnectionErrorState
 
-ConnectionErrorState::ConnectionErrorState(Controller& context) : FixedModeState(context), timer(0){
+ConnectionErrorState::ConnectionErrorState(Controller& context) : FixedModeState(context), timer(0) {
 }
 
 void ConnectionErrorState::entry_action() {

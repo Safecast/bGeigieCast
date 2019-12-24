@@ -6,10 +6,9 @@
 #define READING_STR_MAX 100
 
 constexpr uint8_t k_reading_parsed = 0x1u << 0u;
-constexpr uint8_t k_reading_complete = 0x1u << 1u;
-constexpr uint8_t k_reading_sensor_ok = 0x1u << 2u;
-constexpr uint8_t k_reading_gps_ok = 0x1u << 3u;
-constexpr uint8_t k_reading_valid = 0x1u << 4u;
+constexpr uint8_t k_reading_sensor_ok = 0x1u << 1u;
+constexpr uint8_t k_reading_gps_ok = 0x1u << 2u;
+constexpr uint8_t k_reading_valid = 0x1u << 3u;
 
 /**
  * Container for a reading from the bGeigie, with some extra functions

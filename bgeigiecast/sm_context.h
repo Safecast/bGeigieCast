@@ -6,7 +6,6 @@
 #include "sm_state.h"
 #include "circular_buffer.h"
 
-
 /**
  * Context, something which will control a set of states and runs a state machine
  */

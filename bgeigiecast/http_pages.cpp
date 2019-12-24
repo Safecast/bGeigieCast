@@ -318,7 +318,6 @@ const char* HttpPages::render_full_page(uint32_t device_id, const char* page_nam
       base_page_format_end
   );
 
-
   return transmission_buffer;
 }
 

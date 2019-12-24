@@ -19,7 +19,7 @@ Reporter::Reporter(EspConfig& config,
     _last_reading_moment(0),
     _report_bt(false),
     _report_api(false),
-    _idle(false){
+    _idle(false) {
   _api_connector.set_observer(this);
 }
 
@@ -36,14 +36,15 @@ void Reporter::set_report_output(bool bt, bool api) {
 }
 
 uint32_t Reporter::time_till_next_reading(uint32_t current) const {
-  return _last_reading_moment != 0 && current - _last_reading_moment < READING_DELAY ? READING_DELAY - (current - _last_reading_moment) : 0;
+  return _last_reading_moment!=0 && current - _last_reading_moment < READING_DELAY ? READING_DELAY
+      - (current - _last_reading_moment) : 0;
 }
 
 void Reporter::get_new_reading() {
   if(_bgeigie_connector.get_reading(_reading)) {
     _last_reading_moment = millis();
-    _reading.get_status() & k_reading_complete
-        ? schedule_event(e_r_reading_received) : schedule_event(e_r_reading_invalid);
+    _reading.get_status() & k_reading_parsed
+    ? schedule_event(e_r_reading_received) : schedule_event(e_r_reading_invalid);
     if(_reading.get_device_id() > 0) {
       _config.set_device_id(_reading.get_device_id(), false);
     }
@@ -57,15 +58,14 @@ bool Reporter::is_idle() const {
 }
 
 void Reporter::init_bluetooth_connector() {
-  if(_reading.get_status() & k_reading_complete) {
+  if(_reading.get_status() & k_reading_parsed) {
     _bluetooth.init(_reading.get_device_id());
     schedule_event(e_r_bluetooth_initialized);
   }
 }
 
 void Reporter::run_bluetooth_connector() {
-  _bluetooth.send_reading(_reading);
-  schedule_event(e_r_reading_reported_bt);
+  _bluetooth.send_reading(_reading) ? schedule_event(e_r_reading_reported_bt) : schedule_event(e_r_reading_skipped_bt);
 }
 
 void Reporter::init_api_connector() {

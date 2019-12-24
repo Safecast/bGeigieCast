@@ -48,5 +48,4 @@
 #define D_LED_COLOR_INTENSITY   30
 #define D_SAVED_STATE           0
 
-
 #endif

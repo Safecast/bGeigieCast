@@ -29,22 +29,31 @@ state Active {
 
     state InitActive
     InitActive: action: mode = getSavedMode()
-    state MobileMode
+    state MobileMode {
+        state "Disconnected" as mDisconnected
+        mDisconnected: entry: setLedColor(btDisconnected)
+        state "Connected" as mConnected
+        mConnected: entry: setLedColor(btConnected)
+
+        [*] --> mDisconnected
+        mDisconnected -> mConnected : apiReportFailed
+        mConnected -> mDisconnected : apiReportSuccess
+    }
     MobileMode: entry: reporter.prepare(bluetooth)
 
     state FixedMode {
-        state Disconnected
-        Disconnected: entry: setLedColor(disconnected)
-        state Connected
-        Connected: entry: setLedColor(connected)
-        state ConnectionError
-        ConnectionError: entry: setLedColor(connectionError)
+        state Connecting
+        Connecting: entry: setLedColor(connecting)
+        state Operating
+        Operating: entry: setLedColor(connected)
+        state Error
+        Error: entry: setLedColor(...)
 
-        [*] -> Disconnected
-        Disconnected --> Connected : apiReportSuccess
-        Disconnected --> ConnectionError : apiReportFailed
-        Connected -> ConnectionError : apiReportFailed
-        ConnectionError -> Connected : apiReportSuccess
+        [*] -> Connecting
+        Connecting --> Operating : apiReportSuccess
+        Connecting --> Error : apiReportFailed
+        Operating -> Error : apiReportFailed
+        Error -> Operating : apiReportSuccess
     }
     FixedMode: entry: reporter.prepare(api, bluetooth)
 

@@ -4,13 +4,12 @@
 #include "debugger.h"
 #include "controller.h"
 
-
 /**
  * State with controller context, so the states can control the system
  */
-class ControllerState: public State {
+class ControllerState : public State {
  public:
-  explicit ControllerState(Controller& context): controller(context){};
+  explicit ControllerState(Controller& context) : controller(context) {};
   virtual ~ControllerState() = default;
  protected:
   Controller& controller;

@@ -7,7 +7,7 @@
 /**
  * Controls the LED to visualize the current state
  */
-class ModeLED : private RGBLed{
+class ModeLED : private RGBLed {
  public:
   typedef enum {
     off,
@@ -20,7 +20,6 @@ class ModeLED : private RGBLed{
     fixed_error,
     COUNT
   } ModeColor;
-
 
   explicit ModeLED(EspConfig& config);
   virtual ~ModeLED() = default;

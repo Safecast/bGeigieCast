@@ -9,18 +9,10 @@
  */
 class ApiReporterState : public State {
  public:
-  explicit ApiReporterState(IApiConnector& context): api_connector(context){};
+  explicit ApiReporterState(IApiConnector& context) : api_connector(context) {};
   virtual ~ApiReporterState() = default;
  protected:
   IApiConnector& api_connector;
-};
-
-class ApiReporterReadingState : public ApiReporterState {
- public:
-  explicit ApiReporterReadingState(IApiConnector& context, Reading& reading): ApiReporterState(context), reading(reading){};
-  virtual ~ApiReporterReadingState() = default;
- protected:
-  Reading& reading;
 };
 
 #endif //BGEIGIECAST_SM_R_STATE_H

@@ -39,7 +39,7 @@ void Controller::initialize() {
 }
 
 void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
-  if(button->get_pin() == MODE_BUTTON_PIN) {
+  if(button->get_pin()==MODE_BUTTON_PIN) {
     if(millis_pressed > BUTTON_LONG_PRESSED_MILLIS_TRESHOLD) {
 //      DEBUG_PRINTLN("Button long pressed");
       schedule_event(Event_enum::e_c_button_long_pressed);

@@ -3,7 +3,6 @@
 
 #define BUTTON_DEBOUNCE_TIME_MILLIS 50
 
-
 #include <Arduino.h>
 
 class ButtonObserver;
@@ -14,9 +13,9 @@ class ButtonObserver;
 class Button {
  public:
 
-  typedef void(*on_button_down_fn_t)(Button*);
-  typedef void(*on_button_release_fn_t)(Button*);
-  typedef void(*on_button_pressed_fn_t)(Button*, uint32_t);
+  typedef void(* on_button_down_fn_t)(Button*);
+  typedef void(* on_button_release_fn_t)(Button*);
+  typedef void(* on_button_pressed_fn_t)(Button*, uint32_t);
 
   explicit Button(uint8_t pin, uint8_t pull_type = PULLUP);
   virtual ~Button();
@@ -86,7 +85,6 @@ class Button {
   on_button_release_fn_t _on_button_release_fn;
   on_button_pressed_fn_t _on_button_pressed_fn;
 };
-
 
 /**
  * Anything can be an observer of a button... This class is used to let the button know who observes it.

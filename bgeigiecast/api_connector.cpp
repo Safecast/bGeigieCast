@@ -22,7 +22,8 @@ bool ApiConnector::start_connect(bool initial) {
 
   if(initial) {
     const char* password = _config.get_wifi_password();
-    DEBUG_PRINT("Connecting to ssid "); DEBUG_PRINTLN(ssid);
+    DEBUG_PRINT("Connecting to ssid ");
+    DEBUG_PRINTLN(ssid);
     password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
     _merged_reading.reset();
     _last_send = millis();
@@ -40,18 +41,18 @@ void ApiConnector::stop() {
 
 bool ApiConnector::test() {
   WiFiClient client;
-  bool success = client.connect(API_HOST, 80) != 0;
+  bool success = client.connect(API_HOST, 80)!=0;
   client.stop();
   return success;
 }
 
 bool ApiConnector::is_connected() {
-  return WiFi.status() == WL_CONNECTED;
+  return WiFi.status()==WL_CONNECTED;
 }
 
-bool ApiConnector::send_reading(Reading& reading) {
+bool ApiConnector::send_reading() {
   char json_str[200];
-  if(!reading.as_json(json_str)) {
+  if(!_merged_reading.as_json(json_str)) {
     // This whole reading is invalid
     DEBUG_PRINTLN("Unable to send reading, its not valid at all!");
     schedule_event(e_a_api_post_failed);
@@ -76,7 +77,7 @@ bool ApiConnector::send_reading(Reading& reading) {
   //Specify destination for HTTP request
   if(!http.begin(url)) {
     DEBUG_PRINTLN("Unable to begin url connection");
-    save_reading(reading);
+    save_reading();
     http.end();  //Free resources
     return false;
   }

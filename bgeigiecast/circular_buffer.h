@@ -31,7 +31,7 @@ class CircularBuffer {
    * @param val
    */
   void add(T val) {
-    buffer[(current + count) % max] = val;
+    buffer[(current + count)%max] = val;
     if(count < max) {
       ++count;
     } else {
@@ -45,7 +45,7 @@ class CircularBuffer {
    * @return: true if buffer is empty
    */
   bool empty() const {
-    return count == 0;
+    return count==0;
   }
 
   /**

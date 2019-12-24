@@ -81,13 +81,13 @@ class IApiConnector : public Context {
    * @param reading: reading to send
    * @return: true if the API call was successful
    */
-  virtual bool send_reading(Reading& reading) = 0;
+  virtual bool send_reading() = 0;
 
   /**
    * When a reading cannot be send to the API, we save it to send later..
    * @param reading: reading to save
    */
-  virtual void save_reading(Reading& reading) final;
+  virtual void save_reading() final;
 
   EspConfig& _config;
   CircularBuffer<Reading, MAX_MISSED_READINGS> _saved_readings;

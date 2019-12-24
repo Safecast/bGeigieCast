@@ -4,12 +4,10 @@
 #include "sm_events.h"
 #include "debugger.h"
 
-
 typedef enum {
   k_savable_MobileMode,
   k_savable_FixedMode
 } SavableState;
-
 
 /**
  * Abstract state for the state machine pattern
@@ -38,11 +36,10 @@ class State {
    * Handle event
    * @param event_id
    */
-  virtual void handle_event(Event_enum event_id)  {
+  virtual void handle_event(Event_enum event_id) {
     DEBUG_PRINT("State machine: Unhandled event with id: ");
     DEBUG_PRINTLN(event_id);
   }
 };
-
 
 #endif //BGEIGIECAST_STATE_HPP

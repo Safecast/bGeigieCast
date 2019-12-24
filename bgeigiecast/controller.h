@@ -15,9 +15,13 @@
  */
 class Controller : public Context, private ButtonObserver, private ReporterObserver {
  public:
-  typedef void (*sleep_fn_t)(uint32_t millis_to_sleep);
+  typedef void (* sleep_fn_t)(uint32_t millis_to_sleep);
 
-  Controller(EspConfig& config, Stream& bgeigie_connection, IApiConnector& api_connector, BluetoohConnector& bluetooth_connector, sleep_fn_t sleep_fn = nullptr);
+  Controller(EspConfig& config,
+             Stream& bgeigie_connection,
+             IApiConnector& api_connector,
+             BluetoohConnector& bluetooth_connector,
+             sleep_fn_t sleep_fn = nullptr);
   virtual ~Controller() = default;
 
   /**
@@ -66,7 +70,6 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
    */
   SavableState get_saved_state();
 
-
  private:
   void reading_reported(Reporter::ReporterStatus status) override;
 
@@ -78,7 +81,6 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
   ModeLED _mode_led;
 
   sleep_fn_t _sleep_fn;
-
 
   friend class InitializeState;
   friend class InitReadingState;

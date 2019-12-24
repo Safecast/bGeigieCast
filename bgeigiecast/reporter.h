@@ -33,7 +33,11 @@ class Reporter : public Context, private ApiConnectionObserver {
    * @param bluetooth_connector : Bluetooth connector
    * @param observer : Some instance to report to, default null
    */
-  Reporter(EspConfig& config, Stream& bgeigie_connection, IApiConnector& api_connector, BluetoohConnector& bluetooth_connector, ReporterObserver* observer = nullptr);
+  Reporter(EspConfig& config,
+           Stream& bgeigie_connection,
+           IApiConnector& api_connector,
+           BluetoohConnector& bluetooth_connector,
+           ReporterObserver* observer = nullptr);
   virtual ~Reporter() = default;
 
   /**
@@ -85,7 +89,6 @@ class Reporter : public Context, private ApiConnectionObserver {
   void run_api_connector();
 
   void report_complete(ReporterStatus status);
-
 
   BGeigieConnector _bgeigie_connector;
   EspConfig& _config;

@@ -5,7 +5,7 @@
 #include "bluetooth_connector.h"
 #include "debugger.h"
 
-BluetoohConnector::BluetoohConnector() : initialized(false), pDataRXCharacteristic(nullptr) {
+BluetoohConnector::BluetoohConnector() : pServer(nullptr), initialized(false), pDataRXCharacteristic(nullptr) {
 }
 
 bool BluetoohConnector::init(uint16_t device_id) {
@@ -13,12 +13,11 @@ bool BluetoohConnector::init(uint16_t device_id) {
     return true;
   }
 
-
   char deviceName[16];
   sprintf(deviceName, "bGeigie%d", device_id);
 
   BLEDevice::init(deviceName);
-  BLEServer* pServer = BLEDevice::createServer();
+  pServer = BLEDevice::createServer();
 
   create_ble_profile_service(pServer);
   create_ble_device_service(pServer);
@@ -35,7 +34,8 @@ bool BluetoohConnector::init(uint16_t device_id) {
   BLEDevice::startAdvertising();
   initialized = true;
 
-  DEBUG_PRINT("Bluetooth initialized, device: "); DEBUG_PRINTLN(deviceName);
+  DEBUG_PRINT("Bluetooth initialized, device: ");
+  DEBUG_PRINTLN(deviceName);
   return true;
 }
 
@@ -158,9 +158,13 @@ void BluetoohConnector::create_ble_data_service(BLEServer* pServer) {
   pDataService->start();
 }
 
-void BluetoohConnector::send_reading(Reading& reading) {
+bool BluetoohConnector::send_reading(Reading& reading) {
   if(!initialized) {
     init(reading.get_device_id());
+  }
+  if(pServer->getConnectedCount()) {
+    // No clients to send data to
+    return false;
   }
   DEBUG_PRINTLN("Sending reading over Bluetooth");
   const char* reading_str = reading.get_reading_str();
@@ -170,11 +174,12 @@ void BluetoohConnector::send_reading(Reading& reading) {
   const static uint8_t max_segment_size = 20; // Max that can be send over bluetooth
   do {
     ++segment;
-    uint8_t segment_size = segment * max_segment_size > size ? size % max_segment_size : max_segment_size;
+    uint8_t segment_size = segment*max_segment_size > size ? size%max_segment_size : max_segment_size;
     char to_send[segment_size];
-    strncpy(to_send, reading_str + ((segment - 1) * max_segment_size), segment_size);
+    strncpy(to_send, reading_str + ((segment - 1)*max_segment_size), segment_size);
 
     pDataRXCharacteristic->setValue((uint8_t*) to_send, segment_size);
     pDataRXCharacteristic->notify();
-  } while(segment * max_segment_size < size);
+  } while(segment*max_segment_size < size);
+  return true;
 }

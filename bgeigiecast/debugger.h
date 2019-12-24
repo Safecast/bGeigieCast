@@ -3,7 +3,6 @@
 
 #include "user_config.h"
 
-
 #ifdef UNIT_TEST
 #undef ENABLE_DEBUG
 #endif
@@ -30,6 +29,5 @@
 #define DEBUG_FLUSH()
 
 #endif
-
 
 #endif //BGEIGIECAST_DEBUGGER_H

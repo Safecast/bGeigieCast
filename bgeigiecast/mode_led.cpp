@@ -33,8 +33,8 @@ void ModeLED::set_color(ModeLED::ModeColor color) {
 void ModeLED::blink(ModeLED::ModeColor color, double frequency, double percentage_on) {
   // Blink LED
   double blink_millis = 1000/frequency;
-  uint32_t cycle_now = millis() % static_cast<uint32_t>(blink_millis);
-  uint32_t threshold = static_cast<uint32_t>(blink_millis * (percentage_on / 100));
+  uint32_t cycle_now = millis()%static_cast<uint32_t>(blink_millis);
+  uint32_t threshold = static_cast<uint32_t>(blink_millis*(percentage_on/100));
   if(cycle_now < threshold && !_blink_state) {
     set_color(color);
     _blink_state = true;

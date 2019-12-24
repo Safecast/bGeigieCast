@@ -13,7 +13,7 @@ void ReporterIdleState::entry_action() {
 }
 
 void ReporterIdleState::do_activity() {
-  if(reporter.time_till_next_reading(millis()) == 0){
+  if(reporter.time_till_next_reading(millis())==0) {
     reporter.schedule_event(e_r_reading_expected);
   }
 }
@@ -59,7 +59,7 @@ void GetReadingState::handle_event(Event_enum event_id) {
     case e_r_reading_received:
       if(reporter._report_bt) {
         reporter.set_state(new InitBluetoothState(reporter));
-      }else if(reporter._report_api) {
+      } else if(reporter._report_api) {
         reporter.set_state(new InitApiState(reporter));
       } else {
         reporter.set_state(new ReporterIdleState(reporter));
@@ -146,11 +146,11 @@ void PublishBluetoothState::exit_action() {
 
 void PublishBluetoothState::handle_event(Event_enum event_id) {
   switch(event_id) {
+    case e_r_reading_skipped_bt:
     case e_r_reading_reported_bt:
-      if (reporter._report_api) {
+      if(reporter._report_api) {
         reporter.set_state(new InitApiState(reporter));
-      }
-      else {
+      } else {
         reporter.set_state(new ReporterDoneState(reporter, Reporter::k_reporter_success));
       }
       break;
@@ -232,7 +232,8 @@ void ReportApiState::handle_event(Event_enum event_id) {
 
 // region ReporterDoneState
 
-ReporterDoneState::ReporterDoneState(Reporter& context, Reporter::ReporterStatus status) : ReportReadingState(context), status(status) {
+ReporterDoneState::ReporterDoneState(Reporter& context, Reporter::ReporterStatus status)
+    : ReportReadingState(context), status(status) {
 
 }
 

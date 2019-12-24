@@ -92,6 +92,4 @@ class EspConfig {
 
 };
 
-
-
 #endif //BGEIGIECAST_ESP_CONFIG_H
