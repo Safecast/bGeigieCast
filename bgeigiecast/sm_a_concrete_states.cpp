@@ -151,7 +151,7 @@ void ApiReportDoneState::entry_action() {
 #if DEBUG_LOG_STATE_TRANSITIONS
   DEBUG_PRINTLN("-- API entered state Done");
 #endif
-  if(status==IApiConnector::k_report_failed || status==IApiConnector::k_report_success) {
+  if(status == IApiConnector::k_report_failed || status == IApiConnector::k_report_success) {
     api_connector._merged_reading.reset();
   }
   if(api_connector._observer) {

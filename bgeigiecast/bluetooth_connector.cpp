@@ -174,12 +174,12 @@ bool BluetoohConnector::send_reading(Reading& reading) {
   const static uint8_t max_segment_size = 20; // Max that can be send over bluetooth
   do {
     ++segment;
-    uint8_t segment_size = segment*max_segment_size > size ? size%max_segment_size : max_segment_size;
+    uint8_t segment_size = segment * max_segment_size > size ? size % max_segment_size : max_segment_size;
     char to_send[segment_size];
-    strncpy(to_send, reading_str + ((segment - 1)*max_segment_size), segment_size);
+    strncpy(to_send, reading_str + ((segment - 1) * max_segment_size), segment_size);
 
     pDataRXCharacteristic->setValue((uint8_t*) to_send, segment_size);
     pDataRXCharacteristic->notify();
-  } while(segment*max_segment_size < size);
+  } while(segment * max_segment_size < size);
   return true;
 }

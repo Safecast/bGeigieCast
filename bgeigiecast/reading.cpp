@@ -11,9 +11,9 @@
 #define LONG_LAT_PRECISION 0.001
 
 double dm_to_dd(double dm) {
-  double degree = static_cast<int>(dm/100);
-  double minutes = dm - (degree*100);
-  return degree + minutes/60;
+  double degree = static_cast<int>(dm / 100);
+  double minutes = dm - (degree * 100);
+  return degree + minutes / 60;
 }
 
 Reading::Reading() :
@@ -76,7 +76,7 @@ Reading& Reading::operator=(const char* reading_str) {
 }
 
 Reading& Reading::operator=(const Reading& other) {
-  if(&other!=this) {
+  if(&other != this) {
     _status = other._status;
     _average_of = other._average_of;
     _device_id = other._device_id;
@@ -95,11 +95,11 @@ Reading& Reading::operator=(const Reading& other) {
 }
 
 Reading& Reading::operator+=(const Reading& o) {
-  if(!(o._status & k_reading_valid) || o._average_of==0) {
+  if(!(o._status & k_reading_valid) || o._average_of == 0) {
     // Do nothing with the other, not valid or empty
     return *this;
   }
-  if(_average_of==0) {
+  if(_average_of == 0) {
     // Assign other to this
     return operator=(o);
   }
@@ -124,8 +124,8 @@ Reading& Reading::operator+=(const Reading& o) {
   }
 
   // Sensor data
-  _cpm = ((_cpm*_average_of) + (o_cpm*o._average_of))/(_average_of + o._average_of);
-  _cpb = ((_cpb*_average_of) + (o_cpb*o._average_of))/(_average_of + o._average_of);
+  _cpm = ((_cpm * _average_of) + (o_cpm * o._average_of)) / (_average_of + o._average_of);
+  _cpb = ((_cpb * _average_of) + (o_cpb * o._average_of)) / (_average_of + o._average_of);
 
   // Use latest gps location
   if(o._status & k_reading_gps_ok) {
@@ -206,7 +206,7 @@ void Reading::parse_values() {
       &checksum
   );
 
-  if(parse_result==EXPECTED_PARSE_RESULT_COUNT && VALID_BGEIGIE_ID(_device_id)) { // 15 values to be parsed
+  if(parse_result == EXPECTED_PARSE_RESULT_COUNT && VALID_BGEIGIE_ID(_device_id)) { // 15 values to be parsed
     _status |= k_reading_parsed;
 
     // TODO Validate checksum?
@@ -215,17 +215,17 @@ void Reading::parse_values() {
       _status |= k_reading_valid;
     }
 
-    if(sensor_status=='A') {
+    if(sensor_status == 'A') {
       _status |= k_reading_sensor_ok;
     }
-    if(gps_status=='A') {
+    if(gps_status == 'A') {
       _status |= k_reading_gps_ok;
 
       _latitude = dm_to_dd(lat_dm);
       _longitude = dm_to_dd(long_dm);
 
-      if(n_or_s=='S') { _latitude *= -1; }
-      if(w_or_e=='W') { _longitude *= -1; }
+      if(n_or_s == 'S') { _latitude *= -1; }
+      if(w_or_e == 'W') { _longitude *= -1; }
     }
   }
 }

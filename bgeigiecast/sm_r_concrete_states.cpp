@@ -13,7 +13,7 @@ void ReporterIdleState::entry_action() {
 }
 
 void ReporterIdleState::do_activity() {
-  if(reporter.time_till_next_reading(millis())==0) {
+  if(reporter.time_till_next_reading(millis()) == 0) {
     reporter.schedule_event(e_r_reading_expected);
   }
 }

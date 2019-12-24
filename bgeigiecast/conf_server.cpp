@@ -40,7 +40,7 @@ bool ConfigWebServer::connect(bool try_wifi) {
 
       auto time = millis();
       while(millis() - time < 2000) {
-        if(WiFi.status()==WL_CONNECTED) {
+        if(WiFi.status() == WL_CONNECTED) {
           DEBUG_PRINTF("Connected to %s, IP address: %s\n", _config.get_wifi_ssid(), WiFi.localIP().toString().c_str());
           HttpPages::internet_access = true;
           return true;
@@ -163,7 +163,7 @@ void ConfigWebServer::start_server() {
   _server.on("/update", HTTP_POST, [this]() {
     // Complete
     _server.sendHeader("Connection", "close");
-    if(_server.upload().totalSize==0 || Update.hasError()) {
+    if(_server.upload().totalSize == 0 || Update.hasError()) {
       _server.send(500, "text/plain", "FAIL");
     } else {
       _server.send(200, "text/plain", "OK");
@@ -211,16 +211,16 @@ void ConfigWebServer::handle_save() {
     _config.set_api_key(_server.arg(FORM_NAME_API_KEY).c_str(), false);
   }
   if(_server.hasArg(FORM_NAME_USE_DEV)) {
-    _config.set_use_dev(_server.arg(FORM_NAME_USE_DEV)=="1", false);
+    _config.set_use_dev(_server.arg(FORM_NAME_USE_DEV) == "1", false);
   }
   if(_server.hasArg(FORM_NAME_LED_INTENSITY)) {
     _config.set_led_color_intensity(clamp<uint8_t>(_server.arg(FORM_NAME_LED_INTENSITY).toInt(), 5, 100), false);
   }
   if(_server.hasArg(FORM_NAME_LED_COLOR)) {
-    _config.set_led_color_blind(strcmp(_server.arg(FORM_NAME_LED_COLOR).c_str(), "1")==0, false);
+    _config.set_led_color_blind(strcmp(_server.arg(FORM_NAME_LED_COLOR).c_str(), "1") == 0, false);
   }
   if(_server.hasArg(FORM_NAME_LOC_HOME)) {
-    _config.set_use_home_location(strcmp(_server.arg(FORM_NAME_LOC_HOME).c_str(), "1")==0, false);
+    _config.set_use_home_location(strcmp(_server.arg(FORM_NAME_LOC_HOME).c_str(), "1") == 0, false);
   }
   if(_server.hasArg(FORM_NAME_LOC_HOME_LAT)) {
     _config.set_home_latitude(clamp<double>(_server.arg(FORM_NAME_LOC_HOME_LAT).toDouble(), -90.0, 90.0), false);
@@ -249,7 +249,7 @@ void ConfigWebServer::handle_update_uploading() {
     case UPLOAD_FILE_WRITE: {
       DEBUG_PRINTF(".");
       auto write_size = Update.write(upload.buf, upload.currentSize);
-      if(write_size!=upload.currentSize) {
+      if(write_size != upload.currentSize) {
         DEBUG_PRINTF("Something failed while uploading (wrote %d out of %d)\n", write_size, upload.currentSize);
         Update.abort();
       }

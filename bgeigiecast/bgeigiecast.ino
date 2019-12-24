@@ -48,7 +48,7 @@ HardwareSerial& bGeigieSerialConnection = Serial2;
 
 void controller_sleep(uint32_t millis_to_sleep) {
   esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_TIMER);
-  esp_sleep_enable_timer_wakeup(millis_to_sleep*1000);
+  esp_sleep_enable_timer_wakeup(millis_to_sleep * 1000);
 
   DEBUG_PRINTLN("-----\nEntering sleep");
   DEBUG_FLUSH();
@@ -87,7 +87,7 @@ void setup() {
 
   // Set gpio pin configurations
   gpio_config_t io_conf{
-      .pin_bit_mask = 1ULL << MODE_BUTTON_PIN,
+      .pin_bit_mask = 1ULL<<MODE_BUTTON_PIN,
       .mode = GPIO_MODE_INPUT,
       .pull_up_en = GPIO_PULLUP_ENABLE,
       .pull_down_en = GPIO_PULLDOWN_DISABLE,

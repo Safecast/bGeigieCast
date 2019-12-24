@@ -41,13 +41,13 @@ void ApiConnector::stop() {
 
 bool ApiConnector::test() {
   WiFiClient client;
-  bool success = client.connect(API_HOST, 80)!=0;
+  bool success = client.connect(API_HOST, 80) != 0;
   client.stop();
   return success;
 }
 
 bool ApiConnector::is_connected() {
-  return WiFi.status()==WL_CONNECTED;
+  return WiFi.status() == WL_CONNECTED;
 }
 
 bool ApiConnector::send_reading() {
