@@ -113,16 +113,9 @@ void PostInitializeState::handle_event(Event_enum event_id) {
 ConfigurationModeState::ConfigurationModeState(Controller& context) : ControllerState(context) {
 }
 
-void ConfigurationModeState::handle_event(Event_enum event_id) {
-  switch(event_id) {
-    default:
-      ControllerState::handle_event(event_id);
-      break;
-  }
-}
-
 void ConfigurationModeState::entry_action() {
-//  controller.set_worker_active(k_worker_configuration_server, true);
+  DEBUG_PRINTLN("-- Entered state ConfigurationMode");
+  controller.set_worker_active(k_worker_configuration_server, true);
 }
 
 void ConfigurationModeState::do_activity() {
@@ -130,7 +123,25 @@ void ConfigurationModeState::do_activity() {
 }
 
 void ConfigurationModeState::exit_action() {
-//  controller.set_worker_active(k_worker_configuration_server, true);
+  controller.set_worker_active(k_worker_configuration_server, true);
+}
+
+void ConfigurationModeState::handle_event(Event_enum event_id) {
+  switch(event_id) {
+    case e_c_button_pressed:
+      switch(controller.get_saved_state()) {
+        case Controller::k_savable_FixedMode:
+          controller.set_state(new FixedModeState(controller));
+          break;
+        case Controller::k_savable_MobileMode:
+        default:
+          controller.set_state(new MobileModeState(controller));
+          break;
+      }
+    default:
+      ControllerState::handle_event(event_id);
+      break;
+  }
 }
 
 // endregion
@@ -143,23 +154,20 @@ MobileModeState::MobileModeState(Controller& context) : ControllerState(context)
 void MobileModeState::entry_action() {
   DEBUG_PRINTLN("-- Entered state MobileMode");
   controller.save_state(Controller::k_savable_MobileMode);
-//  controller.set_handler_active(k_handler_bluetooth_reporter, true);
+  controller.set_handler_active(k_handler_bluetooth_reporter, true);
 }
 
 void MobileModeState::do_activity() {
 }
 
 void MobileModeState::exit_action() {
-//  controller.set_handler_active(k_handler_bluetooth_reporter, false);
+  controller.set_handler_active(k_handler_bluetooth_reporter, false);
 }
 
 void MobileModeState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_c_button_pressed:
       controller.set_state(new FixedModeState(controller));
-      break;
-    case e_c_report_success:
-      // Success, no need to do anything
       break;
     default:
       ControllerState::handle_event(event_id);
@@ -176,14 +184,15 @@ FixedModeState::FixedModeState(Controller& context) : ControllerState(context) {
 }
 
 void FixedModeState::entry_action() {
-
+  DEBUG_PRINTLN("-- Entered state FixedMode");
+  controller.set_handler_active(k_handler_api_reporter, true);
 }
 
 void FixedModeState::do_activity() {
 }
 
 void FixedModeState::exit_action() {
-
+  controller.set_handler_active(k_handler_api_reporter, false);
 }
 
 void FixedModeState::handle_event(Event_enum event_id) {

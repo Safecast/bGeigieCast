@@ -7,16 +7,13 @@
 #include "http_pages.h"
 #include "identifiers.h"
 
-#define RETRY_TIMEOUT 2000
+#define RETRY_TIMEOUT 5000
 
 template<typename T, typename T2>
 T clamp(T2 val, T min, T max) {
   T _val = static_cast<T>(val);
   return _val < min ? min : _val > max ? max : _val;
 }
-
-uint32_t last_retry = 0;
-uint8_t retry_count = 0;
 
 ConfigWebServer::ConfigWebServer(LocalStorage& config)
     : Worker<ServerStatus>(k_worker_configuration_server, {false, false}, 0),
@@ -26,9 +23,12 @@ ConfigWebServer::ConfigWebServer(LocalStorage& config)
 }
 
 bool ConfigWebServer::activate(bool retry) {
-  if(retry && millis() - last_retry < RETRY_TIMEOUT) {
+  static uint32_t last_try = 0;
+  static uint8_t retry_count = 0;
+  if(retry && millis() - last_try < RETRY_TIMEOUT) {
     return false;
   }
+  last_try = millis();
   auto device_id = _config.get_device_id();
   if(!device_id) {
     DEBUG_PRINTLN("Can't start config without device id!");
@@ -69,9 +69,11 @@ void ConfigWebServer::deactivate() {
 
 int8_t ConfigWebServer::produce_data() {
   _server.handleClient();
+  return WorkerStatus::e_worker_idle;
 }
 
 bool ConfigWebServer::connect_wifi() {
+  DEBUG_PRINTLN("Config server: Trying to connect to wifi...");
   switch(WiFi.status()) {
     case WL_CONNECTED:
       return true;
@@ -83,7 +85,7 @@ bool ConfigWebServer::connect_wifi() {
       const char* wifi_ssid = _config.get_wifi_ssid();
       const char* password = _config.get_wifi_password();
       password ? WiFi.begin(wifi_ssid, password) : WiFi.begin(wifi_ssid);
-      return false;
+      return WiFi.isConnected();
   }
 }
 
@@ -98,6 +100,7 @@ bool ConfigWebServer::start_ap_server(const char* host_ssid) {
   delay(100);
 
   add_urls();
+  DEBUG_PRINTF("Config server: Access point is up at: %s -> %s\n", host_ssid, WiFi.softAPIP().toString().c_str());
   return true;
 }
 

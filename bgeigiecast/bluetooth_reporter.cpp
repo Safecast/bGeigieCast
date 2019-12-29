@@ -9,6 +9,17 @@ BluetoothReporter::BluetoothReporter(LocalStorage& config)
 }
 
 bool BluetoothReporter::activate(bool) {
+  if(!config.get_device_id()) {
+    DEBUG_PRINTLN("Cannot initialize bluetooth without device id");
+    return false;
+  }
+
+  char deviceName[16];
+  sprintf(deviceName, "bGeigie%d", config.get_device_id());
+  BLEDevice::init(deviceName);
+  DEBUG_PRINT("Bluetooth initialized, device: ");
+  DEBUG_PRINTLN(deviceName);
+
   if(!pServer) {
     pServer = BLEDevice::createServer();
 
@@ -25,14 +36,6 @@ bool BluetoothReporter::activate(bool) {
     pAdvertising->setMinPreferred(0x12);
   }
 
-  if(!BLEDevice::getInitialized() && config.get_device_id()) {
-    char deviceName[16];
-    sprintf(deviceName, "bGeigie%d", config.get_device_id());
-    BLEDevice::init(deviceName);
-    DEBUG_PRINT("Bluetooth initialized, device: ");
-    DEBUG_PRINTLN(deviceName);
-  }
-
   return BLEDevice::getInitialized();
 }
 
@@ -43,11 +46,11 @@ void BluetoothReporter::deactivate() {
 int8_t BluetoothReporter::handle_produced_work(const worker_status_t& worker_reports) {
   const auto& reading_stat = worker_reports.at(k_worker_bgeigie_connector);
   if(!reading_stat.is_fresh()) {
-    return Status::e_handler_idle;
+    return pServer->getConnectedCount() > 0 ? e_handler_clients_available : Status::e_handler_idle;
   }
   // Fresh reading is produced
   const auto& reading = reading_stat.get<Reading>();
-  return send_reading(reading) ? Status::e_handler_data_reported : Status::e_handler_no_clients;
+  return send_reading(reading) ? Status::e_handler_clients_available : Status::e_handler_no_clients;
 }
 
 void BluetoothReporter::create_ble_profile_service(BLEServer* pServer) {

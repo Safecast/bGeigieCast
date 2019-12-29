@@ -26,7 +26,9 @@ void Controller::initialize() {
   _mode_button.activate();
   _mode_button.set_observer(this);
 
-  register_handler(*this);
+  register_handler(*this, true);
+  set_handler_active(k_handler_storage_handler, true);
+  set_worker_active(k_worker_bgeigie_connector, true);
 
   schedule_event(Event_enum::e_c_controller_initialized);
 }
@@ -34,10 +36,10 @@ void Controller::initialize() {
 void Controller::on_button_pressed(Button* button, uint32_t millis_pressed) {
   if(button->get_pin() == MODE_BUTTON_PIN) {
     if(millis_pressed > BUTTON_LONG_PRESSED_MILLIS_TRESHOLD) {
-//      DEBUG_PRINTLN("Button long pressed");
+      DEBUG_PRINTLN("Button long pressed");
       schedule_event(Event_enum::e_c_button_long_pressed);
     } else {
-//      DEBUG_PRINTLN("Button pressed");
+      DEBUG_PRINTLN("Button pressed");
       schedule_event(Event_enum::e_c_button_pressed);
     }
   }

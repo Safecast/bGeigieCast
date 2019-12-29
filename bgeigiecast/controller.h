@@ -67,8 +67,8 @@ class Controller : private ButtonObserver, public Context, public Aggregator, pr
   Button _mode_button;
 
   friend class InitializeState;
-  friend class InitReadingState;
   friend class PostInitializeState;
+  friend class ConfigurationModeState;
   friend class MobileModeState;
   friend class FixedModeState;
   friend class ResetState;

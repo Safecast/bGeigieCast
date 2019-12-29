@@ -14,12 +14,11 @@ class ModeLED : private RGBLed, public Supervisor {
   typedef enum {
     mode_color_off,
     mode_color_init,
-    mode_color_init_config,
     mode_color_config,
     mode_color_mobile,
-    mode_color_fixed_connecting,
-    mode_color_fixed_active,
-    mode_color_fixed_error,
+    mode_color_fixed_connected,
+    mode_color_fixed_soft_error,
+    mode_color_fixed_hard_error,
     mode_color_COUNT
   } ModeColor;
 

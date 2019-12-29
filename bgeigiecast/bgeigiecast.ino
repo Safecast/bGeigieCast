@@ -53,7 +53,6 @@ HardwareSerial& bGeigieSerialConnection = Serial2;
 LocalStorage config;
 Controller controller(config);
 
-
 // Workers
 BGeigieConnector bgeigie_connector(bGeigieSerialConnection);
 ConfigWebServer config_server(config);
@@ -65,12 +64,69 @@ ApiReporter api_reporter(config);
 // Report handlers
 ModeLED mode_led(config);
 
+#if DEBUG_FULL_REPORT
+#if ENABLE_DEBUG
+#include "identifiers.h"
+
+/**
+ * Prints full details of the workers and handlers
+ */
+class FullReporter : public Supervisor {
+  void handle_report(const Report& report) override {
+    auto& worker_stats = report.get_worker_stats();
+    auto& handler_stats = report.get_handler_stats();
+    DEBUG_PRINTF(
+        "Workers:\n"
+        "- bgeigie_connector\n"
+        "  - state: %d, status: %d\n"
+        "- configuration_server\n"
+        "  - state: %d, status: %d\n"
+        "Handlers:\n"
+        "- controller_handler\n"
+        "  - state: %d, status: %d\n"
+        "- storage_handler\n"
+        "  - state: %d, status: %d\n"
+        "- bluetooth_reporter\n"
+        "  - state: %d, status: %d\n"
+        "- api_reporter\n"
+        "  - state: %d, status: %d\n",
+        worker_stats.at(k_worker_bgeigie_connector).active_state,
+        worker_stats.at(k_worker_bgeigie_connector).status,
+        worker_stats.at(k_worker_configuration_server).active_state,
+        worker_stats.at(k_worker_configuration_server).status,
+        handler_stats.at(k_handler_controller_handler).active_state,
+        handler_stats.at(k_handler_controller_handler).status,
+        handler_stats.at(k_handler_storage_handler).active_state,
+        handler_stats.at(k_handler_storage_handler).status,
+        handler_stats.at(k_handler_bluetooth_reporter).active_state,
+        handler_stats.at(k_handler_bluetooth_reporter).status,
+        handler_stats.at(k_handler_api_reporter).active_state,
+        handler_stats.at(k_handler_api_reporter).status
+    );
+  }
+};
+FullReporter full_reporter;
+
+#endif
+#endif
+
 void setup() {
   DEBUG_BEGIN(SERIAL_BAUD);
 
   /// Hardware configurations
   // Start serial connection to bGeigie controller
   bGeigieSerialConnection.begin(BGEIGIE_CONNECTION_BAUD);
+
+  // Set gpio pin configurations
+  gpio_config_t io_conf{
+      .pin_bit_mask = 1ULL<<MODE_BUTTON_PIN,
+      .mode = GPIO_MODE_INPUT,
+      .pull_up_en = GPIO_PULLUP_ENABLE,
+      .pull_down_en = GPIO_PULLDOWN_DISABLE,
+      .intr_type = GPIO_INTR_DISABLE,
+  };
+  gpio_config(&io_conf);
+  gpio_install_isr_service(ESP_INTR_FLAG_LEVEL1);
 
   /// Software configurations
   // Setup aggregator
@@ -79,9 +135,14 @@ void setup() {
 
   controller.register_handler(bluetooth_reporter, false);
   controller.register_handler(api_reporter, false);
+  controller.register_handler(config, false);
 
   controller.register_supervisor(mode_led);
-
+#if DEBUG_FULL_REPORT
+#if ENABLE_DEBUG
+  controller.register_supervisor(full_reporter);
+#endif
+#endif
   controller.setup_state_machine();
 }
 

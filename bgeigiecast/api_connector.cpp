@@ -7,6 +7,8 @@
 #define API_SEND_DEV(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT_DEV : API_SEND_FREQUENCY_SECONDS_DEV)
 #define API_SEND_FREQUENCY(alert, dev) (((dev ? API_SEND_DEV(alert) : API_SEND(alert)) * 1000) - 2000)
 
+#define RETRY_TIMEOUT 2000
+
 ApiReporter::ApiReporter(LocalStorage& config) :
     Handler(k_handler_api_reporter),
     _config(config),
@@ -15,10 +17,6 @@ ApiReporter::ApiReporter(LocalStorage& config) :
     _merged_reading(),
     _current_default_response(e_api_reporter_idle),
     _alert() {
-}
-
-bool ApiReporter::is_connected() const {
-  return WiFi.status() == WL_CONNECTED;
 }
 
 bool ApiReporter::time_to_send() const {
@@ -38,11 +36,18 @@ void ApiReporter::reset() {
 }
 
 bool ApiReporter::activate(bool retry) {
-  if(is_connected()) {
+  static uint32_t last_retry = 0;
+  if(WiFi.isConnected()) {
     return true;
   }
+  if(retry && millis() - last_retry < RETRY_TIMEOUT) {
+    return false;
+  }
+
+  last_retry = millis();
 
   if(retry) {
+    DEBUG_PRINTLN("Reconnecting!");
     WiFi.reconnect();
   } else {
     const char* ssid = _config.get_wifi_ssid();
@@ -56,7 +61,7 @@ bool ApiReporter::activate(bool retry) {
     password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
   }
 
-  return is_connected();
+  return WiFi.isConnected();
 }
 
 void ApiReporter::deactivate() {
@@ -87,6 +92,7 @@ int8_t ApiReporter::handle_produced_work(const worker_status_t& worker_reports) 
     return e_api_reporter_error_invalid_reading;
   }
   reset();
+  return _current_default_response;
 }
 
 ApiReporter::ApiHandlerStatus ApiReporter::send_reading(const Reading& reading) {
@@ -97,7 +103,7 @@ ApiReporter::ApiHandlerStatus ApiReporter::send_reading(const Reading& reading) 
     return e_api_reporter_error_invalid_reading;
   }
 
-  if(!is_connected() && !activate(true)) {
+  if(!WiFi.isConnected() && !activate(true)) {
     DEBUG_PRINTLN("Unable to send, lost connection");
     return e_api_reporter_error_not_connected;
   }
@@ -143,11 +149,10 @@ ApiReporter::ApiHandlerStatus ApiReporter::send_reading(const Reading& reading) 
     DEBUG_PRINTLN("Remote error on sending POST");
     http.end();  //Free resources
     return e_api_reporter_error_server_rejected_post;
-  } else {
-    DEBUG_PRINTLN("Remote not available");
-    http.end();  //Free resources
-    // Failed to send
-    return e_api_reporter_error_remote_not_available;
-
   }
+  DEBUG_PRINTLN("Remote not available");
+  http.end();  //Free resources
+  // Failed to send
+  return e_api_reporter_error_remote_not_available;
+
 }

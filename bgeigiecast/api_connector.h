@@ -29,11 +29,6 @@ class ApiReporter : public Handler {
   explicit ApiReporter(LocalStorage& config);
   virtual ~ApiReporter() = default;
 
-  /**
-   * Check if the connection is up
-   * @return true if connected
-   */
-  bool is_connected() const;
  protected:
 
   /**

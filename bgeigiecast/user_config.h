@@ -5,6 +5,7 @@
 
 /** System config **/
 #define ENABLE_DEBUG 1
+#define DEBUG_FULL_REPORT 0
 #define SERIAL_BAUD 115200
 #define BGEIGIE_CONNECTION_BAUD 9600
 

@@ -16,7 +16,7 @@ class BluetoothReporter : public Handler {
  public:
   typedef enum Status {
     e_handler_idle = -1,
-    e_handler_data_reported,
+    e_handler_clients_available,
     e_handler_no_clients,
   } Status;
 
