@@ -1,9 +1,11 @@
-#include <string.h>
-#include <esp_spi_flash.h>
-#include <stdint.h>
 
-#include "esp_config.h"
+#include "local_storage.h"
 #include "debugger.h"
+#include "identifiers.h"
+#include "reading.h"
+#include "controller.h"
+
+#define D_SAVED_STATE Controller::k_savable_MobileMode
 
 const char* memory_name = "data";
 
@@ -22,7 +24,9 @@ const char* key_home_latitude = "home_latitude";
 const char* key_last_longtitude = "last_longtitude";
 const char* key_last_latitude = "last_latitude";
 
-EspConfig::EspConfig() :
+LocalStorage::LocalStorage() :
+    Handler(k_handler_storage_handler),
+    _memory(),
     _device_id(0),
     _ap_password(""),
     _wifi_ssid(""),
@@ -36,11 +40,10 @@ EspConfig::EspConfig() :
     _home_longitude(0),
     _home_latitude(0),
     _last_longitude(0),
-    _last_latitude(0),
-    _memory() {
+    _last_latitude(0) {
 }
 
-void EspConfig::reset_defaults() {
+void LocalStorage::reset_defaults() {
   if(clear()) {
     set_device_id(D_DEVICE_ID, true);
     set_ap_password(D_ACCESS_POINT_PASSWORD, true);
@@ -59,63 +62,232 @@ void EspConfig::reset_defaults() {
   }
 }
 
-uint16_t EspConfig::get_device_id() const {
+uint16_t LocalStorage::get_device_id() const {
   return _device_id;
 }
 
-const char* EspConfig::get_ap_password() const {
+const char* LocalStorage::get_ap_password() const {
   return _ap_password;
 }
 
-const char* EspConfig::get_wifi_ssid() const {
+const char* LocalStorage::get_wifi_ssid() const {
   return _wifi_ssid;
 }
 
-const char* EspConfig::get_wifi_password() const {
+const char* LocalStorage::get_wifi_password() const {
   return _wifi_password;
 }
 
-const char* EspConfig::get_api_key() const {
+const char* LocalStorage::get_api_key() const {
   return _api_key;
 }
 
-uint8_t EspConfig::get_saved_state() const {
+int8_t LocalStorage::get_saved_state() const {
   return _saved_state;
 }
 
-bool EspConfig::is_led_color_blind() const {
+bool LocalStorage::is_led_color_blind() const {
   return _led_color_blind;
 }
 
-uint8_t EspConfig::get_led_color_intensity() const {
+uint8_t LocalStorage::get_led_color_intensity() const {
   return _led_color_intensity;
 }
 
-bool EspConfig::get_use_dev() const {
+bool LocalStorage::get_use_dev() const {
   return _use_dev;
 }
 
-bool EspConfig::get_use_home_location() const {
+bool LocalStorage::get_use_home_location() const {
   return _use_home_location;
 }
 
-double EspConfig::get_home_longitude() const {
+double LocalStorage::get_home_longitude() const {
   return _home_longitude;
 }
 
-double EspConfig::get_home_latitude() const {
+double LocalStorage::get_home_latitude() const {
   return _home_latitude;
 }
 
-double EspConfig::get_last_longitude() const {
+double LocalStorage::get_last_longitude() const {
   return _last_longitude;
 }
 
-double EspConfig::get_last_latitude() const {
+double LocalStorage::get_last_latitude() const {
   return _last_latitude;
 }
 
-void EspConfig::set_all() {
+void LocalStorage::set_device_id(uint16_t device_id, bool force) {
+  if(force || (device_id != _device_id)) {
+    if(_memory.begin(memory_name)) {
+      _device_id = device_id;
+      _memory.putUShort(key_device_id, _device_id);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for device_id");
+    }
+  }
+}
+
+void LocalStorage::set_ap_password(const char* ap_password, bool force) {
+  if(force || (ap_password != nullptr && strlen(ap_password) < CONFIG_VAL_MAX)) {
+    if(_memory.begin(memory_name)) {
+      strcpy(_ap_password, ap_password);
+      _memory.putString(key_ap_password, _ap_password);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for ap_password");
+    }
+  }
+}
+
+void LocalStorage::set_wifi_ssid(const char* wifi_ssid, bool force) {
+  if(force || (wifi_ssid != nullptr && strlen(wifi_ssid) < CONFIG_VAL_MAX)) {
+    if(_memory.begin(memory_name)) {
+      strcpy(_wifi_ssid, wifi_ssid);
+      _memory.putString(key_wifi_ssid, _wifi_ssid);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for wifi_ssid");
+    }
+  }
+}
+
+void LocalStorage::set_wifi_password(const char* wifi_password, bool force) {
+  if(force || (wifi_password != nullptr && strlen(wifi_password) < CONFIG_VAL_MAX)) {
+    if(_memory.begin(memory_name)) {
+      strcpy(_wifi_password, wifi_password);
+      _memory.putString(key_wifi_password, _wifi_password);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for wifi_password");
+    }
+  }
+}
+
+void LocalStorage::set_api_key(const char* api_key, bool force) {
+  if(force || (api_key != nullptr && strlen(api_key) < CONFIG_VAL_MAX)) {
+    if(_memory.begin(memory_name)) {
+      strcpy(_api_key, api_key);
+      _memory.putString(key_api_key, _api_key);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for api_key");
+    }
+  }
+}
+
+void LocalStorage::set_use_dev(bool use_dev, bool force) {
+  if(force || (use_dev != _use_dev)) {
+    if(_memory.begin(memory_name)) {
+      _use_dev = use_dev;
+      _memory.putBool(key_use_dev, use_dev);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for use_dev");
+    }
+  }
+}
+
+void LocalStorage::set_led_color_blind(bool led_color_blind, bool force) {
+  if(force || (led_color_blind != _led_color_blind)) {
+    if(_memory.begin(memory_name)) {
+      _led_color_blind = led_color_blind;
+      _memory.putBool(key_led_color_blind, led_color_blind);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for key_led_color_blind");
+    }
+  }
+}
+
+void LocalStorage::set_led_color_intensity(uint8_t led_color_intensity, bool force) {
+  if(force || (led_color_intensity != _led_color_intensity)) {
+    if(_memory.begin(memory_name)) {
+      _led_color_intensity = led_color_intensity;
+      _memory.putUChar(key_led_color_intensity, led_color_intensity);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for key_led_color_intensity");
+    }
+  }
+}
+
+void LocalStorage::set_saved_state(uint8_t saved_state, bool force) {
+  if(force || (saved_state != _saved_state)) {
+    if(_memory.begin(memory_name)) {
+      _saved_state = saved_state;
+      _memory.putChar(key_saved_state, saved_state);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for init_fixed");
+    }
+  }
+}
+
+void LocalStorage::set_use_home_location(bool use_home_location, bool force) {
+  if(force || (use_home_location != _use_home_location)) {
+    if(_memory.begin(memory_name)) {
+      _use_home_location = use_home_location;
+      _memory.putBool(key_led_color_blind, use_home_location);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for key_led_color_blind");
+    }
+  }
+}
+
+void LocalStorage::set_home_longitude(double home_longtitude, bool force) {
+  if(_memory.begin(memory_name)) {
+    _home_longitude = home_longtitude;
+    _memory.putDouble(key_home_longtitude, home_longtitude);
+    _memory.end();
+  } else {
+    DEBUG_PRINTLN("unable to save new value for key_home_longtitude");
+  }
+}
+
+void LocalStorage::set_home_latitude(double home_latitude, bool force) {
+  if(_memory.begin(memory_name)) {
+    _home_latitude = home_latitude;
+    _memory.putDouble(key_home_latitude, home_latitude);
+    _memory.end();
+  } else {
+    DEBUG_PRINTLN("unable to save new value for key_home_latitude");
+  }
+}
+
+void LocalStorage::set_last_longitude(double last_longitude, bool force) {
+  if(_memory.begin(memory_name)) {
+    _last_longitude = last_longitude;
+    _memory.putDouble(key_last_longtitude, last_longitude);
+    _memory.end();
+  } else {
+    DEBUG_PRINTLN("unable to save new value for key_last_longtitude");
+  }
+}
+
+void LocalStorage::set_last_latitude(double last_latitude, bool force) {
+  if(_memory.begin(memory_name)) {
+    _last_latitude = last_latitude;
+    _memory.putDouble(key_last_latitude, last_latitude);
+    _memory.end();
+  } else {
+    DEBUG_PRINTLN("unable to save new value for key_last_latitude");
+  }
+}
+
+bool LocalStorage::clear() {
+  if(_memory.begin(memory_name)) {
+    _memory.clear();
+    _memory.end();
+    return true;
+  }
+  return false;
+}
+
+bool LocalStorage::activate(bool) {
   _memory.begin(memory_name, true);
   _device_id = _memory.getUShort(key_device_id, D_DEVICE_ID);
   if(_memory.getString(key_ap_password, _ap_password, CONFIG_VAL_MAX) == 0) {
@@ -133,181 +305,27 @@ void EspConfig::set_all() {
   _use_dev = _memory.getBool(key_use_dev, D_USE_DEV_SERVER);
   _led_color_blind = _memory.getBool(key_led_color_blind, D_LED_COLOR_BLIND);
   _led_color_intensity = _memory.getUChar(key_led_color_intensity, D_LED_COLOR_INTENSITY);
-  _saved_state = _memory.getUChar(key_saved_state, D_SAVED_STATE);
+  _saved_state = _memory.getChar(key_saved_state, D_SAVED_STATE);
   _use_home_location = _memory.getBool(key_led_color_blind, false);
   _home_longitude = _memory.getDouble(key_home_longtitude, 0);
   _home_latitude = _memory.getDouble(key_home_latitude, 0);
   _last_longitude = _memory.getDouble(key_last_longtitude, 0);
   _last_latitude = _memory.getDouble(key_last_latitude, 0);
   _memory.end();
+  return true;
 }
 
-bool EspConfig::clear() {
-  if(_memory.begin(memory_name)) {
-    _memory.clear();
-    _memory.end();
-    return true;
-  }
-  return false;
-}
-
-void EspConfig::set_device_id(uint16_t device_id, bool force) {
-  if(force || (device_id != _device_id)) {
-    if(_memory.begin(memory_name)) {
-      _device_id = device_id;
-      _memory.putUShort(key_device_id, _device_id);
-      _memory.end();
-    } else {
-      DEBUG_PRINTLN("unable to save new value for device_id");
+int8_t LocalStorage::handle_produced_work(const worker_status_t& worker_reports) {
+  // Get reading data to store
+  const auto& reader = worker_reports.at(k_worker_bgeigie_connector);
+  if(reader.is_fresh()) {
+    const auto& reading = reader.get<Reading>();
+    set_device_id(reading.get_device_id(), false);
+    if(reading.get_status() & k_reading_gps_ok) {
+      set_last_latitude(reading.get_latitude(), false);
+      set_last_longitude(reading.get_longitude(), false);
     }
+    return HandlerStatus::e_handler_data_handled;
   }
-}
-
-void EspConfig::set_ap_password(const char* ap_password, bool force) {
-  if(force || (ap_password != nullptr && strlen(ap_password) < CONFIG_VAL_MAX)) {
-    if(_memory.begin(memory_name)) {
-      strcpy(_ap_password, ap_password);
-      _memory.putString(key_ap_password, _ap_password);
-      _memory.end();
-    } else {
-      DEBUG_PRINTLN("unable to save new value for ap_password");
-    }
-  }
-}
-
-void EspConfig::set_wifi_ssid(const char* wifi_ssid, bool force) {
-  if(force || (wifi_ssid != nullptr && strlen(wifi_ssid) < CONFIG_VAL_MAX)) {
-    if(_memory.begin(memory_name)) {
-      strcpy(_wifi_ssid, wifi_ssid);
-      _memory.putString(key_wifi_ssid, _wifi_ssid);
-      _memory.end();
-    } else {
-      DEBUG_PRINTLN("unable to save new value for wifi_ssid");
-    }
-  }
-}
-
-void EspConfig::set_wifi_password(const char* wifi_password, bool force) {
-  if(force || (wifi_password != nullptr && strlen(wifi_password) < CONFIG_VAL_MAX)) {
-    if(_memory.begin(memory_name)) {
-      strcpy(_wifi_password, wifi_password);
-      _memory.putString(key_wifi_password, _wifi_password);
-      _memory.end();
-    } else {
-      DEBUG_PRINTLN("unable to save new value for wifi_password");
-    }
-  }
-}
-
-void EspConfig::set_api_key(const char* api_key, bool force) {
-  if(force || (api_key != nullptr && strlen(api_key) < CONFIG_VAL_MAX)) {
-    if(_memory.begin(memory_name)) {
-      strcpy(_api_key, api_key);
-      _memory.putString(key_api_key, _api_key);
-      _memory.end();
-    } else {
-      DEBUG_PRINTLN("unable to save new value for api_key");
-    }
-  }
-}
-
-void EspConfig::set_use_dev(bool use_dev, bool force) {
-  if(force || (use_dev != _use_dev)) {
-    if(_memory.begin(memory_name)) {
-      _use_dev = use_dev;
-      _memory.putBool(key_use_dev, use_dev);
-      _memory.end();
-    } else {
-      DEBUG_PRINTLN("unable to save new value for use_dev");
-    }
-  }
-}
-
-void EspConfig::set_led_color_blind(bool led_color_blind, bool force) {
-  if(force || (led_color_blind != _led_color_blind)) {
-    if(_memory.begin(memory_name)) {
-      _led_color_blind = led_color_blind;
-      _memory.putBool(key_led_color_blind, led_color_blind);
-      _memory.end();
-    } else {
-      DEBUG_PRINTLN("unable to save new value for key_led_color_blind");
-    }
-  }
-}
-
-void EspConfig::set_led_color_intensity(uint8_t led_color_intensity, bool force) {
-  if(force || (led_color_intensity != _led_color_intensity)) {
-    if(_memory.begin(memory_name)) {
-      _led_color_intensity = led_color_intensity;
-      _memory.putUChar(key_led_color_intensity, led_color_intensity);
-      _memory.end();
-    } else {
-      DEBUG_PRINTLN("unable to save new value for key_led_color_intensity");
-    }
-  }
-
-}
-
-void EspConfig::set_saved_state(uint8_t saved_state, bool force) {
-  if(force || (saved_state != _saved_state)) {
-    if(_memory.begin(memory_name)) {
-      _saved_state = saved_state;
-      _memory.putUChar(key_saved_state, saved_state);
-      _memory.end();
-    } else {
-      DEBUG_PRINTLN("unable to save new value for init_fixed");
-    }
-  }
-}
-
-void EspConfig::set_use_home_location(bool use_home_location, bool force) {
-  if(force || (use_home_location != _use_home_location)) {
-    if(_memory.begin(memory_name)) {
-      _use_home_location = use_home_location;
-      _memory.putBool(key_led_color_blind, use_home_location);
-      _memory.end();
-    } else {
-      DEBUG_PRINTLN("unable to save new value for key_led_color_blind");
-    }
-  }
-}
-
-void EspConfig::set_home_longitude(double home_longtitude, bool force) {
-  if(_memory.begin(memory_name)) {
-    _home_longitude = home_longtitude;
-    _memory.putDouble(key_home_longtitude, home_longtitude);
-    _memory.end();
-  } else {
-    DEBUG_PRINTLN("unable to save new value for key_home_longtitude");
-  }
-}
-
-void EspConfig::set_home_latitude(double home_latitude, bool force) {
-  if(_memory.begin(memory_name)) {
-    _home_latitude = home_latitude;
-    _memory.putDouble(key_home_latitude, home_latitude);
-    _memory.end();
-  } else {
-    DEBUG_PRINTLN("unable to save new value for key_home_latitude");
-  }
-}
-
-void EspConfig::set_last_longitude(double last_longitude, bool force) {
-  if(_memory.begin(memory_name)) {
-    _last_longitude = last_longitude;
-    _memory.putDouble(key_last_longtitude, last_longitude);
-    _memory.end();
-  } else {
-    DEBUG_PRINTLN("unable to save new value for key_last_longtitude");
-  }
-}
-
-void EspConfig::set_last_latitude(double last_latitude, bool force) {
-  if(_memory.begin(memory_name)) {
-    _last_latitude = last_latitude;
-    _memory.putDouble(key_last_latitude, last_latitude);
-    _memory.end();
-  } else {
-    DEBUG_PRINTLN("unable to save new value for key_last_latitude");
-  }
+  return HandlerStatus::e_handler_idle;
 }

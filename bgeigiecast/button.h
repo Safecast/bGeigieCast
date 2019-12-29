@@ -13,10 +13,6 @@ class ButtonObserver;
 class Button {
  public:
 
-  typedef void(* on_button_down_fn_t)(Button*);
-  typedef void(* on_button_release_fn_t)(Button*);
-  typedef void(* on_button_pressed_fn_t)(Button*, uint32_t);
-
   explicit Button(uint8_t pin, uint8_t pull_type = PULLUP);
   virtual ~Button();
 
@@ -57,33 +53,12 @@ class Button {
    */
   void set_observer(ButtonObserver* observer);
 
-  /**
-   * Set a callback function for button down events
-   * @param on_button_down_fn: callback function
-   */
-  void set_on_button_down_fn(on_button_down_fn_t on_button_down_fn);
-
-  /**
-   * Set a callback function for button release events
-   * @param on_button_down_fn: callback function
-   */
-  void set_on_button_release_fn(on_button_release_fn_t on_button_release_fn);
-
-  /**
-   * Set a callback function for button pressed events
-   * @param on_button_down_fn: callback function
-   */
-  void set_on_button_pressed_fn(on_button_pressed_fn_t on_button_pressed_fn);
  private:
   uint8_t _pin;
   bool _pull_type_mode;
   ButtonObserver* _observer;
   bool _current_state;
   uint32_t _last_state_change;
-
-  on_button_down_fn_t _on_button_down_fn;
-  on_button_release_fn_t _on_button_release_fn;
-  on_button_pressed_fn_t _on_button_pressed_fn;
 };
 
 /**

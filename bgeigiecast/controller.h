@@ -1,27 +1,25 @@
 #ifndef BGEIGIECAST_CONTROLLER_HPP
 #define BGEIGIECAST_CONTROLLER_HPP
 
+#include <Handler.hpp>
+#include <Aggregator.hpp>
+
 #include "button.h"
 #include "sm_context.h"
-#include "conf_server.h"
-#include "bgeigie_connector.h"
-#include "i_api_connector.h"
-#include "bluetooth_connector.h"
-#include "mode_led.h"
-#include "reporter.h"
+#include "local_storage.h"
 
 /**
  * Main controller for the system, implements state machine to run
  */
-class Controller : public Context, private ButtonObserver, private ReporterObserver {
+class Controller : private ButtonObserver, public Context, public Aggregator, private Handler {
  public:
-  typedef void (* sleep_fn_t)(uint32_t millis_to_sleep);
 
-  Controller(EspConfig& config,
-             Stream& bgeigie_connection,
-             IApiConnector& api_connector,
-             BluetoohConnector& bluetooth_connector,
-             sleep_fn_t sleep_fn = nullptr);
+  typedef enum {
+    k_savable_MobileMode,
+    k_savable_FixedMode
+  } SavableState;
+
+  Controller(LocalStorage& config);
   virtual ~Controller() = default;
 
   /**
@@ -30,34 +28,24 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
   void setup_state_machine();
 
   /**
-   * Initialize the controller and all of its components
-   */
-  void initialize();
-
-  /**
    * Override the context run to also run the reporter state machine
    */
   void run() override;
 
   /**
-   *
+   * Callback for the button
    */
-  void set_reporter_outputs(bool bt, bool api);
+  void on_button_pressed(Button* button, uint32_t millis) override;
 
-  /**
-   * Go to sleep till next reading is expected.
-   */
-  void sleep();
+ protected:
+  int8_t handle_produced_work(const worker_status_t& worker_reports) override;
+
+ private:
 
   /**
    * Reset and restart the system
    */
   void reset_system();
-
-  /**
-   * Callback for the button
-   */
-  void on_button_pressed(Button* button, uint32_t millis) override;
 
   /**
    * Save a state to the memory
@@ -70,27 +58,20 @@ class Controller : public Context, private ButtonObserver, private ReporterObser
    */
   SavableState get_saved_state();
 
- private:
-  void reading_reported(Reporter::ReporterStatus status) override;
+  /**
+   * Initialize the controller and all of its components
+   */
+  void initialize();
 
- private:
-  EspConfig& _config;
-  Reporter _reporter;
-  ConfigWebServer _ap_server;
+  LocalStorage& _config;
   Button _mode_button;
-  ModeLED _mode_led;
-
-  sleep_fn_t _sleep_fn;
 
   friend class InitializeState;
   friend class InitReadingState;
   friend class PostInitializeState;
-  friend class SetupServerState;
-  friend class ServerActiveState;
   friend class MobileModeState;
-  friend class ConnectedState;
-  friend class DisconnectedState;
-  friend class ConnectionErrorState;
+  friend class FixedModeState;
+  friend class ResetState;
 };
 
 #endif //BGEIGIECAST_CONTROLLER_HPP

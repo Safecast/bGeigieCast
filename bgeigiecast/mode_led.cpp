@@ -6,13 +6,16 @@
 // Set this to true if we use anode LED
 #define RGB_STATE_LED_REVERSED true
 
-ModeLED::ModeLED(EspConfig& config) :
+ModeLED::ModeLED(LocalStorage& config) :
     RGBLed(RGB_LED_PIN_R, RGB_LED_PIN_G, RGB_LED_PIN_B, RGB_STATE_LED_REVERSED),
+    Supervisor(),
     _config(config),
-    _blink_state(false),
+    color(ModeColor::mode_color_off),
+    frequency(0),
+    percentage_on(0),
     _colorTypes{
-        // Normal           Colorblind
-        // R    G    B      R    G    B
+        // Normal            Colorblind
+        // R    G    B   ,   R    G    B
         {{000, 000, 000}, {000, 000, 000}}, // off
         {{063, 127, 063}, {063, 127, 063}}, // init
         {{063, 000, 063}, {063, 000, 063}}, // init config
@@ -24,26 +27,43 @@ ModeLED::ModeLED(EspConfig& config) :
     } {
 }
 
-void ModeLED::set_color(ModeLED::ModeColor color) {
+void ModeLED::set_color(ModeLED::ModeColor _color, double _frequency, uint8_t _percentage_on) {
   DEBUG_PRINT("Changed LED to ");
-  DEBUG_PRINTLN(color);
-  set(_config.is_led_color_blind() ? _colorTypes[color].color_blind : _colorTypes[color].normal);
+  DEBUG_PRINTLN(_color);
+  color = _color;
+  if (frequency > 0){
+    frequency = _frequency;
+    percentage_on = _percentage_on;
+  }
+  else {
+    // If not blinking, set here. Else the loop will take care of the setter
+    set(_config.is_led_color_blind() ? _colorTypes[color].color_blind : _colorTypes[color].normal);
+  }
 }
 
-void ModeLED::blink(ModeLED::ModeColor color, double frequency, double percentage_on) {
-  // Blink LED
-  double blink_millis = 1000 / frequency;
-  uint32_t cycle_now = millis() % static_cast<uint32_t>(blink_millis);
-  uint32_t threshold = static_cast<uint32_t>(blink_millis * (percentage_on / 100));
-  if(cycle_now < threshold && !_blink_state) {
-    set_color(color);
-    _blink_state = true;
-  } else if(cycle_now > threshold && _blink_state) {
-    set_color(ModeLED::ModeColor::off);
-    _blink_state = false;
+void ModeLED::loop() {
+  if(frequency > 0) {
+    // Blink LED
+    double blink_millis = 1000 / frequency;
+    auto cycle_now = millis() % static_cast<uint32_t>(blink_millis);
+    auto threshold = static_cast<uint32_t>(blink_millis * (percentage_on / 100.0));
+    if(cycle_now < threshold) {
+      set_color(color);
+    } else if(cycle_now > threshold) {
+      set_color(ModeLED::mode_color_off);
+    }
   }
 }
 
 uint8_t ModeLED::get_intensity() const {
   return _config.get_led_color_intensity();
+}
+
+bool ModeLED::activate() {
+  init();
+  return true;
+}
+
+void ModeLED::handle_report(const Report& report) {
+  // TODO
 }

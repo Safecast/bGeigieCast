@@ -17,19 +17,19 @@ component bGeigieNano\n {
         component Controller
         component Reporter
         component ConfigServer
-        component ApiConnector
+        component ApiReporter
         component Bluetooth
-        component EspConfig
+        component Configuration
 
         ''' For ordering '''
-        ConfigServer -[hidden]> EspConfig
+        ConfigServer -[hidden]> Configuration
         ''''''
 
         Controller -( serverControl
         serverControl - ConfigServer
         dataReports )- Reporter
         config )-u- ConfigServer
-        config - EspConfig
+        config - Configuration
         deviceConfig -d- ConfigServer
         espMode -d- Controller
         Controller -l-( reporterControl
@@ -37,11 +37,11 @@ component bGeigieNano\n {
         IBL )-u- Reporter
         IBL -d- Bluetooth
         IAP )-u- Reporter
-        IAP -d- ApiConnector
-        ApiConnector -u-( config
+        IAP -d- ApiReporter
+        ApiReporter -u-( config
 
         liveData -u- Bluetooth
-        api )-u- ApiConnector
+        api )-u- ApiReporter
     }
 
     bGeigieController - dataReports

@@ -1,68 +1,105 @@
 
 #include "api_connector.h"
 #include "debugger.h"
+#include "identifiers.h"
 
-#define API_SEND_FREQUENCY (API_SEND_FREQUENCY_MINUTES * 60 * 1000)
+#define API_SEND(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT : API_SEND_FREQUENCY_SECONDS)
+#define API_SEND_DEV(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT_DEV : API_SEND_FREQUENCY_SECONDS_DEV)
+#define API_SEND_FREQUENCY(alert, dev) (((dev ? API_SEND_DEV(alert) : API_SEND(alert)) * 1000) - 2000)
 
-ApiConnector::ApiConnector(EspConfig& config, ApiConnectionObserver* observer) : IApiConnector(config, observer) {
+ApiReporter::ApiReporter(LocalStorage& config) :
+    Handler(k_handler_api_reporter),
+    _config(config),
+    _saved_readings(),
+    _last_send(),
+    _merged_reading(),
+    _current_default_response(e_api_reporter_idle),
+    _alert() {
 }
 
-bool ApiConnector::start_connect(bool initial) {
+bool ApiReporter::is_connected() const {
+  return WiFi.status() == WL_CONNECTED;
+}
+
+bool ApiReporter::time_to_send() const {
+  return millis() - _last_send > API_SEND_FREQUENCY(_alert, _config.get_use_dev());
+}
+
+void ApiReporter::save_reading() {
+  DEBUG_PRINTLN("Could not upload reading, trying again later");
+  if(_merged_reading.valid_reading()) {
+    _saved_readings.add(_merged_reading);
+  }
+}
+
+void ApiReporter::reset() {
+  _last_send = millis();
+  _merged_reading.reset();
+}
+
+bool ApiReporter::activate(bool retry) {
   if(is_connected()) {
     return true;
   }
 
-  const char* ssid = _config.get_wifi_ssid();
-  if(!ssid) {
-    DEBUG_PRINTLN("No SSID to connect to!");
-    return false;
-  }
-
-  DEBUG_PRINTLN();
-
-  if(initial) {
+  if(retry) {
+    WiFi.reconnect();
+  } else {
+    const char* ssid = _config.get_wifi_ssid();
+    if(!ssid) {
+      DEBUG_PRINTLN("No SSID to connect to!");
+      return false;
+    }
     const char* password = _config.get_wifi_password();
     DEBUG_PRINT("Connecting to ssid ");
     DEBUG_PRINTLN(ssid);
     password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
-    _merged_reading.reset();
-    _last_send = millis();
-  } else {
-    WiFi.reconnect();
   }
 
   return is_connected();
 }
 
-void ApiConnector::stop() {
+void ApiReporter::deactivate() {
+  reset();
   WiFi.disconnect(true, true);
   WiFi.mode(WIFI_MODE_NULL);
 }
 
-bool ApiConnector::test() {
-  WiFiClient client;
-  bool success = client.connect(API_HOST, 80) != 0;
-  client.stop();
-  return success;
+int8_t ApiReporter::handle_produced_work(const worker_status_t& worker_reports) {
+  const auto& reader = worker_reports.at(k_worker_bgeigie_connector);
+  if(!reader.is_fresh()) {
+    return _current_default_response;
+  }
+  const auto& reading = reader.get<Reading>();
+  _merged_reading += reading;
+  if(!time_to_send()) {
+    return _current_default_response;
+  }
+
+  _last_send = millis();
+  if(_config.get_use_home_location()) {
+    _merged_reading.apply_home_location(_config.get_home_latitude(), _config.get_home_longitude());
+  }
+
+  if(_merged_reading.valid_reading()) {
+    _current_default_response = send_reading(reading);
+  } else {
+    return e_api_reporter_error_invalid_reading;
+  }
+  reset();
 }
 
-bool ApiConnector::is_connected() {
-  return WiFi.status() == WL_CONNECTED;
-}
-
-bool ApiConnector::send_reading() {
+ApiReporter::ApiHandlerStatus ApiReporter::send_reading(const Reading& reading) {
   char json_str[200];
   if(!_merged_reading.as_json(json_str)) {
     // This whole reading is invalid
     DEBUG_PRINTLN("Unable to send reading, its not valid at all!");
-    schedule_event(e_a_api_post_failed);
-    return false;
+    return e_api_reporter_error_invalid_reading;
   }
 
-  if(!is_connected()) {
+  if(!is_connected() && !activate(true)) {
     DEBUG_PRINTLN("Unable to send, lost connection");
-    schedule_event(e_a_api_post_failed);
-    return false;
+    return e_api_reporter_error_not_connected;
   }
 
   HTTPClient http;
@@ -77,9 +114,8 @@ bool ApiConnector::send_reading() {
   //Specify destination for HTTP request
   if(!http.begin(url)) {
     DEBUG_PRINTLN("Unable to begin url connection");
-    save_reading();
     http.end();  //Free resources
-    return false;
+    return e_api_reporter_error_remote_not_available;
   }
 
   char content_length[5];
@@ -96,18 +132,22 @@ bool ApiConnector::send_reading() {
 
   int httpResponseCode = http.POST(json_str);   //Send the actual POST request
 
-  if(httpResponseCode > 0) {
+  if(httpResponseCode >= 200 && httpResponseCode < 300) {
     String response = http.getString();
+    DEBUG_PRINTLN("POST successfull");
     DEBUG_PRINT(httpResponseCode);
     DEBUG_PRINTLN(response);
-    schedule_event(e_a_reading_posted);
     http.end();  //Free resources
-    return true;
+    return e_api_reporter_send_success;
+  } else if(httpResponseCode > 0) {
+    DEBUG_PRINTLN("Remote error on sending POST");
+    http.end();  //Free resources
+    return e_api_reporter_error_server_rejected_post;
   } else {
-    DEBUG_PRINTLN("Error on sending POST");
-    // Failed to send
-    schedule_event(e_a_api_post_failed);
+    DEBUG_PRINTLN("Remote not available");
     http.end();  //Free resources
-    return false;
+    // Failed to send
+    return e_api_reporter_error_remote_not_available;
+
   }
 }

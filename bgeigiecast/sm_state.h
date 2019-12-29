@@ -4,11 +4,6 @@
 #include "sm_events.h"
 #include "debugger.h"
 
-typedef enum {
-  k_savable_MobileMode,
-  k_savable_FixedMode
-} SavableState;
-
 /**
  * Abstract state for the state machine pattern
  */
@@ -16,6 +11,12 @@ class State {
  public:
   State() = default;;
   virtual ~State() = default;
+
+  /**
+   * Get some unique identifier of the state
+   * @return
+   */
+  virtual int8_t get_state_id() const = 0;
 
   /**
    * Action when entering this state

@@ -1,6 +1,6 @@
 #include <unity.h>
 #include <http_pages.h>
-#include <conf_server.h>
+#include <configuration_server.h>
 #include "../test_config.h"
 #include <HTTPClient.h>
 

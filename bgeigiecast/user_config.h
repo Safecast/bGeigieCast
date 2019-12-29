@@ -5,10 +5,8 @@
 
 /** System config **/
 #define ENABLE_DEBUG 1
-#define DEBUG_LOG_STATE_TRANSITIONS 0
 #define SERIAL_BAUD 115200
 #define BGEIGIE_CONNECTION_BAUD 9600
-#define USE_SLEEP 0
 
 #define POST_INITIALIZE_DURATION 4000
 
@@ -17,7 +15,7 @@
 #define RGB_LED_PIN_G A4
 #define RGB_LED_PIN_B A5
 
-#define MODE_BUTTON_PIN 0
+#define MODE_BUTTON_PIN 0u
 
 
 /** API connector settings **/
@@ -46,6 +44,5 @@
 #define D_USE_DEV_SERVER        true
 #define D_LED_COLOR_BLIND       false
 #define D_LED_COLOR_INTENSITY   30
-#define D_SAVED_STATE           0
 
 #endif

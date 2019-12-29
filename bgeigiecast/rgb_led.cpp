@@ -8,13 +8,17 @@
 #define CHANNEL_RESOLUTION 8
 
 RGBLed::RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b, bool reversed) : _reversed(reversed), config_intensity(30) {
+  ledcAttachPin(pin_r, CHANNEL_R);
+  ledcAttachPin(pin_g, CHANNEL_G);
+  ledcAttachPin(pin_b, CHANNEL_B);
+}
+
+void RGBLed::init() {
   // Connect pins to channels
   ledcSetup(CHANNEL_R, CHANNEL_FREQUENCY, CHANNEL_RESOLUTION);
-  ledcAttachPin(pin_r, CHANNEL_R);
   ledcSetup(CHANNEL_G, CHANNEL_FREQUENCY, CHANNEL_RESOLUTION);
-  ledcAttachPin(pin_g, CHANNEL_G);
   ledcSetup(CHANNEL_B, CHANNEL_FREQUENCY, CHANNEL_RESOLUTION);
-  ledcAttachPin(pin_b, CHANNEL_B);
+  off();
 }
 
 void RGBLed::set(const RGB& values) {

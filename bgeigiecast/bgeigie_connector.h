@@ -3,22 +3,20 @@
 
 #include <Arduino.h>
 
+#include <Worker.hpp>
+
 #include "reading.h"
 
 /**
  * Connect the system to the bGeigieNano to read sensor data
  */
-class BGeigieConnector {
+class BGeigieConnector : public Worker<Reading> {
  public:
   explicit BGeigieConnector(Stream& _serial_connection);
   virtual ~BGeigieConnector() = default;
 
-  /**
-   * Get a reading from serial
-   * @param out: output for the reading
-   * @return: true if a reading was read
-   */
-  bool get_reading(Reading& out);
+ private:
+  int8_t produce_data() override;
 
  private:
   Stream& _serial_connection;

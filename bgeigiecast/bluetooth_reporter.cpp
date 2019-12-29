@@ -1,48 +1,56 @@
 #include <Arduino.h>
-#include <stdio.h>
-#include <string.h>
 
-#include "bluetooth_connector.h"
+#include "bluetooth_reporter.h"
 #include "debugger.h"
+#include "identifiers.h"
 
-BluetoohConnector::BluetoohConnector() : pServer(nullptr), initialized(false), pDataRXCharacteristic(nullptr) {
+BluetoothReporter::BluetoothReporter(LocalStorage& config)
+    : Handler(k_handler_bluetooth_reporter), config(config), pServer(nullptr), pDataRXCharacteristic(nullptr) {
 }
 
-bool BluetoohConnector::init(uint16_t device_id) {
-  if(initialized) {
-    return true;
+bool BluetoothReporter::activate(bool) {
+  if(!pServer) {
+    pServer = BLEDevice::createServer();
+
+    create_ble_profile_service(pServer);
+    create_ble_device_service(pServer);
+    create_ble_data_service(pServer);
+
+    BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
+    pAdvertising->addServiceUUID(SERVICE_PROFILE_UUID);
+    pAdvertising->addServiceUUID(SERVICE_DEVICE_UUID);
+    pAdvertising->addServiceUUID(SERVICE_DATA_UUID);
+    pAdvertising->setScanResponse(true);
+    pAdvertising->setMinPreferred(0x06);
+    pAdvertising->setMinPreferred(0x12);
   }
 
-  char deviceName[16];
-  sprintf(deviceName, "bGeigie%d", device_id);
+  if(!BLEDevice::getInitialized() && config.get_device_id()) {
+    char deviceName[16];
+    sprintf(deviceName, "bGeigie%d", config.get_device_id());
+    BLEDevice::init(deviceName);
+    DEBUG_PRINT("Bluetooth initialized, device: ");
+    DEBUG_PRINTLN(deviceName);
+  }
 
-  BLEDevice::init(deviceName);
-  pServer = BLEDevice::createServer();
-
-  create_ble_profile_service(pServer);
-  create_ble_device_service(pServer);
-  create_ble_data_service(pServer);
-
-  BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
-  pAdvertising->addServiceUUID(SERVICE_PROFILE_UUID);
-  pAdvertising->addServiceUUID(SERVICE_DEVICE_UUID);
-  pAdvertising->addServiceUUID(SERVICE_DATA_UUID);
-  pAdvertising->setScanResponse(true);
-  pAdvertising->setMinPreferred(0x06);
-  pAdvertising->setMinPreferred(0x12);
-
-  BLEDevice::startAdvertising();
-  initialized = true;
-
-  DEBUG_PRINT("Bluetooth initialized, device: ");
-  DEBUG_PRINTLN(deviceName);
-  return true;
+  return BLEDevice::getInitialized();
 }
 
-void BluetoohConnector::create_ble_profile_service(BLEServer* pServer) {
-  if(initialized) {
-    return;
+void BluetoothReporter::deactivate() {
+  BLEDevice::deinit();
+}
+
+int8_t BluetoothReporter::handle_produced_work(const worker_status_t& worker_reports) {
+  const auto& reading_stat = worker_reports.at(k_worker_bgeigie_connector);
+  if(!reading_stat.is_fresh()) {
+    return Status::e_handler_idle;
   }
+  // Fresh reading is produced
+  const auto& reading = reading_stat.get<Reading>();
+  return send_reading(reading) ? Status::e_handler_data_reported : Status::e_handler_no_clients;
+}
+
+void BluetoothReporter::create_ble_profile_service(BLEServer* pServer) {
   BLEService* pProfileService = pServer->createService(SERVICE_PROFILE_UUID);
   BLECharacteristic* pProfileNameCharacteristic = pProfileService->createCharacteristic(
       CHARACTERISTIC_PROFILE_NAME_UUID,
@@ -58,10 +66,7 @@ void BluetoohConnector::create_ble_profile_service(BLEServer* pServer) {
   pProfileService->start();
 }
 
-void BluetoohConnector::create_ble_device_service(BLEServer* pServer) {
-  if(initialized) {
-    return;
-  }
+void BluetoothReporter::create_ble_device_service(BLEServer* pServer) {
   BLEService* pDeviceService = pServer->createService(SERVICE_DEVICE_UUID);
 
   // Manufacturer name
@@ -108,10 +113,7 @@ void BluetoohConnector::create_ble_device_service(BLEServer* pServer) {
   pDeviceService->start();
 }
 
-void BluetoohConnector::create_ble_data_service(BLEServer* pServer) {
-  if(initialized) {
-    return;
-  }
+void BluetoothReporter::create_ble_data_service(BLEServer* pServer) {
   BLEService* pDataService = pServer->createService(SERVICE_DATA_UUID);
 
   // DB Addr
@@ -158,10 +160,7 @@ void BluetoohConnector::create_ble_data_service(BLEServer* pServer) {
   pDataService->start();
 }
 
-bool BluetoohConnector::send_reading(Reading& reading) {
-  if(!initialized) {
-    init(reading.get_device_id());
-  }
+bool BluetoothReporter::send_reading(const Reading& reading) const {
   if(pServer->getConnectedCount()) {
     // No clients to send data to
     return false;

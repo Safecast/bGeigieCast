@@ -3,40 +3,43 @@
 
 #include <BLEDevice.h>
 
-#include "bluetooth_connector.h"
+#include <Handler.hpp>
+
 #include "bluetooth_settings.h"
 #include "reading.h"
+#include "local_storage.h"
 
 /**
  * Setups up bluetooth endpoint for the device, allowing it to send readings over bluetooth
  */
-class BluetoohConnector {
+class BluetoothReporter : public Handler {
  public:
-  BluetoohConnector();
-  virtual ~BluetoohConnector() = default;
+  typedef enum Status {
+    e_handler_idle = -1,
+    e_handler_data_reported,
+    e_handler_no_clients,
+  } Status;
 
-  /**
-   * Initialize the bluetooth, using device id as name
-   * @param device_id : id of the bgeigie device
-   */
-  virtual bool init(uint16_t device_id);
+  explicit BluetoothReporter(LocalStorage& config);
+  virtual ~BluetoothReporter() = default;
 
-  /**
-   * Send a new reading over bluetooth
-   * @param reading : reading object to send
-   */
-  virtual bool send_reading(Reading& reading);
+ protected:
+  bool activate(bool retry) override;
+  void deactivate() override;
+  int8_t handle_produced_work(const worker_status_t& worker_reports) override;
  private:
+
+  bool send_reading(const Reading& reading) const;
+
   void create_ble_profile_service(BLEServer* pServer);
   void create_ble_device_service(BLEServer* pServer);
   void create_ble_data_service(BLEServer* pServer);
 
+  LocalStorage& config;
   BLEServer* pServer;
-  bool initialized;
   BLECharacteristic* pDataRXCharacteristic;
 
   uint8_t addr[BLE_DATA_ADDR_SIZE] = BLE_DATA_ADDR;
-
 };
 
 #endif //BGEIGIECAST_BLUETOOTH_CONNECTOR_H

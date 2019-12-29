@@ -3,20 +3,17 @@
 
 #include <Preferences.h>
 
+#include <Handler.hpp>
+
 #define CONFIG_VAL_MAX 32
 
 /**
  * Configurations for the ESP32, stored in the flash memory
  */
-class EspConfig {
+class LocalStorage : public Handler{
  public:
-  EspConfig();
-  virtual ~EspConfig() = default;
-
-  /**
-   * Read all settings
-   */
-  virtual void set_all();
+  LocalStorage();
+  virtual ~LocalStorage() = default;
 
   /**
    * Reset settings to default (defined in user_config)
@@ -32,7 +29,7 @@ class EspConfig {
   virtual bool get_use_dev() const final;
   virtual bool is_led_color_blind() const final;
   virtual uint8_t get_led_color_intensity() const final;
-  virtual uint8_t get_saved_state() const final;
+  virtual int8_t get_saved_state() const final;
 
   virtual bool get_use_home_location() const final;
   virtual double get_home_longitude() const final;
@@ -58,7 +55,14 @@ class EspConfig {
  protected:
   virtual bool clear();
 
+  /**
+   * Read all settings
+   */
+  bool activate(bool) override;
+  int8_t handle_produced_work(const worker_status_t& worker_reports) override;
  private:
+  Preferences _memory;
+
   // Device
   uint16_t _device_id;
 
@@ -78,7 +82,7 @@ class EspConfig {
   uint8_t _led_color_intensity;
 
   // Flag if fixed or mobile mode is started after init
-  uint8_t _saved_state;
+  int8_t _saved_state;
 
   // Home location configs
   bool _use_home_location;
@@ -87,9 +91,6 @@ class EspConfig {
 
   double _last_longitude;
   double _last_latitude;
-
-  Preferences _memory;
-
 };
 
 #endif //BGEIGIECAST_ESP_CONFIG_H

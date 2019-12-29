@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 #include <HardwareSerial.h>
 
 #include "reading.h"
@@ -7,13 +8,42 @@
 
 #define EXPECTED_PARSE_RESULT_COUNT 15
 #define VALID_BGEIGIE_ID(id) (id >= 1000 && id < 10000)
+#define HOME_LOCATION_PRECISION_KM 0.2
 
-#define LONG_LAT_PRECISION 0.001
-
+/**
+ * Convert degree minutes to decimal degree
+ * @param dm
+ * @return
+ */
 double dm_to_dd(double dm) {
   double degree = static_cast<int>(dm / 100);
   double minutes = dm - (degree * 100);
   return degree + minutes / 60;
+}
+
+/**
+ * Calculate distance using haversine formula
+ * @param lon1
+ * @param lat1
+ * @param lon2
+ * @param lat2
+ * @return distance in km
+ */
+double calc_distance(double lon1, double lat1, double lon2, double lat2) {
+  //This portion converts the current and destination GPS coords from decDegrees to Radians
+  lon1 *= (PI / 180);
+  lon2 *= (PI / 180);
+  lat1 *= (PI / 180);
+  lat2 *= (PI / 180);
+
+  //This portion calculates the differences for the Radian latitudes and longitudes and saves them to variables
+  double dlon = lon2 - lon1;
+  double dlat = lat2 - lat1;
+
+  //This portion is the Haversine Formula for distance between two points. Returned value is in KM
+  double a = (sq(sin(dlat / 2))) + cos(lat1) * cos(lat2) * (sq(sin(dlon / 2)));
+  double e = 2 * atan2(sqrt(a), sqrt(1 - a));
+  return 6371.00 * e;
 }
 
 Reading::Reading() :
@@ -169,8 +199,7 @@ void Reading::reset() {
 }
 
 void Reading::apply_home_location(double home_lat, double home_long) {
-  if(_latitude < home_lat + LONG_LAT_PRECISION && _latitude > home_lat - LONG_LAT_PRECISION
-      && _longitude < home_long + LONG_LAT_PRECISION && _longitude > home_long - LONG_LAT_PRECISION) {
+  if(calc_distance(_longitude, _latitude, home_long, home_lat) < HOME_LOCATION_PRECISION_KM) {
     DEBUG_PRINTF("Gps in home location, setting reading location to %.5f , %.5f\n", home_lat, home_long);
     _latitude = home_lat;
     _longitude = home_long;
@@ -237,39 +266,51 @@ bool Reading::valid_reading() const {
 const char* Reading::get_reading_str() const {
   return _reading_str;
 }
+
 uint8_t Reading::get_status() const {
   return _status;
 }
+
 uint16_t Reading::get_device_id() const {
   return _device_id;
 }
+
 uint32_t Reading::get_fixed_device_id() const {
   return 60000 + _device_id;
 }
+
 const char* Reading::get_iso_timestr() const {
   return _iso_timestr;
 }
+
 uint16_t Reading::get_cpm() const {
   return _cpm;
 }
+
 uint16_t Reading::get_cpb() const {
   return _cpb;
 }
+
 uint16_t Reading::get_total_count() const {
   return _total_count;
 }
+
 double Reading::get_latitude() const {
   return _latitude;
 }
+
 double Reading::get_longitude() const {
   return _longitude;
 }
+
 double Reading::get_altitude() const {
   return _altitude;
 }
+
 int Reading::get_sat_count() const {
   return _sat_count;
 }
+
 float Reading::get_precision() const {
   return _precision;
 }

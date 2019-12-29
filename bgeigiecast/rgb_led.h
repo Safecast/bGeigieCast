@@ -23,6 +23,8 @@ class RGBLed {
 
   void set(const RGB& values);
 
+  void init();
+
   void off();
 
   void set_r(uint8_t value);

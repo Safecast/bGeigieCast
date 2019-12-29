@@ -1,10 +1,13 @@
 #include <Update.h>
 #include <ESPmDNS.h>
-#include "conf_server.h"
+#include "configuration_server.h"
 #include "user_config.h"
-#include "esp_config.h"
+#include "local_storage.h"
 #include "debugger.h"
 #include "http_pages.h"
+#include "identifiers.h"
+
+#define RETRY_TIMEOUT 2000
 
 template<typename T, typename T2>
 T clamp(T2 val, T min, T max) {
@@ -12,58 +15,59 @@ T clamp(T2 val, T min, T max) {
   return _val < min ? min : _val > max ? max : _val;
 }
 
-ConfigWebServer::ConfigWebServer(EspConfig& config) : _server(SERVER_WIFI_PORT), _config(config), _running(false) {
+uint32_t last_retry = 0;
+uint8_t retry_count = 0;
+
+ConfigWebServer::ConfigWebServer(LocalStorage& config)
+    : Worker<ServerStatus>(k_worker_configuration_server, {false, false}, 0),
+      _server(SERVER_WIFI_PORT),
+      _config(config),
+      _running(false) {
 }
 
-ConfigWebServer::~ConfigWebServer() {
-  stop();
-}
-
-bool ConfigWebServer::connect(bool try_wifi) {
+bool ConfigWebServer::activate(bool retry) {
+  if(retry && millis() - last_retry < RETRY_TIMEOUT) {
+    return false;
+  }
   auto device_id = _config.get_device_id();
-
-  if(!_config.get_device_id()) {
+  if(!device_id) {
     DEBUG_PRINTLN("Can't start config without device id!");
     return false;
   }
 
   char host_ssid[16];
   sprintf(host_ssid, ACCESS_POINT_SSID, device_id);
-
-  MDNS.begin(host_ssid);
-
-  delay(100);
-
-  if(try_wifi && _config.get_wifi_ssid()) {
-    for(int i = 0; i < 3; ++i) {
-      connect_wifi();
-
-      auto time = millis();
-      while(millis() - time < 2000) {
-        if(WiFi.status() == WL_CONNECTED) {
-          DEBUG_PRINTF("Connected to %s, IP address: %s\n", _config.get_wifi_ssid(), WiFi.localIP().toString().c_str());
-          HttpPages::internet_access = true;
-          return true;
-        }
-      }
-    }
-
+  if(retry) {
     WiFi.disconnect(true, true);
+    retry_count++;
+  } else {
+    retry_count = 0;
+    MDNS.begin(host_ssid);
+    delay(100);
+  }
+
+  if(retry_count < 3 && _config.get_wifi_ssid()) {
+    connect_wifi();
+    if(WiFi.status() == WL_CONNECTED) {
+      DEBUG_PRINTF("Connected to %s, IP address: %s\n", _config.get_wifi_ssid(), WiFi.localIP().toString().c_str());
+      HttpPages::internet_access = true;
+      add_urls();
+      return true;
+    }
+    return false;
   }
 
   return start_ap_server(host_ssid);
 }
 
-void ConfigWebServer::stop() {
-  if(_running) {
-    _running = false;
-    _server.stop();
-    WiFi.softAPdisconnect(true);
-    delay(20);
-  }
+void ConfigWebServer::deactivate() {
+  _server.close();
+  _server.stop();
+  WiFi.softAPdisconnect(true);
+  delay(20);
 }
 
-void ConfigWebServer::handle_requests() {
+int8_t ConfigWebServer::produce_data() {
   _server.handleClient();
 }
 
@@ -93,13 +97,11 @@ bool ConfigWebServer::start_ap_server(const char* host_ssid) {
 
   delay(100);
 
+  add_urls();
   return true;
 }
 
-void ConfigWebServer::start_server() {
-  if(_running) {
-    return;
-  }
+void ConfigWebServer::add_urls() {
   // Home
   _server.on("/", HTTP_GET, [this]() {
     _server.sendHeader("Connection", "close");
@@ -175,6 +177,7 @@ void ConfigWebServer::start_server() {
   });
 
   _server.on("/reboot", [this]() { // Reboot
+    deactivate();
     ESP.restart();
   });
 
@@ -190,11 +193,6 @@ void ConfigWebServer::start_server() {
   });
 
   _server.begin();
-  _running = true;
-}
-
-bool ConfigWebServer::running() const {
-  return _running;
 }
 
 void ConfigWebServer::handle_save() {

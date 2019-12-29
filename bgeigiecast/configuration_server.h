@@ -4,42 +4,47 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-#include "esp_config.h"
+#include <Worker.hpp>
+
+#include "local_storage.h"
+
+
+struct ServerStatus {
+  bool connected;
+  bool running;
+};
 
 /**
  * Class to host a web server for configuring the ESP32. Will set up an access
  * point based on user_config.h "Access point settings".
  */
-class ConfigWebServer {
+class ConfigWebServer : public Worker<ServerStatus> {
  public:
-  explicit ConfigWebServer(EspConfig& config);
-  virtual ~ConfigWebServer();
-
-  /**
-   * Initialize the web server, does nothing if it is already initialized.
-   * @return true if initialization was success
-   */
-  bool connect(bool try_wifi = true);
-
-  /**
-   * Stop the web server
-   */
-  void stop();
+  explicit ConfigWebServer(LocalStorage& config);
+  virtual ~ConfigWebServer() = default;
 
   /**
    * Checks if there are requests and handles them
    */
-  void handle_requests();
+  int8_t produce_data();
 
   /**
    * Initialize the web server and endpoints
    */
-  void start_server();
+  void add_urls();
+
+ protected:
+  /**
+   * Initialize the web server, does nothing if it is already initialized.
+   * @return true if initialization was success
+   */
+  bool activate(bool retry) override;
 
   /**
-   * if the server is running
+   * Stops the web server
    */
-  bool running() const;
+  void deactivate() override;
+
  private:
 
   /**
@@ -65,7 +70,7 @@ class ConfigWebServer {
   void handle_update_uploading();
 
   WebServer _server;
-  EspConfig& _config;
+  LocalStorage& _config;
 
   bool _running;
 };

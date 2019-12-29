@@ -2,32 +2,45 @@
 #define BGEIGIECAST_STATE_LED_H
 
 #include "rgb_led.h"
-#include "esp_config.h"
+#include "local_storage.h"
+
+#include <Supervisor.hpp>
 
 /**
- * Controls the LED to visualize the current state
+ * Controls the LED to visualize the current mode
  */
-class ModeLED : private RGBLed {
+class ModeLED : private RGBLed, public Supervisor {
  public:
   typedef enum {
-    off,
-    init,
-    init_config,
-    config,
-    mobile,
-    fixed_connecting,
-    fixed_active,
-    fixed_error,
-    COUNT
+    mode_color_off,
+    mode_color_init,
+    mode_color_init_config,
+    mode_color_config,
+    mode_color_mobile,
+    mode_color_fixed_connecting,
+    mode_color_fixed_active,
+    mode_color_fixed_error,
+    mode_color_COUNT
   } ModeColor;
 
-  explicit ModeLED(EspConfig& config);
+  explicit ModeLED(LocalStorage& config);
   virtual ~ModeLED() = default;
 
-  void set_color(ModeColor color);
+  /**
+   * Set color
+   * @param color : color type (ModeColor)
+   * @param frequency : times per second to update if blink (0 for not blinking)
+   *    - example, frequency of 1 will blink once a second
+   * @param percentage_on : if frequency > 0, it will
+   *    - example, percentage of 25 with 1 frequency, will 0.25 second LED on then 0.75 second LED off
+   */
+  void set_color(ModeColor color, double frequency = 0, uint8_t percentage_on = 50);
 
-  void blink(ModeColor color, double frequency, double percentage_on = 50);
+  void loop();
 
+  void handle_report(const Report& report) override;
+
+  bool activate() override;
  private:
   typedef struct {
     RGB normal;
@@ -36,9 +49,11 @@ class ModeLED : private RGBLed {
 
   uint8_t get_intensity() const override;
 
-  const EspConfig& _config;
-  bool _blink_state;
-  const ColorType _colorTypes[ModeColor::COUNT];
+  const LocalStorage& _config;
+  ModeColor color;
+  double frequency;
+  uint8_t percentage_on;
+  const ColorType _colorTypes[ModeColor::mode_color_COUNT];
 };
 
 #endif //BGEIGIECAST_STATE_LED_H
