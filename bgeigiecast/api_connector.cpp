@@ -7,7 +7,7 @@
 #define API_SEND_DEV(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT_DEV : API_SEND_FREQUENCY_SECONDS_DEV)
 #define API_SEND_FREQUENCY(alert, dev) (((dev ? API_SEND_DEV(alert) : API_SEND(alert)) * 1000) - 2000)
 
-#define RETRY_TIMEOUT 3000
+#define RETRY_TIMEOUT 8000
 
 ApiReporter::ApiReporter(LocalStorage& config) :
     Handler(k_handler_api_reporter),
@@ -36,14 +36,17 @@ void ApiReporter::reset() {
 }
 
 bool ApiReporter::activate(bool retry) {
-  static uint32_t last_retry = 0;
+  static uint32_t last_try = 0;
   if(WiFiConnection::wifi_connected()) {
     return true;
   }
-  if(retry && millis() - last_retry < RETRY_TIMEOUT) {
+  if(retry && millis() - last_try < RETRY_TIMEOUT) {
     return false;
   }
-  last_retry = millis();
+  if (!retry) {
+    reset();
+  }
+  last_try = millis();
 
   WiFiConnection::connect_wifi(_config.get_wifi_ssid(), _config.get_wifi_password());
 
@@ -51,7 +54,6 @@ bool ApiReporter::activate(bool retry) {
 }
 
 void ApiReporter::deactivate() {
-  reset();
   _current_default_response = e_api_reporter_idle;
   WiFiConnection::disconnect_wifi();
 }
