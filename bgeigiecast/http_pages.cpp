@@ -296,13 +296,14 @@ const char* HttpPages::get_status_page(uint32_t device_id) {
   return render_full_page(
       device_id,
       TITLE_STATUS,
+      "<form class='pure-form'>"
       "<fieldset>"
-      "<legend>Status</legend>"
-      "<pre style='background-color: #eee;padding: 5px;font-size: 12px;'>"
-      "System [%s]<br>"
-      " - Mode: %s<br>"
+      "<legend><a href='/'>Home</a> / Status</legend>"
+      "<pre style='background-color:#eee;padding:5px;font-size:12px;max-width:680px'>"
+      "bGeigieCast Version %s [%s]<br>"
+      " - Current mode: %s<br>"
       "bGeigie data [%s]<br>"
-      " - Data: %s<br>"
+      " - Last data: %s<br>"
       " - Valid: %s<br>"
       "Configuration server [%s]<br>"
       " - Status: %s<br>"
@@ -311,19 +312,20 @@ const char* HttpPages::get_status_page(uint32_t device_id) {
       "Bluetooth connection [%s]<br>"
       " - Status: %s<br>"
       "</pre>"
-      "</fieldset>",
+      "</fieldset>"
+      "</form>",
       BGEIGIECAST_VERSION,
       "Active", // System state
-      "Configuration / Mobile / Fixed", // - System mode
+      "Fixed", // - System mode
       "Active", // bGeigie state
-      "...", // - bGeigie data
-      "Yes / No", // - bGeigie datavalid
+      "$BNRDD,2041,2012-09-20T16:53:58Z,776,63,33895,A,5641.7788,N,1411.8820,E,9861.20,A,109,9*46", // - bGeigie data
+      "Yes", // - bGeigie datavalid
       "Active", // Server state
-      "Wifi / Access point", // - Server status
+      "Connected with wifi", // - Server status
       "Active", // Api state
-      "Data posted / Data invalid / Remote not available / ...", // - Api status
-      "Active", // BT state
-      "No clients / Client connected"  // - BT status
+      "Data posted", // - Api status
+      "Inactive", // BT state
+      "Idle"  // - BT status
   );
 }
 

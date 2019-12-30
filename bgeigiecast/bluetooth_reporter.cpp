@@ -5,7 +5,7 @@
 #include "identifiers.h"
 
 BluetoothReporter::BluetoothReporter(LocalStorage& config)
-    : Handler(k_handler_bluetooth_reporter), config(config), pServer(nullptr), pDataRXCharacteristic(nullptr) {
+    : Handler(k_handler_bluetooth_reporter), config(config), _pServer(nullptr), pDataRXCharacteristic(nullptr) {
 }
 
 bool BluetoothReporter::activate(bool) {
@@ -13,40 +13,47 @@ bool BluetoothReporter::activate(bool) {
     DEBUG_PRINTLN("Cannot initialize bluetooth without device id");
     return false;
   }
+  if(BLEDevice::getInitialized()) {
+    // Already initialized
+    return true;
+  }
 
   char deviceName[16];
   sprintf(deviceName, "bGeigie%d", config.get_device_id());
   BLEDevice::init(deviceName);
-  DEBUG_PRINT("Bluetooth initialized, device: ");
-  DEBUG_PRINTLN(deviceName);
 
-  if(!pServer) {
-    pServer = BLEDevice::createServer();
+  if(!_pServer) {
+    _pServer = BLEDevice::createServer();
 
-    create_ble_profile_service(pServer);
-    create_ble_device_service(pServer);
-    create_ble_data_service(pServer);
-
-    BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
-    pAdvertising->addServiceUUID(SERVICE_PROFILE_UUID);
-    pAdvertising->addServiceUUID(SERVICE_DEVICE_UUID);
-    pAdvertising->addServiceUUID(SERVICE_DATA_UUID);
-    pAdvertising->setScanResponse(true);
-    pAdvertising->setMinPreferred(0x06);
-    pAdvertising->setMinPreferred(0x12);
+    create_ble_profile_service(_pServer);
+    create_ble_device_service(_pServer);
+    create_ble_data_service(_pServer);
   }
 
+  BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->addServiceUUID(SERVICE_PROFILE_UUID);
+  pAdvertising->addServiceUUID(SERVICE_DEVICE_UUID);
+  pAdvertising->addServiceUUID(SERVICE_DATA_UUID);
+  pAdvertising->setScanResponse(true);
+  pAdvertising->setMinPreferred(0x06);
+  pAdvertising->setMinPreferred(0x12);
+
+  BLEDevice::startAdvertising();
+
+  DEBUG_PRINTF("Bluetooth initialized, device: %s", deviceName);
   return BLEDevice::getInitialized();
 }
 
 void BluetoothReporter::deactivate() {
-  BLEDevice::deinit();
+  // TODO: figure out a way to disable bluetooth without destroying it forever
+//  BLEDevice::deinit(true);
+//  delete _pServer;
 }
 
 int8_t BluetoothReporter::handle_produced_work(const worker_status_t& worker_reports) {
   const auto& reading_stat = worker_reports.at(k_worker_bgeigie_connector);
   if(!reading_stat.is_fresh()) {
-    return pServer->getConnectedCount() > 0 ? e_handler_clients_available : Status::e_handler_idle;
+    return _pServer->getConnectedCount() > 0 ? e_handler_clients_available : Status::e_handler_idle;
   }
   // Fresh reading is produced
   const auto& reading = reading_stat.get<Reading>();
@@ -77,7 +84,7 @@ void BluetoothReporter::create_ble_device_service(BLEServer* pServer) {
       CHARACTERISTIC_DEVICE_MANUFACTURER_UUID,
       BLECharacteristic::PROPERTY_READ
   );
-  BLEDescriptor* pDescriptorManufacturer = new BLEDescriptor((uint16_t) 0x2901);
+  static BLEDescriptor* pDescriptorManufacturer = new BLEDescriptor((uint16_t) 0x2901);
   pDescriptorManufacturer->setValue("Manufacturer Name String");
   pDeviceManufacturerCharacteristic->addDescriptor(pDescriptorManufacturer);
 
@@ -86,7 +93,7 @@ void BluetoothReporter::create_ble_device_service(BLEServer* pServer) {
       CHARACTERISTIC_DEVICE_MODEL_UUID,
       BLECharacteristic::PROPERTY_READ
   );
-  BLEDescriptor* pDescriptorModel = new BLEDescriptor((uint16_t) 0x2901);
+  static BLEDescriptor* pDescriptorModel = new BLEDescriptor((uint16_t) 0x2901);
   pDescriptorModel->setValue("Model Number String");
   pDeviceModelCharacteristic->addDescriptor(pDescriptorModel);
 
@@ -95,7 +102,7 @@ void BluetoothReporter::create_ble_device_service(BLEServer* pServer) {
       CHARACTERISTIC_DEVICE_FIRMWARE_UUID,
       BLECharacteristic::PROPERTY_READ
   );
-  BLEDescriptor* pDescriptorFirmware = new BLEDescriptor((uint16_t) 0x2901);
+  static BLEDescriptor* pDescriptorFirmware = new BLEDescriptor((uint16_t) 0x2901);
   pDescriptorFirmware->setValue("Firmware Revision String");
   pDeviceFirmwareCharacteristic->addDescriptor(pDescriptorFirmware);
 
@@ -104,7 +111,7 @@ void BluetoothReporter::create_ble_device_service(BLEServer* pServer) {
       CHARACTERISTIC_DEVICE_REVISION_UUID,
       BLECharacteristic::PROPERTY_READ
   );
-  BLEDescriptor* pDescriptorHardware = new BLEDescriptor((uint16_t) 0x2901);
+  static BLEDescriptor* pDescriptorHardware = new BLEDescriptor((uint16_t) 0x2901);
   pDescriptorHardware->setValue("Hardware Revision String");
   pDeviceRevisionCharacteristic->addDescriptor(pDescriptorHardware);
 
@@ -124,7 +131,7 @@ void BluetoothReporter::create_ble_data_service(BLEServer* pServer) {
       CHARACTERISTIC_DATA_BDADDR_UUID,
       BLECharacteristic::PROPERTY_READ
   );
-  BLEDescriptor* pDescriptorAddr = new BLEDescriptor((uint16_t) 0x2901);
+  static BLEDescriptor* pDescriptorAddr = new BLEDescriptor((uint16_t) 0x2901);
   pDescriptorAddr->setValue("DB-Addr");
   pDataDBAddrCharacteristic->addDescriptor(pDescriptorAddr);
 
@@ -133,7 +140,7 @@ void BluetoothReporter::create_ble_data_service(BLEServer* pServer) {
       CHARACTERISTIC_DATA_BAUD_UUID,
       BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE
   );
-  BLEDescriptor* pDescriptorBaud = new BLEDescriptor((uint16_t) 0x2901);
+  static BLEDescriptor* pDescriptorBaud = new BLEDescriptor((uint16_t) 0x2901);
   pDescriptorBaud->setValue("Baudrate");
   pDataBaudCharacteristic->addDescriptor(pDescriptorBaud);
 
@@ -142,10 +149,10 @@ void BluetoothReporter::create_ble_data_service(BLEServer* pServer) {
       CHARACTERISTIC_DATA_RX_UUID,
       BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY
   );
-  BLEDescriptor* pDescriptorRX = new BLEDescriptor((uint16_t) 0x2901);
+  static BLEDescriptor* pDescriptorRX = new BLEDescriptor((uint16_t) 0x2901);
   pDescriptorRX->setValue("RX");
   pDataRXCharacteristic->addDescriptor(pDescriptorRX);
-  BLEDescriptor* pDescriptorRXNotifications = new BLEDescriptor((uint16_t) 0x2902);
+  static BLEDescriptor* pDescriptorRXNotifications = new BLEDescriptor((uint16_t) 0x2902);
   pDescriptorRXNotifications->setValue("Notifications and indications disabled");
   pDataRXCharacteristic->addDescriptor(pDescriptorRXNotifications);
 
@@ -154,7 +161,7 @@ void BluetoothReporter::create_ble_data_service(BLEServer* pServer) {
       CHARACTERISTIC_DATA_TX_UUID,
       BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_WRITE_NR
   );
-  BLEDescriptor* pDescriptorTX = new BLEDescriptor((uint16_t) 0x2901);
+  static BLEDescriptor* pDescriptorTX = new BLEDescriptor((uint16_t) 0x2901);
   pDescriptorTX->setValue("TX");
   pDataTXCharacteristic->addDescriptor(pDescriptorTX);
 
@@ -164,7 +171,7 @@ void BluetoothReporter::create_ble_data_service(BLEServer* pServer) {
 }
 
 bool BluetoothReporter::send_reading(const Reading& reading) const {
-  if(pServer->getConnectedCount() == 0) {
+  if(_pServer->getConnectedCount() == 0) {
     // No clients to send data to
     return false;
   }

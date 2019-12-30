@@ -36,7 +36,7 @@ class BluetoothReporter : public Handler {
   void create_ble_data_service(BLEServer* pServer);
 
   LocalStorage& config;
-  BLEServer* pServer;
+  BLEServer* _pServer;
   BLECharacteristic* pDataRXCharacteristic;
 
   uint8_t addr[BLE_DATA_ADDR_SIZE] = BLE_DATA_ADDR;
