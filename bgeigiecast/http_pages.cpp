@@ -25,12 +25,12 @@ const char* update_firmware_script =
     "(e=>{const t=(...t)=>e.querySelector(...t),n=t('form'),a=t('#status');n.addEventListener('submit',e=>{e.prevent"
     "Default();const s=new FormData(n),o=t('#file').files[0],d=new XMLHttpRequest;o?(n.classList.add('uploading'),s."
     "append('update',o),d.addEventListener('load',e=>{a.innerText='Upload success! Restarting device to apply update"
-    ".';const t=new XMLHttpRequest;t.open('get','/reboot'),t.send()}),d.addEventListener('error',e=>{a.innerText='Up"
-    "load failed... Try again or contact info@safecast.org',n.classList.remove('uploading')}),d.addEventListener('ab"
-    "ort',e=>{a.innerText='Upload cancelled...'}),d.upload.addEventListener('progress',e=>{if(e.lengthComputable){a."
-    "innerText='Uploading new firmware... This can take up to 10 minutes.';const n=Math.round(e.loaded/e.total*100)+"
-    "'%';t('#prg').innerText=n,t('#bar').style.width=n}}),d.open(n.method,n.action),d.send(s)):a.innerText='Please s"
-    "elect a file...'})})(this.document);";
+    ".';const t=new XMLHttpRequest;setTimeout(()=>{t.open('get','/reboot'),t.send()},500)}),d.addEventListener('erro"
+    "r',e=>{a.innerText='Upload failed... Try again or contact info@safecast.org',n.classList.remove('uploading')}),"
+    "d.addEventListener('abort',e=>{a.innerText='Upload cancelled...'}),d.upload.addEventListener('progress',e=>{if("
+    "e.lengthComputable){a.innerText='Uploading new firmware... This can take up to 10 minutes.';const n=Math.round("
+    "e.loaded/e.total*100)+'%';t('#prg').innerText=n,t('#bar').style.width=n}}),d.open(n.method,n.action),d.send(s))"
+    ":a.innerText='Please select a file...'})})(this.document);";
 
 /**
  * page format
@@ -109,7 +109,7 @@ const char* HttpPages::get_update_page(uint32_t device_id) {
       "<div id='update'>"
       "<form class='pure-form pure-form-stacked' method='POST' enctype='multipart/form-data'>"
       "<fieldset>"
-      "<legend>Update the firmware</legend>"
+      "<legend><a href='/'>Home</a> / Update the firmware</legend>"
       "<div id='upload-inputs'>"
       "<input type='file' name='update' id='file'><br>"
       //      "<label id='file-input' for='file'>Choose file...</label>"
@@ -146,7 +146,7 @@ const char* HttpPages::get_config_device_page(
       TITLE_CONF_DEVICE,
       "<form class='pure-form pure-form-stacked' action='/save?next=/device' method='POST'>"
       "<fieldset>"
-      "<legend>Device settings</legend>"
+      "<legend><a href='/'>Home</a> / Device settings</legend>"
 
       // Led intensity
       "<label for='" FORM_NAME_LED_INTENSITY "'>Led intensity</label>"
@@ -187,9 +187,7 @@ const char* HttpPages::get_config_location_page(
       TITLE_CONF_LOCATION,
       "<form class='pure-form pure-form-stacked' action='/save?next=/location' method='POST'>"
       "<fieldset>"
-      "<legend>Location settings</legend>"
-
-
+      "<legend><a href='/'>Home</a> / Location settings</legend>"
 
       // Use home location
       "<label>Location in fixed mode</label>"
@@ -248,8 +246,7 @@ const char* HttpPages::get_config_connection_page(
       TITLE_CONF_CONNECTION,
       "<form class='pure-form pure-form-stacked' action='/save?next=/connection' method='POST'>"
       "<fieldset>"
-      "<legend>Connection settings</legend>"
-
+      "<legend><a href='/'>Home</a> / Connection settings</legend>"
 
       // bGeigie ap password
       "<label for='" FORM_NAME_AP_LOGIN "'>bGeigie password</label>"

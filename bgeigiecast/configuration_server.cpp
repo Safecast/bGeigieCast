@@ -127,7 +127,6 @@ void ConfigWebServer::add_urls() {
   });
 
   _server.on("/reboot", [this]() { // Reboot
-    deactivate();
     ESP.restart();
   });
 
