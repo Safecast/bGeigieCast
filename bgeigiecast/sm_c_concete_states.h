@@ -29,7 +29,7 @@ class InitReadingState : public ControllerState {
   void handle_event(Event_enum event_id) override;
 
  private:
-  uint32_t timer;
+  bool _button_pressed;
 };
 
 class PostInitializeState : public ControllerState {

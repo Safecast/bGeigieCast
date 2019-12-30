@@ -36,7 +36,7 @@ void InitializeState::handle_event(Event_enum event_id) {
 
 // region InitReadingState
 
-InitReadingState::InitReadingState(Controller& context) : ControllerState(context) {
+InitReadingState::InitReadingState(Controller& context) : ControllerState(context), _button_pressed(false) {
 }
 
 void InitReadingState::entry_action() {
@@ -53,9 +53,18 @@ void InitReadingState::exit_action() {
 void InitReadingState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_c_reading_initialized: {
-      controller.set_state(new PostInitializeState(controller));
+      if(_button_pressed) {
+        /// Button pressed during init, go to config mode
+        controller.set_state(new ConfigurationModeState(controller));
+      } else {
+        /// To post init, where the user has 3 seconds to press button to go to config mode
+        controller.set_state(new PostInitializeState(controller));
+      }
       break;
     }
+    case e_c_button_pressed:
+      _button_pressed = true;
+      break;
     default:
       ControllerState::handle_event(event_id);
       break;
@@ -86,9 +95,11 @@ void PostInitializeState::exit_action() {
 void PostInitializeState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_c_button_pressed:
+      /// Button pressed, go to config mode
       controller.set_state(new ConfigurationModeState(controller));
       break;
     case e_c_post_init_time_passed: {
+      /// Additional init time has passed, go to previously saved state (fixed or mobile)
       switch(controller.get_saved_state()) {
         case Controller::k_savable_FixedMode:
           controller.set_state(new FixedModeState(controller));
@@ -131,6 +142,7 @@ void ConfigurationModeState::exit_action() {
 void ConfigurationModeState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_c_button_pressed:
+      /// Button pressed, leave config mode to go to previously saved state (fixed or mobile)
       switch(controller.get_saved_state()) {
         case Controller::k_savable_FixedMode:
           controller.set_state(new FixedModeState(controller));

@@ -24,7 +24,14 @@ ConfigWebServer::ConfigWebServer(LocalStorage& config)
 
 bool ConfigWebServer::activate(bool) {
   if(WiFiConnection::wifi_connected() || WiFiConnection::ap_server_up()) {
+    // Set DNS hostname for easy access
+    char hostname[16];
+    sprintf(hostname, ACCESS_POINT_SSID, _config.get_device_id());
+    MDNS.begin(hostname);
+
+    // Start config server
     _server.begin(SERVER_WIFI_PORT);
+    HttpPages::internet_access = WiFiConnection::wifi_connected();
     return true;
   }
   return false;
@@ -211,5 +218,4 @@ void ConfigWebServer::handle_update_uploading() {
 }
 
 void ConfigWebServer::handle_report(const Report& report) {
-
 }

@@ -1,5 +1,6 @@
 #include <WiFi.h>
 #include <Arduino.h>
+#include <ESPmDNS.h>
 
 #include "wifi_connection.h"
 #include "debugger.h"
@@ -55,5 +56,5 @@ void WiFiConnection::stop_ap_server() {
 }
 
 bool WiFiConnection::ap_server_up() {
-  return WiFi.softAPIP() != INADDR_NONE;
+  return (WiFi.getMode() & WIFI_MODE_AP) != 0;
 }

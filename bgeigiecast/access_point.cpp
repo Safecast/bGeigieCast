@@ -1,6 +1,4 @@
 
-#include <ESPmDNS.h>
-
 #include "access_point.h"
 #include "identifiers.h"
 #include "wifi_connection.h"
@@ -25,7 +23,6 @@ bool AccessPoint::activate(bool) {
 
   char host_ssid[16];
   sprintf(host_ssid, ACCESS_POINT_SSID, device_id);
-  MDNS.begin(host_ssid);
 
   return WiFiConnection::start_ap_server(host_ssid, _config.get_ap_password());
 }
