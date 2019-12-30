@@ -111,6 +111,12 @@ void ConfigWebServer::add_urls() {
     _server.send(200, "text/html", HttpPages::get_update_page(_config.get_device_id()));
   });
 
+  // Status get
+  _server.on("/status", HTTP_GET, [this]() {
+    _server.sendHeader("Connection", "close");
+    _server.send(200, "text/html", HttpPages::get_status_page(_config.get_device_id()));
+  });
+
   // Upload post
   _server.on("/update", HTTP_POST, [this]() {
     // Complete

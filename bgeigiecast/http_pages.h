@@ -96,6 +96,16 @@ class HttpPages {
       double last_longitude
   );
 
+  /**
+   * Render status page from report
+   * TODO: implement the report itself
+   * @param device_id : To display the device id on the page
+   * @return complete page rendered
+   */
+  static const char* get_status_page(
+      uint32_t device_id
+  );
+
   static const uint8_t pure_css[PURE_CSS_SIZE];
   static const uint8_t favicon[FAVICON_SIZE];
   static const char* pure_js;

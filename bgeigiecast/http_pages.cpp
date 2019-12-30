@@ -4,6 +4,7 @@
 
 #define TITLE_HOME "Home"
 #define TITLE_UPDATE "Update firmware"
+#define TITLE_STATUS "Status"
 #define TITLE_CONF_DEVICE "Configure device"
 #define TITLE_CONF_LOCATION "Configure location"
 #define TITLE_CONF_CONNECTION "Configure connection"
@@ -70,6 +71,7 @@ const char* base_page_format_begin =
     "<li class='pure-menu-item'><a href='/location' class='pure-menu-link'><i class='fa fa-map-marker-alt'></i>Location</a></li>"
     "</ul></li>"
     "<li class='pure-menu-item'><a href='/update' class='pure-menu-link'><i class='fa fa-download'></i>Update firmware</a></li>"
+    "<!--<li class='pure-menu-item'><a href='/status' class='pure-menu-link'><i class='fas fa-info-circle'></i>Status</a></li>-->"  // TODO: comment this out once status page is done
     "<li class='pure-menu-item'><a target='_blank' href='https://github.com/Safecast/bGeigieCast/' class='pure-menu-link'><i class='fab fa-github'></i>Github</a></li>"
     "</ul>"
     "</div>"
@@ -129,7 +131,7 @@ const char* HttpPages::get_update_page(uint32_t device_id) {
       "#upload-progress{display:none}"
       "form.uploading #upload-inputs{display:none}"
       "form.uploading #upload-progress{display:block}"
-      "</sctyle>"
+      "</style>"
       "</div>",
       update_firmware_script
   );
@@ -287,6 +289,41 @@ const char* HttpPages::get_config_connection_page(
       use_dev ? "" : "checked",
       use_dev ? "checked" : "",
       display_success ? success_message : ""
+  );
+}
+
+const char* HttpPages::get_status_page(uint32_t device_id) {
+  return render_full_page(
+      device_id,
+      TITLE_STATUS,
+      "<fieldset>"
+      "<legend>Status</legend>"
+      "<pre style='background-color: #eee;padding: 5px;font-size: 12px;'>"
+      "System [%s]<br>"
+      " - Mode: %s<br>"
+      "bGeigie data [%s]<br>"
+      " - Data: %s<br>"
+      " - Valid: %s<br>"
+      "Configuration server [%s]<br>"
+      " - Status: %s<br>"
+      "Api connection [%s]<br>"
+      " - Status: %s<br>"
+      "Bluetooth connection [%s]<br>"
+      " - Status: %s<br>"
+      "</pre>"
+      "</fieldset>",
+      BGEIGIECAST_VERSION,
+      "Active", // System state
+      "Configuration / Mobile / Fixed", // - System mode
+      "Active", // bGeigie state
+      "...", // - bGeigie data
+      "Yes / No", // - bGeigie datavalid
+      "Active", // Server state
+      "Wifi / Access point", // - Server status
+      "Active", // Api state
+      "Data posted / Data invalid / Remote not available / ...", // - Api status
+      "Active", // BT state
+      "No clients / Client connected"  // - BT status
   );
 }
 
