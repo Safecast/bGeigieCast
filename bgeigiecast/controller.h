@@ -11,7 +11,7 @@
 /**
  * Main controller for the system, implements state machine to run
  */
-class Controller : private ButtonObserver, public Context, public Aggregator, private Handler {
+class Controller : private ButtonObserver, public Context, public Aggregator, private Handler, private Worker<bool> {
  public:
 
   typedef enum {
@@ -37,9 +37,16 @@ class Controller : private ButtonObserver, public Context, public Aggregator, pr
    */
   void on_button_pressed(Button* button, uint32_t millis) override;
 
+  /**
+   * override set state from context, to flag worker that change has been made
+   * @param state
+   */
+  void set_state(State* state) override;
+
  protected:
   int8_t handle_produced_work(const worker_status_t& worker_reports) override;
-
+ private:
+  int8_t produce_data() override;
  private:
 
   /**
@@ -65,6 +72,7 @@ class Controller : private ButtonObserver, public Context, public Aggregator, pr
 
   LocalStorage& _config;
   Button _mode_button;
+  bool _state_changed;
 
   friend class InitializeState;
   friend class PostInitializeState;

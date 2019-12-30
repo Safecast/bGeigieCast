@@ -7,7 +7,7 @@
 #include <Worker.hpp>
 
 #include "local_storage.h"
-
+#include "wifi_connection.h"
 
 struct ServerStatus {
   bool connected;
@@ -18,7 +18,7 @@ struct ServerStatus {
  * Class to host a web server for configuring the ESP32. Will set up an access
  * point based on user_config.h "Access point settings".
  */
-class ConfigWebServer : public Worker<ServerStatus> {
+class ConfigWebServer : public Worker<ServerStatus>, private WiFiConnection {
  public:
   explicit ConfigWebServer(LocalStorage& config);
   virtual ~ConfigWebServer() = default;
@@ -46,12 +46,6 @@ class ConfigWebServer : public Worker<ServerStatus> {
   void deactivate() override;
 
  private:
-
-  /**
-   * Try to connect to the wifi
-   * @return success
-   */
-  bool connect_wifi();
 
   /**
    * Start access point server

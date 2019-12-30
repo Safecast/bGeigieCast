@@ -9,8 +9,10 @@ Controller::Controller(LocalStorage& config) :
     Context(),
     Aggregator(),
     Handler(k_handler_controller_handler),
+    Worker<bool>(k_worker_controller_state_changer, false, 0),
     _config(config),
-    _mode_button(MODE_BUTTON_PIN) {
+    _mode_button(MODE_BUTTON_PIN),
+    _state_changed(false) {
 }
 
 void Controller::setup_state_machine() {
@@ -27,6 +29,7 @@ void Controller::initialize() {
   _mode_button.set_observer(this);
 
   register_handler(*this, true);
+  register_worker(*this, true);
   set_handler_active(k_handler_storage_handler, true);
   set_worker_active(k_worker_bgeigie_connector, true);
 
@@ -67,4 +70,17 @@ int8_t Controller::handle_produced_work(const worker_status_t& worker_reports) {
     }
   }
   return current_state;
+}
+
+void Controller::set_state(State* state) {
+  Context::set_state(state);
+  _state_changed = true;
+}
+
+int8_t Controller::produce_data() {
+  if(_state_changed) {
+    _state_changed = false;
+    return WorkerStatus::e_worker_data_read;
+  }
+  return WorkerStatus::e_worker_idle;
 }

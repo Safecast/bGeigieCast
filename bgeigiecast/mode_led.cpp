@@ -30,17 +30,22 @@ ModeLED::ModeLED(LocalStorage& config) :
     } {
 }
 
-void ModeLED::set_color(ModeLED::ModeColor _color, double _frequency, uint8_t _percentage_on) {
+void ModeLED::set_values(ModeLED::ModeColor _color, double _frequency, uint8_t _percentage_on) {
   frequency = _frequency;
   percentage_on = _percentage_on;
-  if(_color == color) {
-    // If setting same color, ignore
-    return;
-  }
-  DEBUG_PRINT("Changed LED to ");
-  DEBUG_PRINTLN(_color);
   color = _color;
-  set(_config.is_led_color_blind() ? _colorTypes[color].color_blind : _colorTypes[color].normal);
+  if(frequency == 0)
+    set_color(color);
+}
+
+void ModeLED::set_color(ModeLED::ModeColor _color) {
+  static ModeColor _last = mode_color_off;
+  if(_color != _last) {
+    _last = _color;
+    DEBUG_PRINT("Changed LED to ");
+    DEBUG_PRINTLN(_color);
+    set(_config.is_led_color_blind() ? _colorTypes[_color].color_blind : _colorTypes[_color].normal);
+  }
 }
 
 void ModeLED::loop() {
@@ -75,22 +80,22 @@ void ModeLED::handle_report(const Report& report) {
     case ControllerState::k_state_InitializeState:
     case ControllerState::k_state_InitReadingState:
       /// Initializing, blink every 1 second
-      set_color(mode_color_init, 1, 10);
+      set_values(mode_color_init, 1, 10);
       break;
     case ControllerState::k_state_PostInitializeState:
       /// Post initializing, blink every 0.8 second ( this lasts for 3 seconds total )
-      set_color(mode_color_init, 1.5, 15);
+      set_values(mode_color_init, 1.5, 15);
       break;
     case ControllerState::k_state_ConfigurationModeState:
       switch(worker_stats.at(k_worker_configuration_server).active_state) {
         case WorkerStatus::e_state_active:
           /// Configuration mode - up and running. no blink
-          set_color(mode_color_config);
+          set_values(mode_color_config);
           break;
         case WorkerStatus::e_state_activating_failed:
         default:
           /// Configuration mode - connecting to wifi / settings up access point. blink
-          set_color(mode_color_config, 1, 50);
+          set_values(mode_color_config, 1, 50);
           break;
       }
       break;
@@ -98,47 +103,46 @@ void ModeLED::handle_report(const Report& report) {
       switch(handler_stats.at(k_handler_bluetooth_reporter).status) {
         case BluetoothReporter::e_handler_clients_available:
           /// Mobile mode - Clients connected
-          set_color(mode_color_mobile);
+          set_values(mode_color_mobile);
           break;
         case BluetoothReporter::e_handler_idle:
         case BluetoothReporter::e_handler_no_clients:
         default:
           /// Mobile mode - No clients connected
-          set_color(mode_color_mobile, 0.5, 10);
+          set_values(mode_color_mobile, 0.33, 5);
           break;
       }
       break;
     case ControllerState::k_state_FixedModeState:
       if(handler_stats.at(k_handler_api_reporter).active_state == HandlerStatus::e_state_activating_failed) {
-        set_color(mode_color_fixed_connected, 1, 25);
+        /// Fixed mode - Connecting to wifi, blink connected
+        set_values(mode_color_fixed_connected, 1, 25);
         break;
       }
       switch(handler_stats.at(k_handler_api_reporter).status) {
-        case ApiReporter::e_api_reporter_idle:
-        case ApiReporter::e_api_reporter_send_success:
-          /// Fixed mode - All good and connected
-          set_color(mode_color_fixed_connected);
+        case ApiReporter::e_api_reporter_error_not_connected:
+          /// Fixed mode - Lost connection to wifi, blink connected again
+          set_values(mode_color_fixed_connected, 1, 25);
           break;
         case ApiReporter::e_api_reporter_error_invalid_reading:
           /// Fixed mode - Invalid reading (no good gps) TODO: add additional check for gps
-          set_color(mode_color_fixed_hard_error, 1, 25);
-          break;
-        case ApiReporter::e_api_reporter_error_not_connected:
-          /// Fixed mode - Lost connection to wifi, display the reconnect again
-          set_color(mode_color_fixed_connected, 1, 25);
+          set_values(mode_color_fixed_hard_error, 0.33, 15);
           break;
         case ApiReporter::e_api_reporter_error_remote_not_available:
         case ApiReporter::e_api_reporter_error_server_rejected_post:
           /// Fixed mode - Remote is not available
-          set_color(mode_color_fixed_soft_error);
+          set_values(mode_color_fixed_soft_error);
           break;
+        case ApiReporter::e_api_reporter_send_success:
         default:
+          /// Fixed mode - All good and connected
+          set_values(mode_color_fixed_connected);
           break;
       }
       break;
     case ControllerState::k_state_ResetState:
       /// Reset - Display red because its least used TODO: custom color
-      set_color(mode_color_fixed_hard_error);
+      set_values(mode_color_fixed_hard_error);
       break;
     default:
       break;

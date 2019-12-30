@@ -7,7 +7,7 @@
 #include "http_pages.h"
 #include "identifiers.h"
 
-#define RETRY_TIMEOUT 5000
+#define RETRY_TIMEOUT 4000
 
 template<typename T, typename T2>
 T clamp(T2 val, T min, T max) {
@@ -17,6 +17,7 @@ T clamp(T2 val, T min, T max) {
 
 ConfigWebServer::ConfigWebServer(LocalStorage& config)
     : Worker<ServerStatus>(k_worker_configuration_server, {false, false}, 0),
+      WiFiConnection(),
       _server(SERVER_WIFI_PORT),
       _config(config),
       _running(false) {
@@ -38,7 +39,6 @@ bool ConfigWebServer::activate(bool retry) {
   char host_ssid[16];
   sprintf(host_ssid, ACCESS_POINT_SSID, device_id);
   if(retry) {
-    WiFi.disconnect(true, true);
     retry_count++;
   } else {
     retry_count = 0;
@@ -46,9 +46,8 @@ bool ConfigWebServer::activate(bool retry) {
     delay(100);
   }
 
-  if(retry_count < 3 && _config.get_wifi_ssid()) {
-    connect_wifi();
-    if(WiFi.status() == WL_CONNECTED) {
+  if(retry_count < 3) {
+    if(connect_wifi(_config.get_wifi_ssid(), _config.get_wifi_password())) {
       DEBUG_PRINTF("Connected to %s, IP address: %s\n", _config.get_wifi_ssid(), WiFi.localIP().toString().c_str());
       HttpPages::internet_access = true;
       add_urls();
@@ -63,30 +62,17 @@ bool ConfigWebServer::activate(bool retry) {
 void ConfigWebServer::deactivate() {
   _server.close();
   _server.stop();
-  WiFi.softAPdisconnect(true);
+  if(HttpPages::internet_access) {
+    disconnect_wifi();
+  } else {
+    WiFi.softAPdisconnect(true);
+  }
   delay(20);
 }
 
 int8_t ConfigWebServer::produce_data() {
   _server.handleClient();
   return WorkerStatus::e_worker_idle;
-}
-
-bool ConfigWebServer::connect_wifi() {
-  DEBUG_PRINTLN("Config server: Trying to connect to wifi...");
-  switch(WiFi.status()) {
-    case WL_CONNECTED:
-      return true;
-    case WL_IDLE_STATUS:
-    case WL_DISCONNECTED:
-      WiFi.reconnect();
-      return false;
-    default:
-      const char* wifi_ssid = _config.get_wifi_ssid();
-      const char* password = _config.get_wifi_password();
-      password ? WiFi.begin(wifi_ssid, password) : WiFi.begin(wifi_ssid);
-      return WiFi.isConnected();
-  }
 }
 
 bool ConfigWebServer::start_ap_server(const char* host_ssid) {

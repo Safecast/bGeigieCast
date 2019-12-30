@@ -7,9 +7,10 @@
 #define API_SEND_DEV(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT_DEV : API_SEND_FREQUENCY_SECONDS_DEV)
 #define API_SEND_FREQUENCY(alert, dev) (((dev ? API_SEND_DEV(alert) : API_SEND(alert)) * 1000) - 2000)
 
-#define RETRY_TIMEOUT 2000
+#define RETRY_TIMEOUT 3000
 
 ApiReporter::ApiReporter(LocalStorage& config) :
+    WiFiConnection(),
     Handler(k_handler_api_reporter),
     _config(config),
     _saved_readings(),
@@ -43,31 +44,17 @@ bool ApiReporter::activate(bool retry) {
   if(retry && millis() - last_retry < RETRY_TIMEOUT) {
     return false;
   }
-
   last_retry = millis();
 
-  if(retry) {
-    DEBUG_PRINTLN("Reconnecting!");
-    WiFi.reconnect();
-  } else {
-    const char* ssid = _config.get_wifi_ssid();
-    if(!ssid) {
-      DEBUG_PRINTLN("No SSID to connect to!");
-      return false;
-    }
-    const char* password = _config.get_wifi_password();
-    DEBUG_PRINT("Connecting to ssid ");
-    DEBUG_PRINTLN(ssid);
-    password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
-  }
+  connect_wifi(_config.get_wifi_ssid(), _config.get_wifi_password());
 
   return WiFi.isConnected();
 }
 
 void ApiReporter::deactivate() {
   reset();
-  WiFi.disconnect(true, true);
-  WiFi.mode(WIFI_MODE_NULL);
+  _current_default_response = e_api_reporter_idle;
+  disconnect_wifi();
 }
 
 int8_t ApiReporter::handle_produced_work(const worker_status_t& worker_reports) {
@@ -77,6 +64,8 @@ int8_t ApiReporter::handle_produced_work(const worker_status_t& worker_reports) 
   }
   const auto& reading = reader.get<Reading>();
   _merged_reading += reading;
+  _current_default_response =
+      _merged_reading.valid_reading() ? _current_default_response : e_api_reporter_error_invalid_reading;
   if(!time_to_send()) {
     return _current_default_response;
   }
@@ -87,9 +76,11 @@ int8_t ApiReporter::handle_produced_work(const worker_status_t& worker_reports) 
   }
 
   if(_merged_reading.valid_reading()) {
+    DEBUG_PRINTLN("Api reporter: valid reading, sending");
     _current_default_response = send_reading(reading);
+    // TODO: send saved readings
   } else {
-    return e_api_reporter_error_invalid_reading;
+    DEBUG_PRINTLN("Api reporter: invalid reading, not sending");
   }
   reset();
   return _current_default_response;

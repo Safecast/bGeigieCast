@@ -10,11 +10,12 @@
 #include "reading.h"
 #include "user_config.h"
 #include "circular_buffer.h"
+#include "wifi_connection.h"
 
 /**
  * Connects over WiFi to the API to send readings
  */
-class ApiReporter : public Handler {
+class ApiReporter : private WiFiConnection, public Handler {
  public:
 
   enum ApiHandlerStatus {

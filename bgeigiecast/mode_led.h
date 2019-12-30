@@ -33,7 +33,8 @@ class ModeLED : private RGBLed, public Supervisor {
    * @param percentage_on : if frequency > 0, it will
    *    - example, percentage of 25 with 1 frequency, will 0.25 second LED on then 0.75 second LED off
    */
-  void set_color(ModeColor color, double frequency = 0, uint8_t percentage_on = 50);
+  void set_values(ModeColor color, double frequency = 0, uint8_t percentage_on = 50);
+  void set_color(ModeColor color);
 
   void loop();
 

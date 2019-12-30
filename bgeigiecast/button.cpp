@@ -61,4 +61,3 @@ uint8_t Button::get_pin() const {
 uint32_t Button::get_last_state_change() const {
   return _last_state_change;
 }
-

@@ -164,7 +164,7 @@ void BluetoothReporter::create_ble_data_service(BLEServer* pServer) {
 }
 
 bool BluetoothReporter::send_reading(const Reading& reading) const {
-  if(pServer->getConnectedCount()) {
+  if(pServer->getConnectedCount() == 0) {
     // No clients to send data to
     return false;
   }

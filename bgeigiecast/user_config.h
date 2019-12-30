@@ -1,7 +1,7 @@
 #ifndef USER_CONFIG_H
 #define USER_CONFIG_H
 
-#define BGEIGIECAST_VERSION "1.1"
+#define BGEIGIECAST_VERSION "1.2"
 
 /** System config **/
 #define ENABLE_DEBUG 1
@@ -28,7 +28,7 @@
 #define API_SEND_FREQUENCY_SECONDS_ALERT 60 // 1 minute
 #define API_SEND_FREQUENCY_SECONDS_DEV 30 // 30 seconds
 #define API_SEND_FREQUENCY_SECONDS_ALERT_DEV 10 // 10 seconds
-#define MAX_MISSED_READINGS 20 // Keep up to 20 readings in memory if connection to the api failed
+#define MAX_MISSED_READINGS 10 // Keep up to 20 readings in memory if connection to the api failed
 
 /** Access point settings **/
 #define ACCESS_POINT_SSID       "bgeigie%d" // With device id

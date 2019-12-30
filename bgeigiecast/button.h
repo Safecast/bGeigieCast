@@ -86,7 +86,6 @@ class ButtonObserver {
   virtual void on_button_release(Button* button) {/*no implementation*/};
 
   /**
-   *
    * Callback when the button was pressed (down + release)
    * if button is PULLUP, triggers when HIGH -> LOW -> HIGH
    * if button is PULLDOWN, triggers when  LOW -> HIGH -> LOW
