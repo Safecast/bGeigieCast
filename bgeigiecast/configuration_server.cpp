@@ -16,78 +16,32 @@ T clamp(T2 val, T min, T max) {
 }
 
 ConfigWebServer::ConfigWebServer(LocalStorage& config)
-    : Worker<ServerStatus>(k_worker_configuration_server, {false, false}, 0),
-      WiFiConnection(),
+    : Worker<ServerStatus>(k_worker_configuration_server, k_server_status_offline, 0),
       _server(SERVER_WIFI_PORT),
-      _config(config),
-      _running(false) {
+      _config(config) {
+  add_urls();
 }
 
-bool ConfigWebServer::activate(bool retry) {
-  static uint32_t last_try = 0;
-  static uint8_t retry_count = 0;
-  if(retry && millis() - last_try < RETRY_TIMEOUT) {
-    return false;
+bool ConfigWebServer::activate(bool) {
+  if(WiFiConnection::wifi_connected() || WiFiConnection::ap_server_up()) {
+    _server.begin(SERVER_WIFI_PORT);
+    return true;
   }
-  last_try = millis();
-  auto device_id = _config.get_device_id();
-  if(!device_id) {
-    DEBUG_PRINTLN("Can't start config without device id!");
-    return false;
-  }
-
-  char host_ssid[16];
-  sprintf(host_ssid, ACCESS_POINT_SSID, device_id);
-  if(retry) {
-    retry_count++;
-  } else {
-    retry_count = 0;
-    MDNS.begin(host_ssid);
-    delay(100);
-  }
-
-  if(retry_count < 3) {
-    if(connect_wifi(_config.get_wifi_ssid(), _config.get_wifi_password())) {
-      DEBUG_PRINTF("Connected to %s, IP address: %s\n", _config.get_wifi_ssid(), WiFi.localIP().toString().c_str());
-      HttpPages::internet_access = true;
-      add_urls();
-      return true;
-    }
-    return false;
-  }
-
-  return start_ap_server(host_ssid);
+  return false;
 }
 
 void ConfigWebServer::deactivate() {
   _server.close();
   _server.stop();
-  if(HttpPages::internet_access) {
-    disconnect_wifi();
-  } else {
-    WiFi.softAPdisconnect(true);
-  }
-  delay(20);
 }
 
 int8_t ConfigWebServer::produce_data() {
   _server.handleClient();
+  if(data == k_server_status_offline) {
+    data = HttpPages::internet_access ? k_server_status_running_wifi : k_server_status_running_access_point;
+    return WorkerStatus::e_worker_data_read;
+  }
   return WorkerStatus::e_worker_idle;
-}
-
-bool ConfigWebServer::start_ap_server(const char* host_ssid) {
-  WiFi.softAP(host_ssid, _config.get_ap_password());
-  delay(100);
-
-  IPAddress ip(ACCESS_POINT_IP);
-  IPAddress n_mask(ACCESS_POINT_NMASK);
-  WiFi.softAPConfig(ip, ip, n_mask);
-
-  delay(100);
-
-  add_urls();
-  DEBUG_PRINTF("Config server: Access point is up at: %s -> %s\n", host_ssid, WiFi.softAPIP().toString().c_str());
-  return true;
 }
 
 void ConfigWebServer::add_urls() {
@@ -180,8 +134,6 @@ void ConfigWebServer::add_urls() {
   _server.on("/favicon.ico", HTTP_GET, [this]() {
     _server.send_P(200, "image/x-icon", reinterpret_cast<const char*>(HttpPages::favicon), FAVICON_SIZE);
   });
-
-  _server.begin();
 }
 
 void ConfigWebServer::handle_save() {
@@ -256,4 +208,8 @@ void ConfigWebServer::handle_update_uploading() {
       break;
     }
   }
+}
+
+void ConfigWebServer::handle_report(const Report& report) {
+
 }

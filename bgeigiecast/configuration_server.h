@@ -5,20 +5,22 @@
 #include <WebServer.h>
 
 #include <Worker.hpp>
+#include <Supervisor.hpp>
 
 #include "local_storage.h"
 #include "wifi_connection.h"
 
-struct ServerStatus {
-  bool connected;
-  bool running;
+enum ServerStatus {
+  k_server_status_offline,
+  k_server_status_running_wifi,
+  k_server_status_running_access_point,
 };
 
 /**
  * Class to host a web server for configuring the ESP32. Will set up an access
  * point based on user_config.h "Access point settings".
  */
-class ConfigWebServer : public Worker<ServerStatus>, private WiFiConnection {
+class ConfigWebServer : public Worker<ServerStatus>, public Supervisor {
  public:
   explicit ConfigWebServer(LocalStorage& config);
   virtual ~ConfigWebServer() = default;
@@ -33,6 +35,8 @@ class ConfigWebServer : public Worker<ServerStatus>, private WiFiConnection {
    */
   void add_urls();
 
+  void handle_report(const Report& report) override;
+
  protected:
   /**
    * Initialize the web server, does nothing if it is already initialized.
@@ -40,18 +44,13 @@ class ConfigWebServer : public Worker<ServerStatus>, private WiFiConnection {
    */
   bool activate(bool retry) override;
 
+ protected:
   /**
    * Stops the web server
    */
   void deactivate() override;
 
  private:
-
-  /**
-   * Start access point server
-   * @return success
-   */
-  bool start_ap_server(const char* host_ssid);
 
   /**
    * Handles request for `/save`
@@ -65,8 +64,6 @@ class ConfigWebServer : public Worker<ServerStatus>, private WiFiConnection {
 
   WebServer _server;
   LocalStorage& _config;
-
-  bool _running;
 };
 
 #endif //BGEIGIECAST_SERVER_H

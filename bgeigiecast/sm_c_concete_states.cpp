@@ -115,6 +115,7 @@ ConfigurationModeState::ConfigurationModeState(Controller& context) : Controller
 
 void ConfigurationModeState::entry_action() {
   DEBUG_PRINTLN("-- Entered state ConfigurationMode");
+  controller.set_worker_active(k_worker_wifi_access_point, true);
   controller.set_worker_active(k_worker_configuration_server, true);
 }
 
@@ -123,7 +124,8 @@ void ConfigurationModeState::do_activity() {
 }
 
 void ConfigurationModeState::exit_action() {
-  controller.set_worker_active(k_worker_configuration_server, true);
+  controller.set_worker_active(k_worker_wifi_access_point, false);
+  controller.set_worker_active(k_worker_configuration_server, false);
 }
 
 void ConfigurationModeState::handle_event(Event_enum event_id) {
@@ -185,7 +187,9 @@ FixedModeState::FixedModeState(Controller& context) : ControllerState(context) {
 
 void FixedModeState::entry_action() {
   DEBUG_PRINTLN("-- Entered state FixedMode");
+  controller.save_state(Controller::k_savable_FixedMode);
   controller.set_handler_active(k_handler_api_reporter, true);
+  controller.set_worker_active(k_worker_configuration_server, true);
 }
 
 void FixedModeState::do_activity() {
@@ -193,6 +197,7 @@ void FixedModeState::do_activity() {
 
 void FixedModeState::exit_action() {
   controller.set_handler_active(k_handler_api_reporter, false);
+  controller.set_worker_active(k_worker_configuration_server, false);
 }
 
 void FixedModeState::handle_event(Event_enum event_id) {

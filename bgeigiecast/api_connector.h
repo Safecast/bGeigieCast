@@ -15,7 +15,7 @@
 /**
  * Connects over WiFi to the API to send readings
  */
-class ApiReporter : private WiFiConnection, public Handler {
+class ApiReporter : public Handler {
  public:
 
   enum ApiHandlerStatus {
@@ -60,7 +60,7 @@ class ApiReporter : private WiFiConnection, public Handler {
    * When a reading cannot be send to the API, we save it to send later..
    * @param reading: reading to save
    */
-  virtual void save_reading() final;
+  virtual void save_reading(const Reading& reading) final;
 
  private:
 

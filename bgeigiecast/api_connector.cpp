@@ -10,7 +10,6 @@
 #define RETRY_TIMEOUT 3000
 
 ApiReporter::ApiReporter(LocalStorage& config) :
-    WiFiConnection(),
     Handler(k_handler_api_reporter),
     _config(config),
     _saved_readings(),
@@ -24,10 +23,10 @@ bool ApiReporter::time_to_send() const {
   return millis() - _last_send > API_SEND_FREQUENCY(_alert, _config.get_use_dev());
 }
 
-void ApiReporter::save_reading() {
+void ApiReporter::save_reading(const Reading& reading) {
   DEBUG_PRINTLN("Could not upload reading, trying again later");
-  if(_merged_reading.valid_reading()) {
-    _saved_readings.add(_merged_reading);
+  if(reading.valid_reading()) {
+    _saved_readings.add(reading);
   }
 }
 
@@ -38,7 +37,7 @@ void ApiReporter::reset() {
 
 bool ApiReporter::activate(bool retry) {
   static uint32_t last_retry = 0;
-  if(WiFi.isConnected()) {
+  if(WiFiConnection::wifi_connected()) {
     return true;
   }
   if(retry && millis() - last_retry < RETRY_TIMEOUT) {
@@ -46,7 +45,7 @@ bool ApiReporter::activate(bool retry) {
   }
   last_retry = millis();
 
-  connect_wifi(_config.get_wifi_ssid(), _config.get_wifi_password());
+  WiFiConnection::connect_wifi(_config.get_wifi_ssid(), _config.get_wifi_password());
 
   return WiFi.isConnected();
 }
@@ -54,7 +53,7 @@ bool ApiReporter::activate(bool retry) {
 void ApiReporter::deactivate() {
   reset();
   _current_default_response = e_api_reporter_idle;
-  disconnect_wifi();
+  WiFiConnection::disconnect_wifi();
 }
 
 int8_t ApiReporter::handle_produced_work(const worker_status_t& worker_reports) {
@@ -77,8 +76,10 @@ int8_t ApiReporter::handle_produced_work(const worker_status_t& worker_reports) 
 
   if(_merged_reading.valid_reading()) {
     DEBUG_PRINTLN("Api reporter: valid reading, sending");
-    _current_default_response = send_reading(reading);
-    // TODO: send saved readings
+    _current_default_response = send_reading(_merged_reading);
+    while(_current_default_response == e_api_reporter_send_success && !_saved_readings.empty() ) {
+      _current_default_response = send_reading(_saved_readings.get());
+    }
   } else {
     DEBUG_PRINTLN("Api reporter: invalid reading, not sending");
   }
@@ -136,14 +137,10 @@ ApiReporter::ApiHandlerStatus ApiReporter::send_reading(const Reading& reading) 
     DEBUG_PRINTLN(response);
     http.end();  //Free resources
     return e_api_reporter_send_success;
-  } else if(httpResponseCode > 0) {
-    DEBUG_PRINTLN("Remote error on sending POST");
-    http.end();  //Free resources
-    return e_api_reporter_error_server_rejected_post;
   }
-  DEBUG_PRINTLN("Remote not available");
+  DEBUG_PRINTLN("Error on sending POST request");
   http.end();  //Free resources
-  // Failed to send
-  return e_api_reporter_error_remote_not_available;
+  save_reading(reading);  // Save reading for a time when it is available
+  return httpResponseCode > 0 ? e_api_reporter_error_server_rejected_post : e_api_reporter_error_remote_not_available;
 
 }

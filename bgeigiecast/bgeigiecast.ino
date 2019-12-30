@@ -39,9 +39,10 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 #ifndef UNIT_TEST
 
 #include <Arduino.h>
-#include <Aggregator.hpp>
+
 #include "bluetooth_reporter.h"
 #include "api_connector.h"
+#include "access_point.h"
 #include "debugger.h"
 #include "controller.h"
 #include "bgeigie_connector.h"
@@ -60,6 +61,7 @@ ConfigWebServer config_server(config);
 // Data handlers
 BluetoothReporter bluetooth_reporter(config);
 ApiReporter api_reporter(config);
+AccessPoint access_point(config);
 
 // Report handlers
 ModeLED mode_led(config);
@@ -130,6 +132,7 @@ void setup() {
 
   /// Software configurations
   // Setup aggregator
+  controller.register_worker(access_point, false);
   controller.register_worker(bgeigie_connector, false);
   controller.register_worker(config_server, false);
 

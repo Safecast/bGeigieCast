@@ -4,9 +4,8 @@
 #include "wifi_connection.h"
 #include "debugger.h"
 
-WiFiConnection::WiFiConnection() {}
 
-bool WiFiConnection::connect_wifi(const char* ssid, const char* password) const {
+bool WiFiConnection::connect_wifi(const char* ssid, const char* password) {
   if(!ssid) {
     DEBUG_PRINTLN("WiFi connector: No SSID to connect to!");
     return false;
@@ -26,7 +25,35 @@ bool WiFiConnection::connect_wifi(const char* ssid, const char* password) const 
   }
 }
 
-void WiFiConnection::disconnect_wifi() const {
+void WiFiConnection::disconnect_wifi() {
   WiFi.disconnect(true, true);
   WiFi.mode(WIFI_MODE_NULL);
+}
+
+bool WiFiConnection::wifi_connected() {
+  return WiFi.isConnected();
+}
+
+bool WiFiConnection::start_ap_server(const char* host_ssid, const char* password) {
+  WiFi.softAP(host_ssid, password);
+  WiFi.softAPsetHostname(host_ssid);
+  delay(100);
+
+  IPAddress ip(ACCESS_POINT_IP);
+  IPAddress n_mask(ACCESS_POINT_NMASK);
+  WiFi.softAPConfig(ip, ip, n_mask);
+
+  delay(100);
+
+  DEBUG_PRINTF("Access point is up at: %s -> %s\n", host_ssid, WiFi.softAPIP().toString().c_str());
+  return true;
+}
+
+void WiFiConnection::stop_ap_server() {
+  WiFi.softAPdisconnect(true);
+  delay(20);
+}
+
+bool WiFiConnection::ap_server_up() {
+  return WiFi.softAPIP() != INADDR_NONE;
 }
