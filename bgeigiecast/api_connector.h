@@ -39,9 +39,9 @@ class ApiReporter : public Handler {
   bool time_to_send() const;
 
   /**
-   * reset the api time and merged readings
+   * reset_reading the api time and merged readings
    */
-  void reset();
+  void reset_reading();
 
   /**
    * Initialize the connection

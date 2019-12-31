@@ -15,6 +15,7 @@ bool BluetoothReporter::activate(bool) {
   }
   if(BLEDevice::getInitialized()) {
     // Already initialized
+    _pServer->getAdvertising()->start();
     return true;
   }
 
@@ -45,9 +46,11 @@ bool BluetoothReporter::activate(bool) {
 }
 
 void BluetoothReporter::deactivate() {
-  // TODO: figure out a way to disable bluetooth without destroying it forever
-//  BLEDevice::deinit(true);
-//  delete _pServer;
+  for(auto& peerDevice : BLEDevice::getPeerDevices(true)) {
+    _pServer->disconnect(peerDevice.first);
+  }
+  delay(10);
+  _pServer->getAdvertising()->stop();
 }
 
 int8_t BluetoothReporter::handle_produced_work(const worker_status_t& worker_reports) {

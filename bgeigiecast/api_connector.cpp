@@ -7,7 +7,7 @@
 #define API_SEND_DEV(alert) (alert ? API_SEND_FREQUENCY_SECONDS_ALERT_DEV : API_SEND_FREQUENCY_SECONDS_DEV)
 #define API_SEND_FREQUENCY(alert, dev) (((dev ? API_SEND_DEV(alert) : API_SEND(alert)) * 1000) - 2000)
 
-#define RETRY_TIMEOUT 8000
+#define RETRY_TIMEOUT 10000
 
 ApiReporter::ApiReporter(LocalStorage& config) :
     Handler(k_handler_api_reporter),
@@ -30,7 +30,7 @@ void ApiReporter::save_reading(const Reading& reading) {
   }
 }
 
-void ApiReporter::reset() {
+void ApiReporter::reset_reading() {
   _last_send = millis();
   _merged_reading.reset();
 }
@@ -40,11 +40,10 @@ bool ApiReporter::activate(bool retry) {
   if(WiFiConnection::wifi_connected()) {
     return true;
   }
-  if(retry && millis() - last_try < RETRY_TIMEOUT) {
-    return false;
-  }
   if (!retry) {
-    reset();
+    reset_reading();
+  } else if(millis() - last_try < RETRY_TIMEOUT) {
+    return false;
   }
   last_try = millis();
 
@@ -85,7 +84,7 @@ int8_t ApiReporter::handle_produced_work(const worker_status_t& worker_reports) 
   } else {
     DEBUG_PRINTLN("Api reporter: invalid reading, not sending");
   }
-  reset();
+  reset_reading();
   return _current_default_response;
 }
 

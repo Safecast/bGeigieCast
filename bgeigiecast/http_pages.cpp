@@ -26,7 +26,7 @@ const char* update_firmware_script =
     "(e=>{const t=(...t)=>e.querySelector(...t),n=t('form'),a=t('#status');n.addEventListener('submit',e=>{e.prevent"
     "Default();const s=new FormData(n),o=t('#file').files[0],d=new XMLHttpRequest;o?(n.classList.add('uploading'),s."
     "append('update',o),d.addEventListener('load',e=>{a.innerText='Upload success! Restarting device to apply update"
-    ".';const t=new XMLHttpRequest;setTimeout(()=>{t.open('get','/reboot'),t.send()},500)}),d.addEventListener('erro"
+    ".';const t=new XMLHttpRequest;setTimeout(()=>{t.open('get','/reboot'),t.send()},999)}),d.addEventListener('erro"
     "r',e=>{a.innerText='Upload failed... Try again or contact info@safecast.org',n.classList.remove('uploading')}),"
     "d.addEventListener('abort',e=>{a.innerText='Upload cancelled...'}),d.upload.addEventListener('progress',e=>{if("
     "e.lengthComputable){a.innerText='Uploading new firmware... This can take up to 10 minutes.';const n=Math.round("

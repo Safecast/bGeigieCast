@@ -15,7 +15,6 @@ bool WiFiConnection::connect_wifi(const char* ssid, const char* password) {
   switch(WiFi.status()) {
     case WL_CONNECTED:
       return true;
-    case WL_IDLE_STATUS:
     case WL_DISCONNECTED:
       WiFi.reconnect();
       delay(100);

@@ -9,7 +9,7 @@ PostInitialize: action: sleep()
 state ConfigMode
 state Active
 state Reset
-Reset: Action: reset config defaults && restart system
+Reset: Action: reset_reading config defaults && restart system
 
 state ConfigMode {
     state SetupConfigServer
