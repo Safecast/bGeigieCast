@@ -25,8 +25,8 @@ const char* fallback_resources =
 const char* update_firmware_script =
     "(e=>{const t=(...t)=>e.querySelector(...t),n=t('form'),a=t('#status');n.addEventListener('submit',e=>{e.prevent"
     "Default();const s=new FormData(n),o=t('#file').files[0],d=new XMLHttpRequest;o?(n.classList.add('uploading'),s."
-    "append('update',o),d.addEventListener('load',e=>{a.innerText='Upload success! Restarting device to apply update"
-    ".';const t=new XMLHttpRequest;setTimeout(()=>{t.open('get','/reboot'),t.send()},999)}),d.addEventListener('erro"
+    "append('update',o),d.addEventListener('load',e=>{setTimeout(()=>{a.innerText='Upload success! Restarting device"
+    " to apply update.';const t=new XMLHttpRequest;t.open('get','/reboot'),t.send()},999)}),d.addEventListener('erro"
     "r',e=>{a.innerText='Upload failed... Try again or contact info@safecast.org',n.classList.remove('uploading')}),"
     "d.addEventListener('abort',e=>{a.innerText='Upload cancelled...'}),d.upload.addEventListener('progress',e=>{if("
     "e.lengthComputable){a.innerText='Uploading new firmware... This can take up to 10 minutes.';const n=Math.round("
@@ -97,6 +97,7 @@ const char* HttpPages::get_home_page(uint32_t device_id) {
       "<li><a href='/device'>Configure your device</a></li>"
       "<li><a href='/connection'>Configure your connection to the API</a></li>"
       "<li><a href='/location'>Configure your location for fixed mode</a></li>"
+      "<li><a href='/update'>Update the firmware</a></li>"
       "</ul>"
       "More information about configurations in the <a href='https://github.com/Safecast/bGeigieCast/wiki/User-manual#available-settings' target='_blank'>User manual</a>."
       "</p>",
@@ -113,8 +114,10 @@ const char* HttpPages::get_update_page(uint32_t device_id) {
       "<fieldset>"
       "<legend><a href='/'>Home</a> / Update the firmware</legend>"
       "<div id='upload-inputs'>"
+      "<p><em>Current version: v" BGEIGIECAST_VERSION "</em></p>"
       "<input type='file' name='update' id='file'><br>"
-      //      "<label id='file-input' for='file'>Choose file...</label>"
+      "<span class='pure-form-message'>The latest firmware can be found on <a target='_blank' href='https://github.com/Safecast/bGeigieCast/tree/development/firmware'>Github</a></span>"
+      "<br>"
       "<input type='submit' class='pure-button pure-button-primary' value='Upload'>"
       "</div>"
       "<p id='status'></p>"
@@ -153,7 +156,7 @@ const char* HttpPages::get_config_device_page(
       // Led intensity
       "<label for='" FORM_NAME_LED_INTENSITY "'>Led intensity</label>"
       "<input type='number' min='5' max='100' name='" FORM_NAME_LED_INTENSITY "' id='" FORM_NAME_LED_INTENSITY "' value='%d'>"
-      "<span class='pure-form-message'>Value between 5-100 (percentage).</span>"
+      "<span class='pure-form-message'>Value between 5 (very dim) and 100.(very bright).</span>"
 
       // Colorblind
       "<label>Color set</label>"
@@ -163,7 +166,9 @@ const char* HttpPages::get_config_device_page(
       "<label for='" FORM_NAME_LED_COLOR "1' class='pure-radio'>"
       "<input id='" FORM_NAME_LED_COLOR "1' type='radio' name='" FORM_NAME_LED_COLOR "' value='1' %s>Colorblind"
       "</label>"
+      "<span class='pure-form-message'></span>"
 
+      "<br>"
       "<button type='submit' class='pure-button pure-button-primary'>Save</button>"
       "</fieldset>"
       "</form>"
@@ -196,30 +201,38 @@ const char* HttpPages::get_config_location_page(
       "<label for='" FORM_NAME_LOC_HOME "0' class='pure-radio'>"
       "<input id='" FORM_NAME_LOC_HOME "0' type='radio' name='" FORM_NAME_LOC_HOME "' value='0' %s>Use GPS"
       "</label>"
+      "<span class='pure-form-message'>"
+      "Using GPS location: the bGeigieCast will upload measurements to the api using the last measured GPS location."
+      "</span>"
       "<label for='" FORM_NAME_LOC_HOME "1' class='pure-radio'>"
-      "<input id='" FORM_NAME_LOC_HOME "1' type='radio' name='" FORM_NAME_LOC_HOME "' value='1' %s>Use home location"
+      "<input id='" FORM_NAME_LOC_HOME "1' type='radio' name='" FORM_NAME_LOC_HOME "' value='1' %s>Use fixed location"
       "</label>"
-      "<span class='pure-form-message'>(Informative text)</span>"
+      "<span class='pure-form-message'>"
+      "Using fixed location: Use a single GPS location as the location for all your measurements. If incoming "
+      "measurements are out of range (100+ meter), they will be marked as invalid and will not be send. To use this "
+      "setting, the fields below are required."
+      "</span>"
 
       // Home latitude
-      "<label for='" FORM_NAME_LOC_HOME_LAT "'>Home latitude</label>"
+      "<label for='" FORM_NAME_LOC_HOME_LAT "'>Fixed latitude</label>"
       "<input type='number' min='-90.0000' max='90.0000' name='" FORM_NAME_LOC_HOME_LAT "' id='" FORM_NAME_LOC_HOME_LAT "' value='%.5f' step='0.00001'>"
 
       // Home longitude
-      "<label for='" FORM_NAME_LOC_HOME_LON "'>Home longitude</label>"
+      "<label for='" FORM_NAME_LOC_HOME_LON "'>Fixed longitude</label>"
       "<input type='number' min='-180.0000' max='180.0000' name='" FORM_NAME_LOC_HOME_LON "' id='" FORM_NAME_LOC_HOME_LON "' value='%.5f' step='0.00001'>"
 
       // Set last known location
       "<span class='pure-form-message'>"
-      "Last known location: (<a href='#' onclick=\""
+      "Last known location (<a href='#' onclick=\""
       "document.getElementById('" FORM_NAME_LOC_HOME_LAT "').value = document.getElementById('l_la').innerHTML;"
       "document.getElementById('" FORM_NAME_LOC_HOME_LON "').value = document.getElementById('l_lo').innerHTML;"
       "return false;"
-      "\">use this</a>)<br>"
+      "\">use this</a>):<br>"
       "Latitude: <span id='l_la'>%.5f</span><br>"
       "Longitude: <span id='l_lo'>%.5f</span><br>"
       "</span>"
 
+      "<br>"
       "<button type='submit' class='pure-button pure-button-primary'>Save</button>"
       "</fieldset>"
       "</form>"
@@ -243,6 +256,8 @@ const char* HttpPages::get_config_connection_page(
     const char* api_key,
     bool use_dev
 ) {
+  char ssid[20];
+  sprintf(ssid, ACCESS_POINT_SSID, device_id);
   return render_full_page(
       device_id,
       TITLE_CONF_CONNECTION,
@@ -253,20 +268,28 @@ const char* HttpPages::get_config_connection_page(
       // bGeigie ap password
       "<label for='" FORM_NAME_AP_LOGIN "'>bGeigie password</label>"
       "<input type='text' name='" FORM_NAME_AP_LOGIN "' id='" FORM_NAME_AP_LOGIN "' value='%s'>"
-      "<span class='pure-form-message'>(Informative text)</span>"
+      "<span class='pure-form-message'>"
+      "The password for the wifi connection access point when starting the bGeigieCast in configuration mode. "
+      "The SSID of the bGeigieCast: %s"
+      "</span>"
 
       // WiFi ssid
       "<label for='" FORM_NAME_WIFI_SSID "'>WiFi network name</label>"
       "<input type='text' name='" FORM_NAME_WIFI_SSID "' id='" FORM_NAME_WIFI_SSID "' value='%s'>"
+      "<span class='pure-form-message'>Your WiFi network name</span>"
 
       // WiFi password
       "<label for='" FORM_NAME_WIFI_PASS "'>WiFi password</label>"
       "<input type='text' name='" FORM_NAME_WIFI_PASS "' id='" FORM_NAME_WIFI_PASS "' value='%s'>"
+      "<span class='pure-form-message'>Your WiFi network password</span>"
 
       // Api key
       "<label for='" FORM_NAME_API_KEY "'>API key</label>"
       "<input type='text' name='" FORM_NAME_API_KEY "' id='" FORM_NAME_API_KEY "' value='%s'>"
-      "<span class='pure-form-message'>(Informative text)</span>"
+      "<span class='pure-form-message'>"
+      "Get your API key from <a target='_blank' href='https://api.safecast.org'>api.safecast.org</a>, Login -> Dashboard -> Retrieve your API key.<br>"
+      "<em>Note: when using development server, get your API key from <a target='_blank' href='https://dev.safecast.org'>dev.safecast.org</a></em>"
+      "</span>"
 
       // Use dev
       "<label>Safecast server</label>"
@@ -276,13 +299,17 @@ const char* HttpPages::get_config_connection_page(
       "<label for='" FORM_NAME_USE_DEV "1' class='pure-radio'>"
       "<input id='" FORM_NAME_USE_DEV "1' type='radio' name='" FORM_NAME_USE_DEV "' value='1' %s>Development"
       "</label>"
-      "<span class='pure-form-message'>Use development for testing your device</span>"
+      "<span class='pure-form-message'>"
+      "Use development for testing purposes. Double check your API key when changing this option!"
+      "</span>"
 
+      "<br>"
       "<button type='submit' class='pure-button pure-button-primary'>Save</button>"
       "</fieldset>"
       "</form>"
       "%s",
       device_password,
+      ssid,
       wifi_ssid,
       wifi_password,
       api_key,
