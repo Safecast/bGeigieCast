@@ -35,6 +35,7 @@ bool WiFiConnection::wifi_connected() {
 }
 
 bool WiFiConnection::start_ap_server(const char* host_ssid, const char* password) {
+  set_hostname(host_ssid);
   WiFi.softAP(host_ssid, password);
   WiFi.softAPsetHostname(host_ssid);
   delay(100);
@@ -56,4 +57,8 @@ void WiFiConnection::stop_ap_server() {
 
 bool WiFiConnection::ap_server_up() {
   return (WiFi.getMode() & WIFI_MODE_AP) != 0;
+}
+
+void WiFiConnection::set_hostname(const char* hostname) {
+  WiFi.setHostname(hostname);
 }

@@ -152,6 +152,7 @@ void ConfigurationModeState::handle_event(Event_enum event_id) {
           controller.set_state(new MobileModeState(controller));
           break;
       }
+      break;
     case e_c_button_long_pressed:
       controller.set_state(new ResetState(controller));
       break;

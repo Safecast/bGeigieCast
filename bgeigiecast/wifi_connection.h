@@ -38,6 +38,11 @@ class WiFiConnection {
    * @return
    */
   static bool ap_server_up();
+
+  /**
+   * Set wifi hostname
+   */
+  static void set_hostname(const char* hostname);
 };
 
 #endif //BGEIGIECAST_WIFI_CONNECTION_H_

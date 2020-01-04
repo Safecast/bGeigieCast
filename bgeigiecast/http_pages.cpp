@@ -25,13 +25,13 @@ const char* fallback_resources =
 const char* update_firmware_script =
     "(e=>{const t=(...t)=>e.querySelector(...t),n=t('form'),a=t('#status');n.addEventListener('submit',e=>{e.prevent"
     "Default();const s=new FormData(n),o=t('#file').files[0],d=new XMLHttpRequest;o?(n.classList.add('uploading'),s."
-    "append('update',o),d.addEventListener('load',e=>{setTimeout(()=>{a.innerText='Upload success! Restarting device"
-    " to apply update.';const t=new XMLHttpRequest;t.open('get','/reboot'),t.send()},999)}),d.addEventListener('erro"
-    "r',e=>{a.innerText='Upload failed... Try again or contact info@safecast.org',n.classList.remove('uploading')}),"
-    "d.addEventListener('abort',e=>{a.innerText='Upload cancelled...'}),d.upload.addEventListener('progress',e=>{if("
-    "e.lengthComputable){a.innerText='Uploading new firmware... This can take up to 10 minutes.';const n=Math.round("
-    "e.loaded/e.total*100)+'%';t('#prg').innerText=n,t('#bar').style.width=n}}),d.open(n.method,n.action),d.send(s))"
-    ":a.innerText='Please select a file...'})})(this.document);";
+    "append('update',o),d.addEventListener('load',e=>{a.innerText='Applying update...';setTimeout(()=>{a.innerText='"
+    "Upload success! Restarting device to apply update.';const t=new XMLHttpRequest;t.open('get','/reboot'),t.send()"
+    "},2000)}),d.addEventListener('error',e=>{a.innerText='Upload failed... Try again or contact info@safecast.org',"
+    "n.classList.remove('uploading')}),d.addEventListener('abort',e=>{a.innerText='Upload cancelled...'}),d.upload.a"
+    "ddEventListener('progress',e=>{if(e.lengthComputable){a.innerText='Uploading new firmware... This can take up t"
+    "o 10 minutes.';const n=Math.round(e.loaded/e.total*100)+'%';t('#prg').innerText=n,t('#bar').style.width=n}}),d."
+    "open(n.method,n.action),d.send(s)):a.innerText='Please select a file...'})})(this.document);";
 
 /**
  * page format

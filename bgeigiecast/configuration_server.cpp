@@ -27,7 +27,10 @@ bool ConfigWebServer::activate(bool) {
     // Set DNS hostname for easy access
     char hostname[16];
     sprintf(hostname, ACCESS_POINT_SSID, _config.get_device_id());
-    MDNS.begin(hostname);
+    if(MDNS.begin(hostname)) {
+      WiFiConnection::set_hostname(hostname);
+      MDNS.addService("http", "tcp", 80);
+    }
 
     // Start config server
     _server.begin(SERVER_WIFI_PORT);
@@ -40,6 +43,7 @@ bool ConfigWebServer::activate(bool) {
 void ConfigWebServer::deactivate() {
   _server.close();
   _server.stop();
+  MDNS.end();
 }
 
 int8_t ConfigWebServer::produce_data() {
@@ -133,6 +137,8 @@ void ConfigWebServer::add_urls() {
   });
 
   _server.on("/reboot", [this]() { // Reboot
+    _server.send(200, "text/plain", "OK");
+    _server.client().flush();
     ESP.restart();
   });
 
