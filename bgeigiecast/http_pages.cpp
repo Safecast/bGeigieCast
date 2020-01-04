@@ -99,9 +99,11 @@ const char* HttpPages::get_home_page(uint32_t device_id) {
       "<li><a href='/location'>Configure your location for fixed mode</a></li>"
       "<li><a href='/update'>Update the firmware</a></li>"
       "</ul>"
-      "More information about configurations in the <a href='https://github.com/Safecast/bGeigieCast/wiki/User-manual#available-settings' target='_blank'>User manual</a>."
+      "More information about configurations in the <a href='https://github.com/Safecast/bGeigieCast/wiki/User-manual#available-settings' target='_blank'>User manual</a>. "
+      "Or view your device on <a href='https://grafana.safecast.cc/d/xDN0RWlmz/?var-device=6%d&from=now-30m&to=now' target='_blank'>Grafana</a>."
       "</p>",
-      BGEIGIECAST_VERSION
+      BGEIGIECAST_VERSION,
+      device_id
   );
 }
 
