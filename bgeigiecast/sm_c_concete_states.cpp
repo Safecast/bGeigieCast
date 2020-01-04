@@ -152,6 +152,9 @@ void ConfigurationModeState::handle_event(Event_enum event_id) {
           controller.set_state(new MobileModeState(controller));
           break;
       }
+    case e_c_button_long_pressed:
+      controller.set_state(new ResetState(controller));
+      break;
     default:
       ControllerState::handle_event(event_id);
       break;
@@ -182,6 +185,9 @@ void MobileModeState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_c_button_pressed:
       controller.set_state(new FixedModeState(controller));
+      break;
+    case e_c_button_long_pressed:
+      controller.set_state(new ResetState(controller));
       break;
     default:
       ControllerState::handle_event(event_id);
@@ -216,6 +222,9 @@ void FixedModeState::handle_event(Event_enum event_id) {
   switch(event_id) {
     case e_c_button_pressed:
       controller.set_state(new MobileModeState(controller));
+      break;
+    case e_c_button_long_pressed:
+      controller.set_state(new ResetState(controller));
       break;
     default:
       ControllerState::handle_event(event_id);
