@@ -100,7 +100,7 @@ const char* HttpPages::get_home_page(uint32_t device_id) {
       "<li><a href='/update'>Update the firmware</a></li>"
       "</ul>"
       "More information about configurations in the <a href='https://github.com/Safecast/bGeigieCast/wiki/User-manual#available-settings' target='_blank'>User manual</a>. "
-      "Or view your device on <a href='https://grafana.safecast.cc/d/xDN0RWlmz/?var-device=6%d&from=now-30m&to=now' target='_blank'>Grafana</a>."
+      "Or view your device on <a href='https://grafana.safecast.cc/d/DFSxrOLWk/safecast-device-details?orgId=1&from=now-7d&to=now&refresh=15m&var-device_urn=geigiecast:6%d&from=now-30m&to=now' target='_blank'>Grafana</a>."
       "</p>",
       BGEIGIECAST_VERSION,
       device_id
