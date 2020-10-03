@@ -1,0 +1,9 @@
+Id,Designator,Package,Quantity,Designation,Supplier and ref,URL
+6,C1,CP_EIA-6032-15_Kemet-U_Pad2.25x2.35mm_HandSolder,1,CP1,,
+2,D1,DJS-BRGBC-TR8,1,RGB-LED,,
+8,G***,QR_code_safecast_bgc,1,LOGO,,
+7,"R1,R3,R4",R_0805_HandSoldering,3,470,,
+1,SW1,SW_SPST_TL3342,1,TACT-SWITCH,,
+5,SW2,SW_SPDT_PCM12,1,SWITCH_INV,,
+4,U1,ESP-32S,1,ESP32S,,
+3,U2,XBEE-20_THT,1,XBEE-socket,,https://www.sparkfun.com/products/10112

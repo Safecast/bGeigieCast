@@ -1,3 +1,4 @@
 (fp_lib_table
-  (lib (name ESP32-footprints-Lib)(type KiCad)(uri ${KISYSMOD}/ESP32-footprints-Lib.pretty)(options "")(descr ""))
+  (lib (name "ESP32-footprints-Lib")(type "KiCad")(uri "${KISYSMOD}/ESP32-footprints-Lib.pretty")(options "")(descr ""))
+  (lib (name "ESP32 nGeigieNano WiFi all")(type "KiCad")(uri "${KIPRJMOD}/ESP32 nGeigieNano WiFi all.pretty")(options "")(descr ""))
 )
