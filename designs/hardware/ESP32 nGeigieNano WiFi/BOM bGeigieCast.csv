@@ -1,9 +1,9 @@
-Id,Designator,Package,Quantity,Designation,Supplier and ref,URL
-6,C1,CP_EIA-6032-15_Kemet-U_Pad2.25x2.35mm_HandSolder,1,CP1,,
-2,D1,DJS-BRGBC-TR8,1,RGB-LED,,
-8,G***,QR_code_safecast_bgc,1,LOGO,,
-7,"R1,R3,R4",R_0805_HandSoldering,3,470,,
-1,SW1,SW_SPST_TL3342,1,TACT-SWITCH,,
-5,SW2,SW_SPDT_PCM12,1,SWITCH_INV,,
-4,U1,ESP-32S,1,ESP32S,,
-3,U2,XBEE-20_THT,1,XBEE-socket,,https://www.sparkfun.com/products/10112
+Id,Designator,Package,Quantity,Designation,,Supplier and ref,URL,alt URL
+6,C1,CP_EIA-6032-15_Kemet-U_Pad2.25x2.35mm_HandSolder,1,CP1,330uF 15V,,https://www.ebay.com/itm/322335558548,
+2,D1,DJS-BRGBC-TR8,1,RGB-LED,Common cathode,,https://www.sparkfun.com/products/7844,
+8,G***,QR_code_safecast_bgc,1,LOGO,,,,
+7,"R1,R3,R4",R_0805_HandSoldering,3,,470,,https://www.amazon.com/470-ohm-Resistor-Resistors-Tolerance/dp/B07DHGBR3W/ref=sr_1_1?dchild=1&keywords=smd+0805+470+ohm&qid=1602062116&sr=8-1,https://www.amazon.com/HiLetgo-Values-Resistors-Assortment-Resistor/dp/B07R5S5RFK/ref=pd_day0_328_3/134-1676936-8757311?_encoding=UTF8&pd_rd_i=B07R5S5RFK&pd_rd_r=b6c02da0-4cdf-4e43-96e0-e02781f7e869&pd_rd_w=sfOZU&pd_rd_wg=jXFJ1&pf_rd_p=d495c3b6-b08c-488d-b587-92006fef8456&pf_rd_r=K42SBTNQGBSV3S4SXJ9W&psc=1&refRID=K42SBTNQGBSV3S4SXJ9W
+1,SW1,SW_SPST_TL3342,1,TACT-SWITCH,,,https://www.digikey.com/en/products/detail/e-switch/TL3342F160QG-TR/379003?s=N4IgjCBcoLQdIDGUAuAnArgUwDQgPZQDa4ALBALoC%2BVeATMSACoAyAzG6XQGJgBsABgCKAcQD0TAEohqQA,
+5,SW2,SW_SPDT_PCM12,1,SWITCH_INV,,,https://www.digikey.com/en/products/detail/c-k/PCM12SMTR/1640112?s=N4IgTCBcDaIMoAUAiAVABAgwgWQIwQF0BfIA,
+4,U1,ESP-32S,1,ESP32S,,,https://www.digikey.com/en/products/detail/espressif-systems/esp32-wrover-b/9682051,
+3,U2,XBEE-20_THT,1,XBEE-socket,2x10 2mm pitch,,https://www.sparkfun.com/products/10112,
