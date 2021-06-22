@@ -1,0 +1,9 @@
+"Id";"Designator";"Package";"Quantity";"Designation";"Supplier and ref";
+1;"G***";"QR_code_safecast_bgc";1;"LOGO";;;
+2;"C1";"CP_EIA-6032-15_Kemet-U_Pad2.25x2.35mm_HandSolder";1;"CP1";;;
+3;"R4,R3,R1";"R_0805_HandSoldering";3;"470";;;
+4;"U2";"XBEE-20_THT";1;"XBEE-socket";;;
+5;"D1";"DJS-BRGBC-TR8";1;"RGB-LED";;;
+6;"U1";"ESP-32S";1;"ESP32S";;;
+7;"SW2";"SW_SPDT_PCM12";1;"SWITCH_INV";;;
+8;"SW1";"SW_SPST_TL3342";1;"TACT-SWITCH";;;
