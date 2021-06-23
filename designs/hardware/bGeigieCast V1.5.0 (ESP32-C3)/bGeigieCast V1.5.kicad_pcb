@@ -445,10 +445,15 @@
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
-    (model "${KICAD6_3DMODEL_DIR}/ESP32-C3.3dshapes/ESP32-C3-WROOM-02-N4.stp"
+    (model "${KICAD6_3DMODEL_DIR}/ESP32-C3.3dshapes/ESP32-C3-WROOM-02-N4.stp" hide
       (offset (xyz 0 0 0))
-      (scale (xyz 1 1 1))
+      (scale (xyz 1.1 1 1))
       (rotate (xyz 0 0 0))
+    )
+    (model "${KIPRJMOD}/shapes3D/ESP32-C3-WROOM-02.wrl"
+      (offset (xyz -10 -15 0))
+      (scale (xyz 1 1.179 1))
+      (rotate (xyz 0 0 180))
     )
   )
 
