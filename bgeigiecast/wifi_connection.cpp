@@ -5,7 +5,6 @@
 #include "wifi_connection.h"
 #include "debugger.h"
 
-
 bool WiFiConnection::connect_wifi(const char* ssid, const char* password) {
   if(!ssid) {
     DEBUG_PRINTLN("WiFi connector: No SSID to connect to!");

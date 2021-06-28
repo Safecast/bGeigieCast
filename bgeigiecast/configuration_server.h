@@ -20,7 +20,7 @@ enum ServerStatus {
  * Class to host a web server for configuring the ESP32. Will set up an access
  * point based on user_config.h "Access point settings".
  */
-class ConfigWebServer : public Worker<ServerStatus>, public Supervisor {
+class ConfigWebServer : public Worker<ServerStatus> {
  public:
   explicit ConfigWebServer(LocalStorage& config);
   virtual ~ConfigWebServer() = default;
@@ -28,14 +28,12 @@ class ConfigWebServer : public Worker<ServerStatus>, public Supervisor {
   /**
    * Checks if there are requests and handles them
    */
-  int8_t produce_data();
+  int8_t produce_data() override;
 
   /**
    * Initialize the web server and endpoints
    */
   void add_urls();
-
-  void handle_report(const Report& report) override;
 
  protected:
   /**
@@ -44,7 +42,6 @@ class ConfigWebServer : public Worker<ServerStatus>, public Supervisor {
    */
   bool activate(bool retry) override;
 
- protected:
   /**
    * Stops the web server
    */

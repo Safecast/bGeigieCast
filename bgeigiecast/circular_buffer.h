@@ -1,7 +1,5 @@
-#ifndef BGEIGIECAST_CIRCULARBUFFER_HPP
-#define BGEIGIECAST_CIRCULARBUFFER_HPP
-
-#include <stdint.h>
+#ifndef BGEIGIECAST_CIRCULAR_BUFFER_HPP
+#define BGEIGIECAST_CIRCULAR_BUFFER_HPP
 
 /**
  * Simple circular buffer
@@ -18,7 +16,7 @@ class CircularBuffer {
    * Get the next value from the buffer, should check if buffer is not empty before calling this
    * @return: next value T
    */
-  T& get() {
+  const T& get() {
     T& val = buffer[current];
     --count;
     ++current;
@@ -30,7 +28,7 @@ class CircularBuffer {
    * Add a value to the buffer. If the buffer is full, it will throw away the oldest value and add this.
    * @param val
    */
-  void add(T val) {
+  void add(const T& val) {
     buffer[(current + count) % max] = val;
     if(count < max) {
       ++count;
@@ -69,4 +67,4 @@ class CircularBuffer {
   uint16_t current;
 };
 
-#endif //BGEIGIECAST_CIRCULARBUFFER_HPP
+#endif //BGEIGIECAST_CIRCULAR_BUFFER_HPP

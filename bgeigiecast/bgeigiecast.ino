@@ -40,6 +40,7 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 
 #include <Arduino.h>
 
+#include "identifiers.h"
 #include "bluetooth_reporter.h"
 #include "api_connector.h"
 #include "access_point.h"
@@ -52,19 +53,20 @@ Contact: Jelle Bouwhuis (email jellebouwhuis@outlook.com) and Rob Oudendijk (rob
 HardwareSerial& bGeigieSerialConnection = Serial2;
 
 LocalStorage config;
-Controller controller(config);
 
 // Workers
 BGeigieConnector bgeigie_connector(bGeigieSerialConnection);
 ConfigWebServer config_server(config);
+Button mode_button(MODE_BUTTON_PIN);
 
 // Data handlers
 BluetoothReporter bluetooth_reporter(config);
-ApiReporter api_reporter(config);
+ApiConnector api_reporter(config);
 AccessPoint access_point(config);
 
-// Report handlers
+// Supervisors
 ModeLED mode_led(config);
+Controller controller(config);
 
 #if DEBUG_FULL_REPORT
 #if ENABLE_DEBUG
@@ -112,6 +114,16 @@ FullReporter full_reporter;
 #endif
 #endif
 
+/**
+ * Loop in separate thread for mode LED blinking
+ */
+void mode_led_loop(void* param) {
+  for (;;) {
+    mode_led.loop();
+    delay(50);
+  }
+}
+
 void setup() {
   DEBUG_BEGIN(SERIAL_BAUD);
 
@@ -131,14 +143,17 @@ void setup() {
   gpio_install_isr_service(ESP_INTR_FLAG_LEVEL1);
 
   /// Software configurations
-  // Setup aggregator
-  controller.register_worker(access_point, false);
-  controller.register_worker(bgeigie_connector, false);
-  controller.register_worker(config_server, false);
+  // Setup controller
+  controller.register_worker(k_worker_bgeigie_connector, bgeigie_connector);
+  controller.register_worker(k_worker_controller_state, controller);
+  controller.register_worker(k_worker_configuration_server, config_server);
+  controller.register_worker(k_worker_wifi_access_point, access_point);
+  controller.register_worker(k_worker_mode_button, mode_button);
 
-  controller.register_handler(bluetooth_reporter, false);
-  controller.register_handler(api_reporter, false);
-  controller.register_handler(config, false);
+  controller.register_handler(k_handler_bluetooth_reporter, bluetooth_reporter);
+  controller.register_handler(k_handler_controller_handler, controller);
+  controller.register_handler(k_handler_api_reporter, api_reporter);
+  controller.register_handler(k_handler_storage_handler, config);
 
   controller.register_supervisor(mode_led);
 #if DEBUG_FULL_REPORT
@@ -147,6 +162,8 @@ void setup() {
 #endif
 #endif
   controller.setup_state_machine();
+
+  xTaskCreate(mode_led_loop, "led_loop", configMINIMAL_STACK_SIZE * 3, nullptr, 2, nullptr);
 }
 
 void loop() {

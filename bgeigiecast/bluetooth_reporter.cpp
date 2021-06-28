@@ -3,12 +3,17 @@
 #include "bluetooth_reporter.h"
 #include "debugger.h"
 #include "identifiers.h"
+#include "bgeigie_connector.h"
 
-BluetoothReporter::BluetoothReporter(LocalStorage& config)
-    : Handler(k_handler_bluetooth_reporter), config(config), _pServer(nullptr), pDataRXCharacteristic(nullptr) {
+BluetoothReporter::BluetoothReporter(LocalStorage& config) :
+    Handler(),
+    config(config),
+    _pServer(nullptr),
+    pDataRXCharacteristic(nullptr) {
 }
 
 bool BluetoothReporter::activate(bool) {
+  return false;
   if(!config.get_device_id()) {
     DEBUG_PRINTLN("Cannot initialize bluetooth without device id");
     return false;
@@ -53,13 +58,13 @@ void BluetoothReporter::deactivate() {
   _pServer->getAdvertising()->stop();
 }
 
-int8_t BluetoothReporter::handle_produced_work(const worker_status_t& worker_reports) {
-  const auto& reading_stat = worker_reports.at(k_worker_bgeigie_connector);
-  if(!reading_stat.is_fresh()) {
+int8_t BluetoothReporter::handle_produced_work(const worker_map_t& workers) {
+  const auto& reading_stat = workers.worker<BGeigieConnector>(k_worker_bgeigie_connector);
+  if(!reading_stat->is_fresh()) {
     return _pServer->getConnectedCount() > 0 ? e_handler_clients_available : Status::e_handler_idle;
   }
   // Fresh reading is produced
-  const auto& reading = reading_stat.get<Reading>();
+  const auto& reading = reading_stat->get_data();
   return send_reading(reading) ? Status::e_handler_clients_available : Status::e_handler_no_clients;
 }
 
@@ -195,3 +200,4 @@ bool BluetoothReporter::send_reading(const Reading& reading) const {
   } while(segment * max_segment_size < size);
   return true;
 }
+

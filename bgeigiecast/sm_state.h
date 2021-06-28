@@ -7,10 +7,10 @@
 /**
  * Abstract state for the state machine pattern
  */
-class State {
+class BaseState {
  public:
-  State() = default;;
-  virtual ~State() = default;
+  BaseState() = default;;
+  virtual ~BaseState() = default;
 
   /**
    * Get some unique identifier of the state
@@ -38,7 +38,7 @@ class State {
    * @param event_id
    */
   virtual void handle_event(Event_enum event_id) {
-    DEBUG_PRINT("State machine: Unhandled event with id: ");
+    DEBUG_PRINT("BaseState machine: Unhandled event with id: ");
     DEBUG_PRINTLN(event_id);
   }
 };

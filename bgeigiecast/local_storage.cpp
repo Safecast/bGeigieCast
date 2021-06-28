@@ -4,8 +4,11 @@
 #include "identifiers.h"
 #include "reading.h"
 #include "controller.h"
+#include "bgeigie_connector.h"
+#include "api_connector.h"
 
 #define D_SAVED_STATE Controller::k_savable_MobileMode
+#define D_SEND_FREQUENCY ApiConnector::e_api_send_frequency_5_min
 
 const char* memory_name = "data";
 
@@ -16,16 +19,17 @@ const char* key_wifi_ssid = "wifi_ssid";
 const char* key_wifi_password = "wifi_password";
 const char* key_api_key = "api_key";
 const char* key_use_dev = "use_dev";
+const char* key_send_frequency = "send_frequency";
 const char* key_led_color_blind = "led_color_blind";
 const char* key_led_color_intensity = "led_intensity";
 const char* key_saved_state = "saved_state";
-const char* key_home_longtitude = "home_longtitude";
+const char* key_home_longitude = "home_longtitude";
 const char* key_home_latitude = "home_latitude";
-const char* key_last_longtitude = "last_longtitude";
+const char* key_last_longitude = "last_longtitude";
 const char* key_last_latitude = "last_latitude";
 
 LocalStorage::LocalStorage() :
-    Handler(k_handler_storage_handler),
+    Handler(),
     _memory(),
     _device_id(0),
     _ap_password(""),
@@ -33,6 +37,7 @@ LocalStorage::LocalStorage() :
     _wifi_password(""),
     _api_key(""),
     _use_dev(D_USE_DEV_SERVER),
+    _send_frequency(D_SEND_FREQUENCY),
     _led_color_blind(D_LED_COLOR_BLIND),
     _led_color_intensity(D_LED_COLOR_INTENSITY),
     _saved_state(D_SAVED_STATE),
@@ -51,6 +56,7 @@ void LocalStorage::reset_defaults() {
     set_wifi_password(D_WIFI_PASSWORD, true);
     set_api_key(D_APIKEY, true);
     set_use_dev(D_USE_DEV_SERVER, true);
+    set_send_frequency(D_SEND_FREQUENCY, true);
     set_led_color_blind(D_LED_COLOR_BLIND, true);
     set_led_color_intensity(D_LED_COLOR_INTENSITY, true);
     set_saved_state(D_SAVED_STATE, true);
@@ -96,6 +102,10 @@ uint8_t LocalStorage::get_led_color_intensity() const {
 
 bool LocalStorage::get_use_dev() const {
   return _use_dev;
+}
+
+uint8_t LocalStorage::get_send_frequency() const {
+  return _send_frequency;
 }
 
 bool LocalStorage::get_use_home_location() const {
@@ -190,6 +200,18 @@ void LocalStorage::set_use_dev(bool use_dev, bool force) {
   }
 }
 
+void LocalStorage::set_send_frequency(uint8_t send_frequency, bool force) {
+  if(force || (send_frequency != _send_frequency)) {
+    if(_memory.begin(memory_name)) {
+      _send_frequency = send_frequency;
+      _memory.putUChar(key_send_frequency, send_frequency);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for key_send_frequency");
+    }
+  }
+}
+
 void LocalStorage::set_led_color_blind(bool led_color_blind, bool force) {
   if(force || (led_color_blind != _led_color_blind)) {
     if(_memory.begin(memory_name)) {
@@ -241,10 +263,10 @@ void LocalStorage::set_use_home_location(bool use_home_location, bool force) {
 void LocalStorage::set_home_longitude(double home_longtitude, bool force) {
   if(_memory.begin(memory_name)) {
     _home_longitude = home_longtitude;
-    _memory.putDouble(key_home_longtitude, home_longtitude);
+    _memory.putDouble(key_home_longitude, home_longtitude);
     _memory.end();
   } else {
-    DEBUG_PRINTLN("unable to save new value for key_home_longtitude");
+    DEBUG_PRINTLN("unable to save new value for key_home_longitude");
   }
 }
 
@@ -261,10 +283,10 @@ void LocalStorage::set_home_latitude(double home_latitude, bool force) {
 void LocalStorage::set_last_longitude(double last_longitude, bool force) {
   if(_memory.begin(memory_name)) {
     _last_longitude = last_longitude;
-    _memory.putDouble(key_last_longtitude, last_longitude);
+    _memory.putDouble(key_last_longitude, last_longitude);
     _memory.end();
   } else {
-    DEBUG_PRINTLN("unable to save new value for key_last_longtitude");
+    DEBUG_PRINTLN("unable to save new value for key_last_longitude");
   }
 }
 
@@ -303,29 +325,30 @@ bool LocalStorage::activate(bool) {
     strcpy(_api_key, D_APIKEY);
   }
   _use_dev = _memory.getBool(key_use_dev, D_USE_DEV_SERVER);
+  _send_frequency = _memory.getUChar(key_send_frequency, D_SEND_FREQUENCY);
   _led_color_blind = _memory.getBool(key_led_color_blind, D_LED_COLOR_BLIND);
   _led_color_intensity = _memory.getUChar(key_led_color_intensity, D_LED_COLOR_INTENSITY);
   _saved_state = _memory.getChar(key_saved_state, D_SAVED_STATE);
   _use_home_location = _memory.getBool(key_led_color_blind, false);
-  _home_longitude = _memory.getDouble(key_home_longtitude, 0);
+  _home_longitude = _memory.getDouble(key_home_longitude, 0);
   _home_latitude = _memory.getDouble(key_home_latitude, 0);
-  _last_longitude = _memory.getDouble(key_last_longtitude, 0);
+  _last_longitude = _memory.getDouble(key_last_longitude, 0);
   _last_latitude = _memory.getDouble(key_last_latitude, 0);
   _memory.end();
   return true;
 }
 
-int8_t LocalStorage::handle_produced_work(const worker_status_t& worker_reports) {
+int8_t LocalStorage::handle_produced_work(const worker_map_t& workers) {
   // Get reading data to store
-  const auto& reader = worker_reports.at(k_worker_bgeigie_connector);
-  if(reader.is_fresh()) {
-    const auto& reading = reader.get<Reading>();
+  const auto& reader = (BGeigieConnector*) workers.at(k_worker_bgeigie_connector);
+  if(reader->is_fresh()) {
+    const auto& reading = reader->get_data();
     set_device_id(reading.get_device_id(), false);
     if(reading.get_status() & k_reading_gps_ok) {
       set_last_latitude(reading.get_latitude(), false);
       set_last_longitude(reading.get_longitude(), false);
     }
-    return HandlerStatus::e_handler_data_handled;
+    return Handler::e_handler_data_handled;
   }
-  return HandlerStatus::e_handler_idle;
+  return Handler::e_handler_idle;
 }

@@ -11,7 +11,7 @@ Context::~Context() {
   }
 }
 
-void Context::set_state(State* state) {
+void Context::set_state(BaseState* state) {
   if(_current_state) {
     _current_state->exit_action();
     delete _current_state;
@@ -35,7 +35,7 @@ void Context::schedule_event(Event_enum event_id) {
   _event_queue.add(event_id);
 }
 
-State* Context::get_current_state() const {
+BaseState* Context::get_current_state() const {
   return _current_state;
 }
 

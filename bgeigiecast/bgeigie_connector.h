@@ -15,7 +15,6 @@ class BGeigieConnector : public Worker<Reading> {
   explicit BGeigieConnector(Stream& _serial_connection);
   virtual ~BGeigieConnector() = default;
 
- private:
   int8_t produce_data() override;
 
  private:

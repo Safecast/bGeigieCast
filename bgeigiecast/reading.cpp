@@ -1,7 +1,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
-#include <HardwareSerial.h>
 
 #include "reading.h"
 #include "debugger.h"
@@ -49,9 +48,8 @@ double calc_distance(double lon1, double lat1, double lon2, double lat2) {
 Reading::Reading() :
     _reading_str(""),
     _status(0x0),
-    _average_of(0),
     _device_id(0),
-    _iso_timestr(""),
+    _iso_timestamp(""),
     _cpm(0),
     _cpb(0),
     _total_count(0),
@@ -65,9 +63,8 @@ Reading::Reading() :
 Reading::Reading(const char* reading_str) :
     _reading_str(""),
     _status(0x0),
-    _average_of(0),
     _device_id(0),
-    _iso_timestr(""),
+    _iso_timestamp(""),
     _cpm(0),
     _cpb(0),
     _total_count(0),
@@ -83,9 +80,8 @@ Reading::Reading(const char* reading_str) :
 Reading::Reading(const Reading& copy) :
     _reading_str(""),
     _status(copy._status),
-    _average_of(copy._average_of),
     _device_id(copy._device_id),
-    _iso_timestr(""),
+    _iso_timestamp(""),
     _cpm(copy._cpm),
     _cpb(copy._cpb),
     _total_count(copy._total_count),
@@ -95,7 +91,7 @@ Reading::Reading(const Reading& copy) :
     _sat_count(copy._sat_count),
     _precision(copy._precision) {
   strcpy(_reading_str, copy._reading_str);
-  strcpy(_iso_timestr, copy._iso_timestr);
+  strcpy(_iso_timestamp, copy._iso_timestamp);
 }
 
 Reading& Reading::operator=(const char* reading_str) {
@@ -108,7 +104,6 @@ Reading& Reading::operator=(const char* reading_str) {
 Reading& Reading::operator=(const Reading& other) {
   if(&other != this) {
     _status = other._status;
-    _average_of = other._average_of;
     _device_id = other._device_id;
     _cpm = other._cpm;
     _cpb = other._cpb;
@@ -119,107 +114,30 @@ Reading& Reading::operator=(const Reading& other) {
     _sat_count = other._sat_count;
     _precision = other._precision;
     strcpy(_reading_str, other._reading_str);
-    strcpy(_iso_timestr, other._iso_timestr);
+    strcpy(_iso_timestamp, other._iso_timestamp);
   }
   return *this;
-}
-
-Reading& Reading::operator+=(const Reading& o) {
-  if(!(o._status & k_reading_valid) || o._average_of == 0) {
-    // Do nothing with the other, not valid or empty
-    return *this;
-  }
-  if(_average_of == 0) {
-    // Assign other to this
-    return operator=(o);
-  }
-  // Else, merge other with this
-
-  // Use latest datetime and total count
-  strcpy(_iso_timestr, o._iso_timestr);
-  _total_count = o._total_count;
-
-  // Maybe do something smarter with the validity...?
-  _status |= o._status & k_reading_parsed;
-
-  uint16_t o_cpm = o._cpm, o_cpb = o._cpb;
-
-  if(!(_status & k_reading_sensor_ok) && o._status & k_reading_sensor_ok) {
-    _status |= k_reading_sensor_ok;
-    _cpm = o_cpm;
-    _cpb = o_cpb;
-  } else if(_status & k_reading_sensor_ok && !(o._status & k_reading_sensor_ok)) {
-    o_cpm = _cpm;
-    o_cpb = _cpb;
-  }
-
-  // Sensor data
-  _cpm = ((_cpm * _average_of) + (o_cpm * o._average_of)) / (_average_of + o._average_of);
-  _cpb = ((_cpb * _average_of) + (o_cpb * o._average_of)) / (_average_of + o._average_of);
-
-  // Use latest gps location
-  if(o._status & k_reading_gps_ok) {
-    _status |= k_reading_gps_ok;
-    _latitude = o._latitude;
-    _longitude = o._longitude;
-    _altitude = o._altitude;
-  }
-
-  // Update count of readings merged with this
-  _average_of += o._average_of;
-
-  return *this;
-}
-
-bool Reading::as_json(char* out) {
-  if(!valid_reading()) {
-    return false;
-  }
-
-  sprintf(
-      out,
-      "{\"captured_at\":\"%s\","
-      "\"device_id\":%d,"
-      "\"value\":%d,"
-      "\"unit\":\"cpm\","
-      "\"longitude\":%.5f,"
-      "\"latitude\":%.5f}\n",
-      _iso_timestr,
-      get_fixed_device_id(),
-      _cpm,
-      _longitude,
-      _latitude
-  );
-  return true;
 }
 
 void Reading::reset() {
-  _average_of = 0;
   _status = 0;
 }
 
-void Reading::apply_home_location(double home_lat, double home_long) {
-  if(calc_distance(_longitude, _latitude, home_long, home_lat) < HOME_LOCATION_PRECISION_KM) {
-    DEBUG_PRINTF("Gps in home location, setting reading location to %.5f , %.5f\n", home_lat, home_long);
-    _latitude = home_lat;
-    _longitude = home_long;
-  } else {
-    DEBUG_PRINTLN("Gps not in home location");
-    _status &= ~(k_reading_gps_ok);
-  }
+bool Reading::near_location(double home_lat, double home_long) const {
+  return calc_distance(_longitude, _latitude, home_long, home_lat) < HOME_LOCATION_PRECISION_KM;
 }
 
 void Reading::parse_values() {
   reset();
   double lat_dm = 0, long_dm = 0;
   char n_or_s, w_or_e, sensor_status, gps_status;
-  int16_t checksum;
+  uint16_t checksum;
 
   int parse_result = sscanf(
       _reading_str,
       "$BNRDD,%hu,%[^,],%hu,%hu,%hu,%c,%lf,%c,%lf,%c,%lf,%c,%d,%f*%hx",
       &_device_id,
-      _iso_timestr,
+      _iso_timestamp,
       &_cpm,
       &_cpb,
       &_total_count,
@@ -238,15 +156,28 @@ void Reading::parse_values() {
   if(parse_result == EXPECTED_PARSE_RESULT_COUNT && VALID_BGEIGIE_ID(_device_id)) { // 15 values to be parsed
     _status |= k_reading_parsed;
 
-    // TODO Validate checksum?
-    if(checksum > 0) {
-      _average_of = 1;
+    uint16_t c = 0;
+    char* str = _reading_str + 1;  // Excluding the dollar sign
+    while(*str && *str != '*')
+      c ^= *str++;
+    if(checksum == c) {
       _status |= k_reading_valid;
+    }
+
+    uint16_t year;
+    char date_rest[25];
+
+    sscanf(_iso_timestamp, "%hu-%s", &year, date_rest);
+
+    if(year < 2021) {
+      // Year in the past, set reading invalid
+      _status &= _status ^ k_reading_valid;
     }
 
     if(sensor_status == 'A') {
       _status |= k_reading_sensor_ok;
     }
+
     if(gps_status == 'A') {
       _status |= k_reading_gps_ok;
 
@@ -260,7 +191,7 @@ void Reading::parse_values() {
 }
 
 bool Reading::valid_reading() const {
-  return _average_of > 0 && _status & k_reading_sensor_ok && _status & k_reading_gps_ok;
+  return _status & k_reading_sensor_ok && _status & k_reading_gps_ok;
 }
 
 const char* Reading::get_reading_str() const {
@@ -279,8 +210,8 @@ uint32_t Reading::get_fixed_device_id() const {
   return 60000 + _device_id;
 }
 
-const char* Reading::get_iso_timestr() const {
-  return _iso_timestr;
+const char* Reading::get_iso_timestamp() const {
+  return _iso_timestamp;
 }
 
 uint16_t Reading::get_cpm() const {

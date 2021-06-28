@@ -22,11 +22,7 @@
 #define HEADER_API_CONTENT_TYPE "application/json"
 #define HEADER_API_USER_AGENT "bGeigieCast/" BGEIGIECAST_VERSION
 #define API_MEASUREMENTS_ENDPOINT "http://" API_HOST "/measurements.json"
-#define API_SEND_FREQUENCY_SECONDS 300 // 5 minutes
-#define API_SEND_FREQUENCY_SECONDS_ALERT 60 // 1 minute
-#define API_SEND_FREQUENCY_SECONDS_DEV 30 // 30 seconds
-#define API_SEND_FREQUENCY_SECONDS_ALERT_DEV 10 // 10 seconds
-#define MAX_MISSED_READINGS 10 // Keep up to 20 readings in memory if connection to the api failed
+#define API_READING_BUFFER 60 //
 
 /** Access point settings **/
 #define ACCESS_POINT_SSID       "bgeigie%d" // With device id

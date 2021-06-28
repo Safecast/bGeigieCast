@@ -26,7 +26,7 @@ class BluetoothReporter : public Handler {
  protected:
   bool activate(bool retry) override;
   void deactivate() override;
-  int8_t handle_produced_work(const worker_status_t& worker_reports) override;
+  int8_t handle_produced_work(const worker_map_t& workers) override;
  private:
 
   bool send_reading(const Reading& reading) const;

@@ -1,5 +1,5 @@
-#ifndef BGEIGIECAST_SM_C_CONCETE_STATES_H
-#define BGEIGIECAST_SM_C_CONCETE_STATES_H
+#ifndef BGEIGIECAST_SM_C_CONCRETE_STATES_H
+#define BGEIGIECAST_SM_C_CONCRETE_STATES_H
 
 #include "sm_c_state.h"
 
@@ -8,7 +8,7 @@ class InitializeState : public ControllerState {
   explicit InitializeState(Controller& context);
   virtual ~InitializeState() = default;
 
-  int8_t get_state_id() const override { return k_state_InitializeState;}
+  int8_t get_state_id() const override { return k_state_InitializeState; }
 
   void entry_action() override;
   void do_activity() override;
@@ -21,7 +21,7 @@ class InitReadingState : public ControllerState {
   explicit InitReadingState(Controller& context);
   virtual ~InitReadingState() = default;
 
-  int8_t get_state_id() const override { return k_state_InitReadingState;}
+  int8_t get_state_id() const override { return k_state_InitReadingState; }
 
   void entry_action() override;
   void do_activity() override;
@@ -37,7 +37,7 @@ class PostInitializeState : public ControllerState {
   explicit PostInitializeState(Controller& context);
   virtual ~PostInitializeState() = default;
 
-  int8_t get_state_id() const override { return k_state_PostInitializeState;}
+  int8_t get_state_id() const override { return k_state_PostInitializeState; }
 
   void entry_action() override;
   void do_activity() override;
@@ -53,7 +53,7 @@ class ConfigurationModeState : public ControllerState {
   explicit ConfigurationModeState(Controller& context);
   virtual ~ConfigurationModeState() = default;
 
-  int8_t get_state_id() const override { return k_state_ConfigurationModeState;}
+  int8_t get_state_id() const override { return k_state_ConfigurationModeState; }
 
   void entry_action() override;
   void do_activity() override;
@@ -66,7 +66,7 @@ class MobileModeState : public ControllerState {
   explicit MobileModeState(Controller& context);
   virtual ~MobileModeState() = default;
 
-  int8_t get_state_id() const override { return k_state_MobileModeState;}
+  int8_t get_state_id() const override { return k_state_MobileModeState; }
 
   void entry_action() override;
   void do_activity() override;
@@ -80,7 +80,7 @@ class FixedModeState : public ControllerState {
   explicit FixedModeState(Controller& context);
   virtual ~FixedModeState() = default;
 
-  int8_t get_state_id() const override { return k_state_FixedModeState;}
+  int8_t get_state_id() const override { return k_state_FixedModeState; }
 
   void entry_action() override;
   void do_activity() override;
@@ -94,7 +94,7 @@ class ResetState : public ControllerState {
   explicit ResetState(Controller& context);
   virtual ~ResetState() = default;
 
-  int8_t get_state_id() const override { return k_state_ResetState;}
+  int8_t get_state_id() const override { return k_state_ResetState; }
 
   void entry_action() override;
   void do_activity() override;
@@ -102,4 +102,4 @@ class ResetState : public ControllerState {
   void handle_event(Event_enum event_id) override;
 };
 
-#endif //BGEIGIECAST_SM_C_CONCETE_STATES_H
+#endif //BGEIGIECAST_SM_C_CONCRETE_STATES_H

@@ -1,9 +1,8 @@
 #include "bgeigie_connector.h"
 #include "debugger.h"
-#include "identifiers.h"
 
 BGeigieConnector::BGeigieConnector(Stream& serial_connection) :
-    Worker<Reading>(k_worker_bgeigie_connector, Reading(), 4000),
+    Worker<Reading>(4000),
     _serial_connection(serial_connection),
     _buffer("") {
 }
@@ -14,9 +13,10 @@ int8_t BGeigieConnector::produce_data() {
     _buffer += c;
     if(c == '\n') {
       data = _buffer.c_str();
+      DEBUG_PRINTLN(_buffer);
       _buffer = "";
-      return data.get_status() & k_reading_parsed ? WorkerStatus::e_worker_data_read : WorkerStatus::e_worker_error;
+      return data.get_status() & k_reading_parsed ? Worker::e_worker_data_read : Worker::e_worker_error;
     }
   }
-  return WorkerStatus::e_worker_idle;
+  return Worker::e_worker_idle;
 }

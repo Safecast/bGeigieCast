@@ -1,6 +1,7 @@
 #include <WebServer.h>
 #include "http_pages.h"
 #include "user_config.h"
+#include "api_connector.h"
 
 #define TITLE_HOME "Home"
 #define TITLE_UPDATE "Update firmware"
@@ -256,6 +257,7 @@ const char* HttpPages::get_config_connection_page(
     const char* wifi_ssid,
     const char* wifi_password,
     const char* api_key,
+    uint8_t send_frequency,
     bool use_dev
 ) {
   char ssid[20];
@@ -293,6 +295,21 @@ const char* HttpPages::get_config_connection_page(
       "<em>Note: when using development server, get your API key from <a target='_blank' href='https://dev.safecast.org'>dev.safecast.org</a></em>"
       "</span>"
 
+      // Send frequency
+      "<label>Send data to server</label>"
+      "<label for='" FORM_NAME_SEND_FREQ "0' class='pure-radio'>"
+      "<input id='" FORM_NAME_SEND_FREQ "0' type='radio' name='" FORM_NAME_SEND_FREQ "' value='0' %s>Every 5 seconds"
+      "</label>"
+      "<label for='" FORM_NAME_SEND_FREQ "1' class='pure-radio'>"
+      "<input id='" FORM_NAME_SEND_FREQ "1' type='radio' name='" FORM_NAME_SEND_FREQ "' value='1' %s>Every minute"
+      "</label>"
+      "<label for='" FORM_NAME_SEND_FREQ "2' class='pure-radio'>"
+      "<input id='" FORM_NAME_SEND_FREQ "2' type='radio' name='" FORM_NAME_SEND_FREQ "' value='2' %s>Every 5 minutes"
+      "</label>"
+      "<span class='pure-form-message'>"
+      "We suggest sending data every 5 minutes for stationary sensors"
+      "</span>"
+
       // Use dev
       "<label>Safecast server</label>"
       "<label for='" FORM_NAME_USE_DEV "0' class='pure-radio'>"
@@ -315,6 +332,9 @@ const char* HttpPages::get_config_connection_page(
       wifi_ssid,
       wifi_password,
       api_key,
+      send_frequency == ApiConnector::e_api_send_frequency_5_sec ? "checked" : "",
+      send_frequency == ApiConnector::e_api_send_frequency_1_min ? "checked" : "",
+      send_frequency == ApiConnector::e_api_send_frequency_5_min ? "checked" : "",
       use_dev ? "" : "checked",
       use_dev ? "checked" : "",
       display_success ? success_message : ""
