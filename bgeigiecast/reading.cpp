@@ -5,9 +5,11 @@
 #include "reading.h"
 #include "debugger.h"
 
+#define D2R (PI / 180.0)
 #define EXPECTED_PARSE_RESULT_COUNT 15
 #define VALID_BGEIGIE_ID(id) (id >= 1000 && id < 10000)
 #define HOME_LOCATION_PRECISION_KM 0.2
+
 
 /**
  * Convert degree minutes to decimal degree
@@ -22,27 +24,18 @@ double dm_to_dd(double dm) {
 
 /**
  * Calculate distance using haversine formula
- * @param lon1
  * @param lat1
- * @param lon2
+ * @param long1
  * @param lat2
+ * @param long2
  * @return distance in km
  */
-double calc_distance(double lon1, double lat1, double lon2, double lat2) {
-  //This portion converts the current and destination GPS coords from decDegrees to Radians
-  lon1 *= (PI / 180);
-  lon2 *= (PI / 180);
-  lat1 *= (PI / 180);
-  lat2 *= (PI / 180);
-
-  //This portion calculates the differences for the Radian latitudes and longitudes and saves them to variables
-  double dlon = lon2 - lon1;
-  double dlat = lat2 - lat1;
-
-  //This portion is the Haversine Formula for distance between two points. Returned value is in KM
-  double a = (sq(sin(dlat / 2))) + cos(lat1) * cos(lat2) * (sq(sin(dlon / 2)));
-  double e = 2 * atan2(sqrt(a), sqrt(1 - a));
-  return 6371.00 * e;
+double haversine_km(double lat1, double long1, double lat2, double long2) {
+  double dlong = (long2 - long1) * D2R;
+  double dlat = (lat2 - lat1) * D2R;
+  double a = pow(sin(dlat / 2.0), 2) + cos(lat1 * D2R) * cos(lat2 * D2R) * pow(sin(dlong / 2.0), 2);
+  double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+  return 6367 * c;
 }
 
 Reading::Reading() :
@@ -124,7 +117,7 @@ void Reading::reset() {
 }
 
 bool Reading::near_location(double home_lat, double home_long) const {
-  return calc_distance(_longitude, _latitude, home_long, home_lat) < HOME_LOCATION_PRECISION_KM;
+  return haversine_km(_latitude, _longitude, home_lat, home_long) < HOME_LOCATION_PRECISION_KM;
 }
 
 void Reading::parse_values() {

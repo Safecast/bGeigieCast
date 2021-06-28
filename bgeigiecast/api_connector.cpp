@@ -159,8 +159,8 @@ bool ApiConnector::reading_to_json(const Reading& reading, char* out) {
       reading.get_iso_timestamp(),
       reading.get_fixed_device_id(),
       reading.get_cpm(),
-      _config.get_use_home_location() ? reading.get_longitude() : _config.get_home_longitude(),
-      _config.get_use_home_location() ? reading.get_latitude() : _config.get_home_latitude()
+      _config.get_use_home_location() ? _config.get_home_longitude() : reading.get_longitude(),
+      _config.get_use_home_location() ? _config.get_home_latitude() : reading.get_latitude()
   );
   return true;
 }
