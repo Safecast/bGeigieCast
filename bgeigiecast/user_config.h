@@ -1,7 +1,7 @@
 #ifndef USER_CONFIG_H
 #define USER_CONFIG_H
 
-#define BGEIGIECAST_VERSION "1.2"
+#define BGEIGIECAST_VERSION "1.3"
 
 /** System config **/
 #define ENABLE_DEBUG 1
