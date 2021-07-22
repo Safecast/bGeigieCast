@@ -67,23 +67,10 @@
     "zone_display_mode": 0
   },
   "meta": {
-    "filename": "xbee.kicad_prl",
+    "filename": "bGeigieCastV1.5.kicad_prl",
     "version": 3
   },
   "project": {
-    "files": [
-      {
-        "name": "xbee.kicad_pcb",
-        "open": false,
-        "window": {
-          "display": 0,
-          "maximized": true,
-          "pos_x": 0,
-          "pos_y": 215,
-          "size_x": 1280,
-          "size_y": 452
-        }
-      }
-    ]
+    "files": []
   }
 }
