@@ -4,8 +4,8 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-#include <Worker.hpp>
-#include <Supervisor.hpp>
+#include "Worker.hpp"
+#include "Supervisor.hpp"
 
 #include "local_storage.h"
 #include "wifi_connection.h"

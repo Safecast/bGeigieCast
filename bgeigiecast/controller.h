@@ -1,8 +1,8 @@
 #ifndef BGEIGIECAST_CONTROLLER_HPP
 #define BGEIGIECAST_CONTROLLER_HPP
 
-#include <Handler.hpp>
-#include <Aggregator.hpp>
+#include "Handler.hpp"
+#include "Aggregator.hpp"
 
 #include "button.h"
 #include "sm_context.h"

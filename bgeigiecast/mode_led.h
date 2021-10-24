@@ -4,7 +4,7 @@
 #include "rgb_led.h"
 #include "local_storage.h"
 
-#include <Supervisor.hpp>
+#include "Supervisor.hpp"
 
 /**
  * Controls the LED to visualize the current mode

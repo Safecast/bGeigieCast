@@ -1,4 +1,4 @@
-#include <Aggregator.hpp>
+#include "Aggregator.hpp"
 
 #include "sm_c_concrete_states.h"
 #include "identifiers.h"
