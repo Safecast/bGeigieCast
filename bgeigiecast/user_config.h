@@ -37,8 +37,8 @@
 /** Default ESP configurations **/
 #define D_DEVICE_ID             0
 #define D_ACCESS_POINT_PASSWORD "safecast"
-#define D_WIFI_SSID             "your wifi ssid"
-#define D_WIFI_PASSWORD         "yourwifipassword"
+#define D_WIFI_SSID             "KittyWood LTE2"
+#define D_WIFI_PASSWORD         "schatjeyuka"
 #define D_APIKEY                ""
 #define D_USE_DEV_SERVER        true
 #define D_LED_COLOR_BLIND       false
