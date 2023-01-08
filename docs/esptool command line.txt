@@ -1,0 +1,1 @@
+python -m esptool --chip esp32 --port /dev/ttyUSB0 -b 115200  write_flash -z 0x10000 firmware-1.2.bin
