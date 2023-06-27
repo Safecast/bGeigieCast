@@ -27,10 +27,10 @@ const char* update_firmware_script =
     "(e=>{const t=(...t)=>e.querySelector(...t),n=t('form'),a=t('#status');n.addEventListener('submit',e=>{e.prevent"
     "Default();const s=new FormData(n),o=t('#file').files[0],d=new XMLHttpRequest;o?(n.classList.add('uploading'),s."
     "append('update',o),d.addEventListener('load',e=>{a.innerText='Applying update...';setTimeout(()=>{a.innerText='"
-    "Upload success! Restarting device to apply update.';const t=new XMLHttpRequest;t.open('get','/reboot'),t.send()"
-    "},2000)}),d.addEventListener('error',e=>{a.innerText='Upload failed... Try again or contact info@safecast.org',"
-    "n.classList.remove('uploading')}),d.addEventListener('abort',e=>{a.innerText='Upload cancelled...'}),d.upload.a"
-    "ddEventListener('progress',e=>{if(e.lengthComputable){a.innerText='Uploading new firmware... This can take up t"
+    "Upload success! The device is now restarting to apply update.';const t=new XMLHttpRequest;t.open('get','/reboot')"
+    ",t.send()},2000)}),d.addEventListener('error',e=>{a.innerText='Upload failed... Try again or contact info@safecast"
+    ".org',n.classList.remove('uploading')}),d.addEventListener('abort',e=>{a.innerText='Upload canceled...'}),d.upload"
+    ".addEventListener('progress',e=>{if(e.lengthComputable){a.innerText='Uploading new firmware... This can take up t"
     "o 10 minutes.';const n=Math.round(e.loaded/e.total*100)+'%';t('#prg').innerText=n,t('#bar').style.width=n}}),d."
     "open(n.method,n.action),d.send(s)):a.innerText='Please select a file...'})})(this.document);";
 
@@ -101,7 +101,7 @@ const char* HttpPages::get_home_page(uint32_t device_id) {
       "<li><a href='/update'>Update the firmware</a></li>"
       "</ul>"
       "More information about configurations in the <a href='https://github.com/Safecast/bGeigieCast/wiki/User-manual#available-settings' target='_blank'>User manual</a>. "
-      "Or view your device on <a href='https://grafana.safecast.cc/d/DFSxrOLWk/safecast-device-details?orgId=1&from=now-7d&to=now&refresh=15m&var-device_urn=geigiecast:6%d&from=now-30m&to=now' target='_blank'>Grafana</a>."
+      "Or view your device on <a href='https://grafana.safecast.cc/d/RphzozyGk/safecast-geigiecast-drive?orgId=1&var-device_urn=geigiecast:6%d&from=now-7d&to=now' target='_blank'>Grafana</a>."
       "</p>",
       BGEIGIECAST_VERSION,
       device_id
@@ -147,7 +147,8 @@ const char* HttpPages::get_config_device_page(
     bool display_success,
     uint32_t device_id,
     uint8_t led_intensity,
-    bool colorblind
+    bool colorblind,
+    bool webserver
 ) {
   return render_full_page(
       device_id,
@@ -171,6 +172,16 @@ const char* HttpPages::get_config_device_page(
       "</label>"
       "<span class='pure-form-message'></span>"
 
+      // Config server access
+      "<label>Wifi server</label>"
+      "<label for='" FORM_NAME_WIFI_SERVER "0' class='pure-radio'>"
+      "<input id='" FORM_NAME_WIFI_SERVER "0' type='radio' name='" FORM_NAME_WIFI_SERVER "' value='0' %s>Disabled"
+      "</label>"
+      "<label for='" FORM_NAME_WIFI_SERVER "1' class='pure-radio'>"
+      "<input id='" FORM_NAME_WIFI_SERVER "1' type='radio' name='" FORM_NAME_WIFI_SERVER "' value='1' %s>Enabled"
+      "</label>"
+      "<span class='pure-form-message'>You can make this config page available while the device is connected to wifi in fixed mode (access through http://bgeigie%d.local). If disabled, these config pages will only be available in config mode.</span>"
+
       "<br>"
       "<button type='submit' class='pure-button pure-button-primary'>Save</button>"
       "</fieldset>"
@@ -179,6 +190,9 @@ const char* HttpPages::get_config_device_page(
       led_intensity,
       colorblind ? "" : "checked",
       colorblind ? "checked" : "",
+      webserver ? "" : "checked",
+      webserver ? "checked" : "",
+      device_id,
       display_success ? success_message : ""
   );
 }
@@ -212,7 +226,7 @@ const char* HttpPages::get_config_location_page(
       "</label>"
       "<span class='pure-form-message'>"
       "Using fixed location: Use a single GPS location as the location for all your measurements. If incoming "
-      "measurements are out of range (100+ meter), they will be marked as invalid and will not be send. To use this "
+      "measurements are out of range (400+ meter), they will be marked as invalid and will not be send. To use this "
       "setting, the fields below are required."
       "</span>"
 
@@ -230,7 +244,7 @@ const char* HttpPages::get_config_location_page(
       "document.getElementById('" FORM_NAME_LOC_HOME_LAT "').value = document.getElementById('l_la').innerHTML;"
       "document.getElementById('" FORM_NAME_LOC_HOME_LON "').value = document.getElementById('l_lo').innerHTML;"
       "return false;"
-      "\">use this</a>):<br>"
+      "\">apply</a>):<br>"
       "Latitude: <span id='l_la'>%.5f</span><br>"
       "Longitude: <span id='l_lo'>%.5f</span><br>"
       "</span>"

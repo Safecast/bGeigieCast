@@ -45,9 +45,10 @@ class ApiConnector : public Handler {
 
   /**
    * Check if enough time has passed to send the latest reading to api
-   * @return
+   * @param offset: additional ms offset to check if its *almost* time to send (default 1 second)
+   * @return true if time to send
    */
-  bool time_to_send() const;
+  bool time_to_send(unsigned offset = 1000) const;
 
   /**
    * Initialize the connection
@@ -75,8 +76,7 @@ class ApiConnector : public Handler {
   ApiHandlerStatus send_reading(const Reading& reading);
 
   LocalStorage& _config;
-//  CircularBuffer<Reading, API_READING_BUFFER> _missed_readings;
-  uint32_t _last_send;
+  uint32_t _last_success_send;
   ApiHandlerStatus _current_default_response;
 
   bool _alert;

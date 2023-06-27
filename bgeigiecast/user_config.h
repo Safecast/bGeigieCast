@@ -1,7 +1,7 @@
 #ifndef USER_CONFIG_H
 #define USER_CONFIG_H
 
-#define BGEIGIECAST_VERSION "1.3"
+#define BGEIGIECAST_VERSION "1.4"
 
 /** System config **/
 #define ENABLE_DEBUG 1
@@ -39,5 +39,6 @@
 #define D_USE_DEV_SERVER        true
 #define D_LED_COLOR_BLIND       false
 #define D_LED_COLOR_INTENSITY   30
+#define D_WIFI_SERVER           false
 
 #endif

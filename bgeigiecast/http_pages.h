@@ -14,6 +14,7 @@
 #define FORM_NAME_AP_LOGIN "d_ap"
 #define FORM_NAME_LED_INTENSITY "d_li"
 #define FORM_NAME_LED_COLOR "d_lc"
+#define FORM_NAME_WIFI_SERVER "d_ws"
 #define FORM_NAME_LOC_HOME "l_uh"
 #define FORM_NAME_LOC_HOME_LAT "l_ha"
 #define FORM_NAME_LOC_HOME_LON "l_ho"
@@ -52,7 +53,8 @@ class HttpPages {
       bool display_success,
       uint32_t device_id,
       uint8_t led_intensity,
-      bool colorblind
+      bool colorblind,
+      bool webserver
   );
 
   /**

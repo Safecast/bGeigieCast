@@ -8,8 +8,6 @@
 #define D2R (PI / 180.0)
 #define EXPECTED_PARSE_RESULT_COUNT 15
 #define VALID_BGEIGIE_ID(id) (id >= 1000 && id < 10000)
-#define HOME_LOCATION_PRECISION_KM 0.2
-
 
 /**
  * Convert degree minutes to decimal degree
@@ -46,10 +44,12 @@ Reading::Reading() :
     _cpm(0),
     _cpb(0),
     _total_count(0),
-    _latitude(),
-    _longitude(),
-    _altitude(),
-    _sat_count(),
+    _latitude(0),
+    _longitude(0),
+    _last_known_latitude(0),
+    _last_known_longitude(0),
+    _altitude(0),
+    _sat_count(0),
     _precision(0) {
 }
 
@@ -61,10 +61,12 @@ Reading::Reading(const char* reading_str) :
     _cpm(0),
     _cpb(0),
     _total_count(0),
-    _latitude(),
-    _longitude(),
-    _altitude(),
-    _sat_count(),
+    _latitude(0),
+    _longitude(0),
+    _last_known_latitude(0),
+    _last_known_longitude(0),
+    _altitude(0),
+    _sat_count(0),
     _precision(0) {
   strcpy(_reading_str, reading_str);
   parse_values();
@@ -80,6 +82,8 @@ Reading::Reading(const Reading& copy) :
     _total_count(copy._total_count),
     _latitude(copy._latitude),
     _longitude(copy._longitude),
+    _last_known_latitude(copy._last_known_latitude),
+    _last_known_longitude(copy._last_known_longitude),
     _altitude(copy._altitude),
     _sat_count(copy._sat_count),
     _precision(copy._precision) {
@@ -95,7 +99,7 @@ Reading& Reading::operator=(const char* reading_str) {
 }
 
 Reading& Reading::operator=(const Reading& other) {
-  if(&other != this) {
+  if (&other != this) {
     _status = other._status;
     _device_id = other._device_id;
     _cpm = other._cpm;
@@ -103,6 +107,8 @@ Reading& Reading::operator=(const Reading& other) {
     _total_count = other._total_count;
     _latitude = other._latitude;
     _longitude = other._longitude;
+    _last_known_latitude = other._last_known_latitude;
+    _last_known_longitude = other._last_known_longitude;
     _altitude = other._altitude;
     _sat_count = other._sat_count;
     _precision = other._precision;
@@ -114,14 +120,24 @@ Reading& Reading::operator=(const Reading& other) {
 
 void Reading::reset() {
   _status = 0;
+  _device_id = 0;
+  strcpy(_reading_str, "");
+  strcpy(_iso_timestamp, "");
+  _cpm = 0;
+  _cpb = 0;
+  _total_count = 0;
+  _latitude = 0;
+  _longitude = 0;
+  _altitude = 0;
+  _sat_count = 0;
+  _precision = 0;
 }
 
-bool Reading::near_location(double home_lat, double home_long) const {
-  return haversine_km(_latitude, _longitude, home_lat, home_long) < HOME_LOCATION_PRECISION_KM;
+bool Reading::near_coordinates(double latitude, double longitude, double distance) const {
+  return haversine_km(_latitude, _longitude, latitude, longitude) < distance;
 }
 
 void Reading::parse_values() {
-  reset();
   double lat_dm = 0, long_dm = 0;
   char n_or_s, w_or_e, sensor_status, gps_status;
   uint16_t checksum;
@@ -146,14 +162,14 @@ void Reading::parse_values() {
       &checksum
   );
 
-  if(parse_result == EXPECTED_PARSE_RESULT_COUNT && VALID_BGEIGIE_ID(_device_id)) { // 15 values to be parsed
+  if (parse_result == EXPECTED_PARSE_RESULT_COUNT && VALID_BGEIGIE_ID(_device_id)) { // 15 values to be parsed
     _status |= k_reading_parsed;
 
     uint16_t c = 0;
     char* str = _reading_str + 1;  // Excluding the dollar sign
-    while(*str && *str != '*')
+    while (*str && *str != '*')
       c ^= *str++;
-    if(checksum == c) {
+    if (checksum == c) {
       _status |= k_reading_valid;
     }
 
@@ -162,23 +178,30 @@ void Reading::parse_values() {
 
     sscanf(_iso_timestamp, "%hu-%s", &year, date_rest);
 
-    if(year < 2021) {
+    if (year < 2021) {
       // Year in the past, set reading invalid
       _status &= _status ^ k_reading_valid;
     }
 
-    if(sensor_status == 'A') {
+    if (sensor_status == 'A') {
       _status |= k_reading_sensor_ok;
     }
 
-    if(gps_status == 'A') {
-      _status |= k_reading_gps_ok;
-
+    if (gps_status == 'A') {
       _latitude = dm_to_dd(lat_dm);
       _longitude = dm_to_dd(long_dm);
 
-      if(n_or_s == 'S') { _latitude *= -1; }
-      if(w_or_e == 'W') { _longitude *= -1; }
+      if (n_or_s == 'S') { _latitude *= -1; }
+      if (w_or_e == 'W') { _longitude *= -1; }
+
+      if (_latitude < 90 && _latitude > -90 && _longitude < 180 && _longitude > -180 && near_coordinates(
+          _last_known_latitude,
+          _last_known_longitude,
+          15)) {
+        _status |= k_reading_gps_ok;
+      }
+      _last_known_latitude = _latitude;
+      _last_known_longitude = _longitude;
     }
   }
 }

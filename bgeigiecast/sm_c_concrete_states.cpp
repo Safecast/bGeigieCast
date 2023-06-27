@@ -213,7 +213,7 @@ void FixedModeState::entry_action() {
   DEBUG_PRINTLN("-- Entered state FixedMode");
   controller.save_state(Controller::k_savable_FixedMode);
   controller.set_handler_active(k_handler_api_reporter, true);
-  controller.set_worker_active(k_worker_configuration_server, true);
+  controller.set_worker_active(k_worker_configuration_server, controller._config.get_wifi_server());
 }
 
 void FixedModeState::do_activity() {

@@ -21,6 +21,7 @@ const char* key_api_key = "api_key";
 const char* key_use_dev = "use_dev";
 const char* key_send_frequency = "send_frequency";
 const char* key_led_color_blind = "led_color_blind";
+const char* key_wifi_server = "wifi_server";
 const char* key_led_color_intensity = "led_intensity";
 const char* key_saved_state = "saved_state";
 const char* key_home_longitude = "home_longtitude";
@@ -40,6 +41,7 @@ LocalStorage::LocalStorage() :
     _send_frequency(D_SEND_FREQUENCY),
     _led_color_blind(D_LED_COLOR_BLIND),
     _led_color_intensity(D_LED_COLOR_INTENSITY),
+    _wifi_server(D_WIFI_SERVER),
     _saved_state(D_SAVED_STATE),
     _use_home_location(false),
     _home_longitude(0),
@@ -59,6 +61,7 @@ void LocalStorage::reset_defaults() {
     set_send_frequency(D_SEND_FREQUENCY, true);
     set_led_color_blind(D_LED_COLOR_BLIND, true);
     set_led_color_intensity(D_LED_COLOR_INTENSITY, true);
+    set_wifi_server(D_WIFI_SERVER, true);
     set_saved_state(D_SAVED_STATE, true);
     set_use_home_location(false, true);
     set_home_longitude(0, true);
@@ -98,6 +101,10 @@ bool LocalStorage::is_led_color_blind() const {
 
 uint8_t LocalStorage::get_led_color_intensity() const {
   return _led_color_intensity;
+}
+
+bool LocalStorage::get_wifi_server() const {
+  return _wifi_server;
 }
 
 bool LocalStorage::get_use_dev() const {
@@ -232,6 +239,18 @@ void LocalStorage::set_led_color_intensity(uint8_t led_color_intensity, bool for
       _memory.end();
     } else {
       DEBUG_PRINTLN("unable to save new value for key_led_color_intensity");
+    }
+  }
+}
+
+void LocalStorage::set_wifi_server(bool wifi_server, bool force) {
+  if(force || (wifi_server != _wifi_server)) {
+    if(_memory.begin(memory_name)) {
+      _wifi_server = wifi_server;
+      _memory.putBool(key_wifi_server, wifi_server);
+      _memory.end();
+    } else {
+      DEBUG_PRINTLN("unable to save new value for key_wifi_server");
     }
   }
 }

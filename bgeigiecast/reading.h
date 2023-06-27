@@ -51,11 +51,11 @@ class Reading {
 
   /**
    * Check if measurement is within home location.
-   * @param home_lat: latitude
-   * @param home_long: longitude
+   * @param latitude: latitude
+   * @param longitude: longitude
    * @return: True if within hom location
    */
-  bool near_location(double home_lat, double home_long) const;
+  bool near_coordinates(double home_lat, double home_long, double distance) const;
 
   const char* get_reading_str() const;
   uint8_t get_status() const;
@@ -88,6 +88,8 @@ class Reading {
   uint16_t _total_count;
   double _latitude;
   double _longitude;
+  double _last_known_latitude;
+  double _last_known_longitude;
   double _altitude;
   int _sat_count;
   float _precision;

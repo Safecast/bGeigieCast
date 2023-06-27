@@ -70,7 +70,8 @@ void ConfigWebServer::add_urls() {
         _server.hasArg("success"),
         _config.get_device_id(),
         _config.get_led_color_intensity(),
-        _config.is_led_color_blind()
+        _config.is_led_color_blind(),
+        _config.get_wifi_server()
     ));
   });
 
@@ -177,6 +178,9 @@ void ConfigWebServer::handle_save() {
   }
   if(_server.hasArg(FORM_NAME_LED_COLOR)) {
     _config.set_led_color_blind(strcmp(_server.arg(FORM_NAME_LED_COLOR).c_str(), "1") == 0, false);
+  }
+  if(_server.hasArg(FORM_NAME_WIFI_SERVER)) {
+    _config.set_wifi_server(strcmp(_server.arg(FORM_NAME_WIFI_SERVER).c_str(), "1") == 0, false);
   }
   if(_server.hasArg(FORM_NAME_LOC_HOME)) {
     _config.set_use_home_location(strcmp(_server.arg(FORM_NAME_LOC_HOME).c_str(), "1") == 0, false);

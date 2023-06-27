@@ -122,6 +122,15 @@ void mode_led_loop(void* param) {
     mode_led.loop();
     delay(50);
   }
+//  uint32_t minTime = 50;
+//  previousMillis = millis();
+//  for(;;) {
+//    uint32_t currentMillis = millis();
+//    if(currentMillis - previousMillis > minTime) {
+//      previousMillis = currentMillis;
+//      mode_led.loop();
+//    }
+//  }
 }
 
 void setup() {

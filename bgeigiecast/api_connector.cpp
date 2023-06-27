@@ -5,28 +5,29 @@
 #include "bgeigie_connector.h"
 
 #define RETRY_TIMEOUT 10000
+#define HOME_LOCATION_PRECISION_KM 0.4
 
 // subtracting 1 seconds so data is send more often than not.
-#define SEND_FREQUENCY(last_send, sec) (millis() - last_send > ((sec * 1000) - 1000))
+#define SEND_FREQUENCY(last_send, sec, slack) (last_send == 0 || (millis() - last_send) > ((sec * 1000) - 1000))
 
 ApiConnector::ApiConnector(LocalStorage& config) :
     Handler(),
     _config(config),
 //    _reading_buffer(),
-    _last_send(),
+    _last_success_send(0),
     _current_default_response(e_api_reporter_idle),
-    _alert() {
+    _alert(false) {
 }
 
-bool ApiConnector::time_to_send() const {
+bool ApiConnector::time_to_send(unsigned offset) const {
   switch(static_cast<SendFrequency>(_config.get_send_frequency())) {
     case e_api_send_frequency_5_sec:
-      return SEND_FREQUENCY(_last_send, 5);
+      return SEND_FREQUENCY(_last_success_send, 5, offset);
     case e_api_send_frequency_1_min:
-      return SEND_FREQUENCY(_last_send, 60);
+      return SEND_FREQUENCY(_last_success_send, 60, offset);
     case e_api_send_frequency_5_min:
     default:  // Default 5 min frequency
-      return SEND_FREQUENCY(_last_send, 5 * 60);
+      return SEND_FREQUENCY(_last_success_send, 5 * 60, offset);
   }
 }
 
@@ -61,20 +62,27 @@ int8_t ApiConnector::handle_produced_work(const worker_map_t& workers) {
 
   if(!time_to_send()) {
     DEBUG_PRINTLN("not time to send");
+    if (time_to_send(5000)) {
+      // almost time to send, start wifi if not connected yet
+      activate(true);
+    }
     return _current_default_response;
   }
-
-  _last_send = millis();
 
   const auto& reading = geigie_connector->get_data();
 
   if(reading.valid_reading()) {
-    if (_config.get_use_home_location() && !reading.near_location(_config.get_home_latitude(), _config.get_home_longitude())) {
+    if (_config.get_use_home_location() && !reading
+        .near_coordinates(_config.get_home_latitude(), _config.get_home_longitude(), HOME_LOCATION_PRECISION_KM)) {
       // Reading not near home location
       DEBUG_PRINTLN("not time to send");
       return _current_default_response;
     }
     _current_default_response = send_reading(reading);
+
+    if (_current_default_response == e_api_reporter_send_success) {
+      _last_success_send = millis();
+    }
   }
   return _current_default_response;
 }
@@ -123,11 +131,13 @@ ApiConnector::ApiHandlerStatus ApiConnector::send_reading(const Reading& reading
   DEBUG_PRINTF("POST complete, status %d\r\nrepsonse: \r\n\r\n%s\r\n\r\n", httpResponseCode, response.c_str());
   http.end();  //Free resources
 
+  if (!_config.get_wifi_server() && _config.get_send_frequency() != e_api_send_frequency_5_sec) {
+    // Disconnect from wifi between readings (not needed when sending every 5 seconds)
+    WiFiConnection::disconnect_wifi();
+  }
+
   switch(httpResponseCode) {
-    case 201:
-      DEBUG_PRINTLN("POST successfull");
-      DEBUG_PRINT(httpResponseCode);
-      DEBUG_PRINTLN(response);
+    case 200 ... 204:
       return e_api_reporter_send_success;
     case 400:
       return e_api_reporter_error_server_rejected_post_400;

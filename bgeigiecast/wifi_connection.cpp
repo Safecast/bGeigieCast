@@ -14,12 +14,9 @@ bool WiFiConnection::connect_wifi(const char* ssid, const char* password) {
   switch(WiFi.status()) {
     case WL_CONNECTED:
       return true;
-    case WL_DISCONNECTED:
-      WiFi.reconnect();
-      delay(100);
-      return WiFi.isConnected();
     default:
       password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
+      delay(100);
       return WiFi.isConnected();
   }
 }
