@@ -194,10 +194,7 @@ void Reading::parse_values() {
       if (n_or_s == 'S') { _latitude *= -1; }
       if (w_or_e == 'W') { _longitude *= -1; }
 
-      if (_latitude < 90 && _latitude > -90 && _longitude < 180 && _longitude > -180 && near_coordinates(
-          _last_known_latitude,
-          _last_known_longitude,
-          15)) {
+      if (_latitude < 90 && _latitude > -90 && _longitude < 180 && _longitude > -180 && near_coordinates(_last_known_latitude, _last_known_longitude,2)) {
         _status |= k_reading_gps_ok;
       }
       _last_known_latitude = _latitude;

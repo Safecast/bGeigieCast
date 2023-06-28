@@ -78,8 +78,6 @@ class ApiConnector : public Handler {
   LocalStorage& _config;
   uint32_t _last_success_send;
   ApiHandlerStatus _current_default_response;
-
-  bool _alert;
 };
 
 #endif //BGEIGIECAST_APICONNECTOR_H

@@ -7,16 +7,14 @@
 #define RETRY_TIMEOUT 10000
 #define HOME_LOCATION_PRECISION_KM 0.4
 
-// subtracting 1 seconds so data is send more often than not.
+// subtracting 1 seconds so data is sent more often than not.
 #define SEND_FREQUENCY(last_send, sec, slack) (last_send == 0 || (millis() - last_send) > ((sec * 1000) - 1000))
 
 ApiConnector::ApiConnector(LocalStorage& config) :
     Handler(),
     _config(config),
-//    _reading_buffer(),
     _last_success_send(0),
-    _current_default_response(e_api_reporter_idle),
-    _alert(false) {
+    _current_default_response(e_api_reporter_idle) {
 }
 
 bool ApiConnector::time_to_send(unsigned offset) const {
@@ -62,7 +60,7 @@ int8_t ApiConnector::handle_produced_work(const worker_map_t& workers) {
 
   if(!time_to_send()) {
     DEBUG_PRINTLN("not time to send");
-    if (time_to_send(5000)) {
+    if (time_to_send(10000)) {
       // almost time to send, start wifi if not connected yet
       activate(true);
     }
@@ -75,7 +73,7 @@ int8_t ApiConnector::handle_produced_work(const worker_map_t& workers) {
     if (_config.get_use_home_location() && !reading
         .near_coordinates(_config.get_home_latitude(), _config.get_home_longitude(), HOME_LOCATION_PRECISION_KM)) {
       // Reading not near home location
-      DEBUG_PRINTLN("not time to send");
+      DEBUG_PRINTLN("Reading not near configured home location");
       return _current_default_response;
     }
     _current_default_response = send_reading(reading);

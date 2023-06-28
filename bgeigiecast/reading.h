@@ -53,6 +53,7 @@ class Reading {
    * Check if measurement is within home location.
    * @param latitude: latitude
    * @param longitude: longitude
+   * @param distance: distance in kilometers
    * @return: True if within hom location
    */
   bool near_coordinates(double home_lat, double home_long, double distance) const;

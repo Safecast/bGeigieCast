@@ -111,14 +111,22 @@ void ModeLED::handle_report(const worker_map_t& workers, const handler_map_t& ha
           return;
       }
       return;
-    case SystemStateId::k_state_FixedModeState:
+    case SystemStateId::k_state_FixedModeState: {
       if(handlers.at(k_handler_api_reporter)->get_active_state() == Handler::e_state_activating_failed) {
         /// Fixed mode - Connecting to wifi, blink connected
         set_values(mode_color_fixed_connected, 1, 25);
         return;
       }
-      switch(workers.worker<BGeigieConnector>(k_worker_bgeigie_connector)->get_data().get_status()) {
-
+      const auto readingStatus = workers.worker<BGeigieConnector>(k_worker_bgeigie_connector)->get_data().get_status();
+      if (readingStatus & k_reading_parsed && !(readingStatus & k_reading_sensor_ok)) {
+        /// Fixed mode - Sensor broken
+        set_values(mode_color_fixed_hard_error);
+        return;
+      }
+      if (readingStatus & k_reading_parsed && !(readingStatus & k_reading_gps_ok)) {
+        /// Fixed mode - GPS not available
+        set_values(mode_color_fixed_hard_error, 0.5, 25);
+        return;
       }
       switch(handlers.at(k_handler_api_reporter)->get_status()) {
         case ApiConnector::e_api_reporter_error_not_connected:
@@ -140,8 +148,9 @@ void ModeLED::handle_report(const worker_map_t& workers, const handler_map_t& ha
           return;
       }
       return;
+    }
     case SystemStateId::k_state_ResetState:
-      /// Reset - Display red because its least used TODO: custom color
+      /// Reset - Display red because its least used
       set_values(mode_color_fixed_hard_error);
       return;
     default:
