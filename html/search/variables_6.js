@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['k_5freading_5fgps_5fok_0',['k_reading_gps_ok',['../reading_8h.html#a08ce43ca3418587bff323423f54ed8dc',1,'reading.h']]],
+  ['k_5freading_5fparsed_1',['k_reading_parsed',['../reading_8h.html#abb30552c83c89c1c6b331246e54602d7',1,'reading.h']]],
+  ['k_5freading_5fsensor_5fok_2',['k_reading_sensor_ok',['../reading_8h.html#a7e26f271a322e11dd965eb4931dd7d96',1,'reading.h']]],
+  ['k_5freading_5fvalid_3',['k_reading_valid',['../reading_8h.html#a76cad681a293afcea80462ceee8acb69',1,'reading.h']]],
+  ['key_5fap_5fpassword_4',['key_ap_password',['../local__storage_8cpp.html#a7d9f3d754040151f4292a57431c5e1d3',1,'local_storage.cpp']]],
+  ['key_5fapi_5fkey_5',['key_api_key',['../local__storage_8cpp.html#a5c676b3fb3be8ab7e66402250230ca2d',1,'local_storage.cpp']]],
+  ['key_5fdevice_5fid_6',['key_device_id',['../local__storage_8cpp.html#a1cc3c4ca432fdd11a925513552304d24',1,'local_storage.cpp']]],
+  ['key_5fhome_5flatitude_7',['key_home_latitude',['../local__storage_8cpp.html#adaf1cf80cc335109b3127a847382d900',1,'local_storage.cpp']]],
+  ['key_5fhome_5flongtitude_8',['key_home_longtitude',['../local__storage_8cpp.html#a03064db8c05b2fa3c126f551302ad0c9',1,'local_storage.cpp']]],
+  ['key_5flast_5flatitude_9',['key_last_latitude',['../local__storage_8cpp.html#adc8a2fcfb910f0c89841859660e686af',1,'local_storage.cpp']]],
+  ['key_5flast_5flongtitude_10',['key_last_longtitude',['../local__storage_8cpp.html#a19931fb6ec93478099b1f1c0f2b29051',1,'local_storage.cpp']]],
+  ['key_5fled_5fcolor_5fblind_11',['key_led_color_blind',['../local__storage_8cpp.html#aea8daf683a0c01a161c61aa5cb46447d',1,'local_storage.cpp']]],
+  ['key_5fled_5fcolor_5fintensity_12',['key_led_color_intensity',['../local__storage_8cpp.html#ad57a851063077b1ea75a3e7d9e725a80',1,'local_storage.cpp']]],
+  ['key_5fsaved_5fstate_13',['key_saved_state',['../local__storage_8cpp.html#afc38caccbcc0eeb70813bc791a8359c4',1,'local_storage.cpp']]],
+  ['key_5fuse_5fdev_14',['key_use_dev',['../local__storage_8cpp.html#a7baf90ae01cbff68a0ac0013e615ed26',1,'local_storage.cpp']]],
+  ['key_5fwifi_5fpassword_15',['key_wifi_password',['../local__storage_8cpp.html#af80482f4d17df6f62f5ba0cd6b63967c',1,'local_storage.cpp']]],
+  ['key_5fwifi_5fssid_16',['key_wifi_ssid',['../local__storage_8cpp.html#ad6045c95b0899d869eb788d7ac34cc95',1,'local_storage.cpp']]]
+];

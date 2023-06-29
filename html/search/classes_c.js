@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['wificonnection_119',['WiFiConnection',['../class_wi_fi_connection.html',1,'']]]
+  ['wificonnection_0',['WiFiConnection',['../class_wi_fi_connection.html',1,'']]]
 ];

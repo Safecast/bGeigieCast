@@ -1,0 +1,27 @@
+var class_reading =
+[
+    [ "Reading", "class_reading.html#a6dce74773104164a2f4a819952940bef", null ],
+    [ "Reading", "class_reading.html#abb3dca16a3028c6521e4482bee0389ac", null ],
+    [ "~Reading", "class_reading.html#ada101fd214eceb1530da2402c08f85d5", null ],
+    [ "Reading", "class_reading.html#a5780f018d689c326441abeb157a1a505", null ],
+    [ "apply_home_location", "class_reading.html#a3417fa848b6b03ed8c8438fe146791ca", null ],
+    [ "as_json", "class_reading.html#a0d18af4438feb2623351e30acf169ced", null ],
+    [ "get_altitude", "class_reading.html#a1555ca02639a3f71dd9fdf770918c97f", null ],
+    [ "get_cpb", "class_reading.html#a7b5934164e58e628048c26ba51d1c75d", null ],
+    [ "get_cpm", "class_reading.html#a844ccf09696c68517b991dc6333b97f4", null ],
+    [ "get_device_id", "class_reading.html#abe4687e25a14345302715909a3a838d5", null ],
+    [ "get_fixed_device_id", "class_reading.html#a76e77a247cd949ee14857ce4d97fbe84", null ],
+    [ "get_iso_timestr", "class_reading.html#acf1c7c6f87a3b7fbeaee68dd0822e077", null ],
+    [ "get_latitude", "class_reading.html#a53668e3724f44f8526eda36acd832c42", null ],
+    [ "get_longitude", "class_reading.html#a2be0ae50fc0b544c0712636694310e5e", null ],
+    [ "get_precision", "class_reading.html#a464c6eaac393d33aee81c310efedb003", null ],
+    [ "get_reading_str", "class_reading.html#a88e9567e79adc3425d4a9b4e28ac63cb", null ],
+    [ "get_sat_count", "class_reading.html#a20f3ee34b0823fb6f201dafd96135573", null ],
+    [ "get_status", "class_reading.html#afdcb98ae5fa316536520498723313fd3", null ],
+    [ "get_total_count", "class_reading.html#a7db1b3bb1df8df89bba8ea5d521b07d8", null ],
+    [ "operator+=", "class_reading.html#aefe18cee16360dfc57c8771ec153d30b", null ],
+    [ "operator=", "class_reading.html#a908e2cdb0082329d9ff0289df5848cf5", null ],
+    [ "operator=", "class_reading.html#a733b380d87a2f85f50fd6b6c4b1aa4fd", null ],
+    [ "reset", "class_reading.html#a0adfafd74410f3d401a4e3d22072bbd4", null ],
+    [ "valid_reading", "class_reading.html#a500ed861a3db9bed1ac60e272c562f57", null ]
+];
