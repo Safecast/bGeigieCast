@@ -1,0 +1,6 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "xbee-eagle-import")(type "Legacy")(uri "${KIPRJMOD}/xbee-eagle-import.lib")(options "")(descr ""))
+  (lib (name "xbee-rescue")(type "Legacy")(uri "${KIPRJMOD}/bGeigieCast V1.6.0(StampS3)-rescue.lib")(options "")(descr ""))
+  (lib (name "ESP8266")(type "Legacy")(uri "${KIPRJMOD}/ESP8266.lib")(options "")(descr ""))
+)
