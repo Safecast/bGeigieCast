@@ -139,6 +139,7 @@ void setup() {
   /// Hardware configurations
   // Start serial connection to bGeigie controller
   bGeigieSerialConnection.begin(BGEIGIE_CONNECTION_BAUD);
+  bGeigieSerialConnection.setRxBufferSize(1024);
 
   // Set gpio pin configurations
   gpio_config_t io_conf{

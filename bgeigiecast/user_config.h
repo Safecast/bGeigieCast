@@ -11,11 +11,23 @@
 #define POST_INITIALIZE_DURATION 4000
 
 /** Hardware pins settings **/
+#define MODE_BUTTON_PIN 0u
+
+#ifdef STAMPS3
+// FastLED conf
+#define FASTLED_PIN 21
+#else
+// 3-channel RGB LED (cathode/anode)
 #define RGB_LED_PIN_R A18
 #define RGB_LED_PIN_G A4
 #define RGB_LED_PIN_B A5
+#define CHANNEL_R 0
+#define CHANNEL_G 1
+#define CHANNEL_B 2
+#define CHANNEL_FREQUENCY 12800
+#define CHANNEL_RESOLUTION 8
+#endif //STAMPS3
 
-#define MODE_BUTTON_PIN 0u
 
 /** API connector settings **/
 #define API_HOST "tt.safecast.org"

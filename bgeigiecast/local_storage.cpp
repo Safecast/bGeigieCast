@@ -329,7 +329,7 @@ bool LocalStorage::clear() {
 }
 
 bool LocalStorage::activate(bool) {
-  _memory.begin(memory_name, true);
+  _memory.begin(memory_name, false);
   _device_id = _memory.getUShort(key_device_id, D_DEVICE_ID);
   if(_memory.getString(key_ap_password, _ap_password, CONFIG_VAL_MAX) == 0) {
     strcpy(_ap_password, D_ACCESS_POINT_PASSWORD);

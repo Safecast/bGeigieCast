@@ -8,7 +8,7 @@
 #define HOME_LOCATION_PRECISION_KM 0.4
 
 // subtracting 1 seconds so data is sent more often than not.
-#define SEND_FREQUENCY(last_send, sec, slack) (last_send == 0 || (millis() - last_send) > ((sec * 1000) - 1000))
+#define SEND_FREQUENCY(last_send, sec, slack) (last_send == 0 || (millis() - last_send) > ((sec * 1000) - slack))
 
 ApiConnector::ApiConnector(LocalStorage& config) :
     Handler(),
@@ -54,13 +54,11 @@ int8_t ApiConnector::handle_produced_work(const worker_map_t& workers) {
 
   if(!geigie_connector || !geigie_connector->is_fresh()) {
     // No fresh data
-    DEBUG_PRINTLN("no fresh data");
     return _current_default_response;
   }
 
   if(!time_to_send()) {
-    DEBUG_PRINTLN("not time to send");
-    if (time_to_send(10000)) {
+    if (time_to_send(6000)) {
       // almost time to send, start wifi if not connected yet
       activate(true);
     }
@@ -76,10 +74,11 @@ int8_t ApiConnector::handle_produced_work(const worker_map_t& workers) {
       DEBUG_PRINTLN("Reading not near configured home location");
       return _current_default_response;
     }
+    const unsigned long time_at_send = millis();
     _current_default_response = send_reading(reading);
 
     if (_current_default_response == e_api_reporter_send_success) {
-      _last_success_send = millis();
+      _last_success_send = time_at_send;
     }
   }
   return _current_default_response;

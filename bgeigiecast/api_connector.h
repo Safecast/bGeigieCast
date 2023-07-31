@@ -45,7 +45,7 @@ class ApiConnector : public Handler {
 
   /**
    * Check if enough time has passed to send the latest reading to api
-   * @param offset: additional ms offset to check if its *almost* time to send (default 1 second)
+   * @param offset: additional ms offset (default 1 sec to overlap measurements better)
    * @return true if time to send
    */
   bool time_to_send(unsigned offset = 1000) const;
