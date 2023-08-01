@@ -14,6 +14,8 @@
 #define MODE_BUTTON_PIN 0u
 
 #ifdef STAMPS3
+#define DEBUG_STREAM USBSerial
+
 // FastLED conf
 #define FASTLED_PIN 21
 #else
