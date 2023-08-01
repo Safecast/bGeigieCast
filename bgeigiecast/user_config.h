@@ -16,6 +16,8 @@
 #ifdef STAMPS3
 // FastLED conf
 #define FASTLED_PIN 21
+//Serial ports for the bGeigieCast StampS3 pins need to be like Serial.begin(9600, SERIAL_8N1, 9, 7); 
+
 #else
 // 3-channel RGB LED (cathode/anode)
 #define RGB_LED_PIN_R A18
@@ -43,10 +45,10 @@
 #define ACCESS_POINT_NMASK      {255, 255, 255, 0}
 
 /** Default ESP configurations **/
-#define D_DEVICE_ID             0
+#define D_DEVICE_ID             2007
 #define D_ACCESS_POINT_PASSWORD "safecast"
-#define D_WIFI_SSID             "your wifi ssid"
-#define D_WIFI_PASSWORD         "yourwifipassword"
+#define D_WIFI_SSID             "KittyWood LTE2"
+#define D_WIFI_PASSWORD         "schatjeyuka"
 #define D_APIKEY                ""
 #define D_USE_DEV_SERVER        true
 #define D_LED_COLOR_BLIND       false
