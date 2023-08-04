@@ -1,7 +1,7 @@
 #ifndef USER_CONFIG_H
 #define USER_CONFIG_H
 
-#define BGEIGIECAST_VERSION "1.4"
+#define BGEIGIECAST_VERSION "1.5"
 
 /** System config **/
 #define ENABLE_DEBUG 1
@@ -10,14 +10,17 @@
 #define BGEIGIE_CONNECTION_BAUD 9600
 #define POST_INITIALIZE_DURATION 4000
 
-/** Hardware pins settings **/
-#define MODE_BUTTON_PIN 0u
+/** Hardware pins settings  for StampS3 0 for Stamp Pico 39 **/
+// #define MODE_BUTTON_PIN 0u
+#define MODE_BUTTON_PIN 39
 
 #ifdef STAMPS3
-#define DEBUG_STREAM USBSerial
+// #define DEBUG_STREAM USBSerial
 
 // FastLED conf
-#define FASTLED_PIN 21
+// for pico 27 for S3 21
+#define FASTLED_PIN 27
+
 
 #else
 // 3-channel RGB LED (cathode/anode)
@@ -48,9 +51,9 @@
 /** Default ESP configurations **/
 #define D_DEVICE_ID             0
 #define D_ACCESS_POINT_PASSWORD "safecast"
-#define D_WIFI_SSID             "your wifi ssid"
-#define D_WIFI_PASSWORD         "yourwifipassword"
-#define D_APIKEY                ""
+#define D_WIFI_SSID             "KittyWoodLTE2"
+#define D_WIFI_PASSWORD         "schatjeyuka"
+#define D_APIKEY                "q1LKu7RQ8s5pmyxunnDW "
 #define D_USE_DEV_SERVER        true
 #define D_LED_COLOR_BLIND       false
 #define D_LED_COLOR_INTENSITY   30
