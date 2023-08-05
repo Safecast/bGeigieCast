@@ -136,14 +136,16 @@ void mode_led_loop(void* param) {
 void setup() {
   DEBUG_BEGIN(SERIAL_BAUD);
   // for tesing Stamp-pico
-  Serial.begin(9600);
-  delay(100);
-  Serial.printf(" serial works");
 
   /// Hardware configurations
   // Start serial connection to bGeigie controller
-  bGeigieSerialConnection.begin(BGEIGIE_CONNECTION_BAUD);
-  bGeigieSerialConnection.setRxBufferSize(1024);
+  // bGeigieSerialConnection.begin(BGEIGIE_CONNECTION_BAUD);
+  // bGeigieSerialConnection.setRxBufferSize(1024);
+
+
+  Serial.begin(9600);
+  delay(100);
+  Serial.printf(" serial works");
 
   // Set gpio pin configurations
   gpio_config_t io_conf{
