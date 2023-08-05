@@ -11,12 +11,11 @@
 #define POST_INITIALIZE_DURATION 4000
 
 /** Hardware pins settings **/
+#ifndef MODE_BUTTON_PIN
 #define MODE_BUTTON_PIN 0u
+#endif
 
 #ifndef USE_FASTLED
-
-
-#else
 // 3-channel RGB LED (cathode/anode)
 #define RGB_LED_PIN_R A18
 #define RGB_LED_PIN_G A4
