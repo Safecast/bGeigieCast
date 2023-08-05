@@ -13,11 +13,8 @@
 /** Hardware pins settings **/
 #define MODE_BUTTON_PIN 0u
 
-#ifdef STAMPS3
-#define DEBUG_STREAM USBSerial
+#ifndef USE_FASTLED
 
-// FastLED conf
-#define FASTLED_PIN 21
 
 #else
 // 3-channel RGB LED (cathode/anode)
@@ -29,7 +26,7 @@
 #define CHANNEL_B 2
 #define CHANNEL_FREQUENCY 12800
 #define CHANNEL_RESOLUTION 8
-#endif //STAMPS3
+#endif //USE_FASTLED
 
 
 /** API connector settings **/

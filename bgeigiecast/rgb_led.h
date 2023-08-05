@@ -3,11 +3,11 @@
 
 #include <Arduino.h>
 
-#ifdef STAMPS3
+#ifdef USE_FASTLED
 #include <FastLED.h>
 #define NUM_LEDS 1
 
-#endif //STAMPS3
+#endif //USE_FASTLED
 
 
 typedef struct {
@@ -18,7 +18,7 @@ typedef struct {
 
 class RGBLed {
  public:
-#ifdef STAMPS3
+#ifdef USE_FASTLED
   /**
    * Create a FastLED
    * @param ledSerial: fastLED serial connection
@@ -33,7 +33,7 @@ class RGBLed {
    * @param reversed: true for anode, false for cathode (default cathode)
    */
   RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b, bool reversed = false);
-#endif //STAMPS3
+#endif //USE_FASTLED
   virtual ~RGBLed() = default;
 
   virtual void set(const RGB_e& values);
@@ -44,7 +44,7 @@ class RGBLed {
   virtual uint8_t get_intensity() const;
 
  private:
-#ifdef STAMPS3
+#ifdef USE_FASTLED
   CRGB leds[1];
 #else
   void set_r(uint8_t value);
@@ -54,7 +54,7 @@ class RGBLed {
 
   bool _reversed;
 
-#endif //STAMPS3
+#endif //USE_FASTLED
   uint8_t config_intensity;
 };
 

@@ -12,11 +12,11 @@
 #define RGB_STATE_LED_REVERSED true
 
 ModeLED::ModeLED(LocalStorage& config) :
-#ifdef STAMPS3
+#ifdef USE_FASTLED
     RGBLed(),
 #else
     RGBLed(RGB_LED_PIN_R, RGB_LED_PIN_G, RGB_LED_PIN_B, RGB_STATE_LED_REVERSED),
-#endif //STAMPS3
+#endif //USE_FASTLED
     Supervisor(),
     _config(config),
     color(ModeColor::mode_color_off),
