@@ -143,10 +143,6 @@ void setup() {
   // bGeigieSerialConnection.setRxBufferSize(1024);
 
 
-  Serial.begin(9600);
-  delay(100);
-  Serial.printf(" serial works");
-
   // Set gpio pin configurations
   gpio_config_t io_conf{
       .pin_bit_mask = 1ULL<<MODE_BUTTON_PIN,
