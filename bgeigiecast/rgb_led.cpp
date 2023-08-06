@@ -3,7 +3,7 @@
 
 
 #ifdef USE_FASTLED
-RGBLed::RGBLed() : config_intensity(30) {
+RGBLed::RGBLed() : leds{CRGB()}, config_intensity(30) {
 }
 #else
 RGBLed::RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b, bool reversed) : _reversed(reversed), config_intensity(30) {
@@ -15,7 +15,7 @@ RGBLed::RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b, bool reversed) : _re
 
 void RGBLed::init() {
 #ifdef USE_FASTLED
-  FastLED.addLeds<WS2812, FASTLED_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.addLeds<WS2812, FASTLED_PIN, GRB>(leds, 1);
 #else
   // Connect pins to channels
   ledcSetup(CHANNEL_R, CHANNEL_FREQUENCY, CHANNEL_RESOLUTION);
