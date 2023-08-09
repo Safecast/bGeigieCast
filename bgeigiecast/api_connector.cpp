@@ -123,8 +123,14 @@ ApiConnector::ApiHandlerStatus ApiConnector::send_reading(const Reading& reading
   http.addHeader("Content-Length", content_length);
 
   int httpResponseCode = http.POST(payload);
-
+  
   String response = http.getString();
+DEBUG_PRINTF("POST apikey: \r\n\r\n%s\r\n\r\n", _config.get_api_key());
+  DEBUG_PRINTF("POST payload: \r\n\r\n%s\r\n\r\n", payload);
+
+
+
+  // String response = http.getString();
   DEBUG_PRINTF("POST complete, status %d\r\nrepsonse: \r\n\r\n%s\r\n\r\n", httpResponseCode, response.c_str());
   http.end();  //Free resources
 
