@@ -46,7 +46,7 @@
 #define D_WIFI_SSID             "KittyWood LTE2"
 #define D_WIFI_PASSWORD         "schatjeyuka"
 #define D_APIKEY                "q1LKu7RQ8s5pmyxunnDW "
-#define D_USE_DEV_SERVER        true
+#define D_USE_DEV_SERVER        false
 #define D_LED_COLOR_BLIND       false
 #define D_LED_COLOR_INTENSITY   30
 #define D_WIFI_SERVER           false

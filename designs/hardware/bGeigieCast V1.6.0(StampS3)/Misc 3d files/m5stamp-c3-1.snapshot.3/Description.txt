@@ -1,0 +1,24 @@
+"M5Stack just added a new family to its popular series of modules with the Stamp-C3. 
+The new Stamp-C3 featuring ESPRESSIF ESP32-C3 RISC-V MCU with Wi-Fi connectivity for IoT edge devices such as home appliances and Industrial Automation. 
+By combining RSA-3072-based secure boot and the AES-128-XTS-based flash encryption, while also make it optimal for industrial IoT equipment collecting sensor data within a factory or a building.
+
+The Stamp-C3 is based on 32-bit RISC-V microcontroller and operates at a maximum clock frequency of 160 MHz. 
+With 400 KB of internal RAM and 4 MB Flash, it can facilitate many different use-cases involving connected devices. 
+Furthermore, the exceptional heat resistance plastic enclosure is sustained at a higher operating temperature."
+
+https://grabcad.com/library/m5stamp-c3-1
+
+https://shop.m5stack.com/collections/m5-controllers/products/m5stamp-c3-5pcs
+
+Product Features
+
+MULTIPLE STYLE:
+Three types soldering options are available(SMT, DIP, flywire), with a high-temperature resistant plastic enclosure, Peak temperature = 230℃
+
+HIGH INTEGRATION:
+Stamp-C3 contains 5V->3.3V DC/DC design, GPIOx13, programmable RGB LED x1, Reset button x1, button x1, 3D antenna,providing stable and reliable wireless communication.
+
+LOW-CODE DEVELOPMENT:
+Stamp-C3 fully compatible with Arduino, ESP32-IDF, and other mainstream development platforms to quickly build various applications. (UIFlow support coming soon)
+
+#CAD #SolidWorks #3dmodeling #microcontroller #32bit #mcu #m5stampc3 #bluetooth #wifi #riscv
