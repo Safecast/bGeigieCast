@@ -76,6 +76,7 @@
       (psa4output false)
       (plotreference true)
       (plotvalue true)
+      (plotfptext true)
       (plotinvisibletext false)
       (sketchpadsonfab false)
       (subtractmaskfromsilk false)
@@ -333,6 +334,10 @@
       (net 18 "GND")
       (tstamp 01bf3553-0052-4c53-9733-450f3a8d1f14)
     )
+    (pad "6" thru_hole oval (at 0 12.7) (size 1.7 1.7) (drill 1) (layers "*.Cu" "*.Mask")
+      (net 18 "GND")
+      (tstamp 5862f99a-5473-4427-ad8d-a4b94d38effd)
+    )
     (model "${KICAD7_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x01_P2.54mm_Vertical.wrl"
       (offset (xyz 0 0 -3))
       (scale (xyz 1 1 0.5))
@@ -445,6 +450,7 @@
 
   (segment (start 140.796 113.954) (end 140.796 109.672) (width 1) (layer "F.Cu") (net 18) (tstamp 4aba1ec1-12fe-401a-9e97-047ff06776b9))
   (segment (start 137.4 117.35) (end 140.796 113.954) (width 1) (layer "F.Cu") (net 18) (tstamp 95ab4c7a-2b4f-483b-82d3-cf61dfdae45c))
+  (segment (start 140.796 113.954) (end 140.796 117.292) (width 1) (layer "F.Cu") (net 18) (tstamp 973d7ef5-7baa-4a91-beb9-bb54316d39ea))
   (segment (start 153.984557 93.316557) (end 143.515443 93.316557) (width 1) (layer "F.Cu") (net 19) (tstamp 2cade3a4-6734-4aaa-8fbc-27d2042433b7))
   (segment (start 143.515443 93.316557) (end 143.416 93.416) (width 1) (layer "F.Cu") (net 19) (tstamp 483d843c-1772-414f-905a-f9b8fb402c41))
   (segment (start 157.64 96.972) (end 153.984557 93.316557) (width 1) (layer "F.Cu") (net 19) (tstamp 907e51c0-fdad-4fdb-84aa-34ac280b18f8))
