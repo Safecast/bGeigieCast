@@ -8,10 +8,20 @@
 #include "sm_context.h"
 #include "local_storage.h"
 
+enum SystemStateId {
+  k_state_InitializeState,
+  k_state_InitReadingState,
+  k_state_PostInitializeState,
+  k_state_ConfigurationModeState,
+  k_state_MobileModeState,
+  k_state_FixedModeState,
+  k_state_ResetState,
+};
+
 /**
  * Main controller for the system, implements state machine to run
  */
-class Controller : private ButtonObserver, public Context, public Aggregator, private Handler, private Worker<bool> {
+class Controller : public Context, public Aggregator, public Handler, public Worker<SystemStateId> {
  public:
 
   typedef enum {
@@ -33,21 +43,17 @@ class Controller : private ButtonObserver, public Context, public Aggregator, pr
   void run() override;
 
   /**
-   * Callback for the button
-   */
-  void on_button_pressed(Button* button, uint32_t millis) override;
-
-  /**
    * override set state from context, to flag worker that change has been made
    * @param state
    */
-  void set_state(State* state) override;
+  void set_state(BaseState* state) override;
 
- protected:
-  int8_t handle_produced_work(const worker_status_t& worker_reports) override;
+ private:
+  void initialize() override;
+  int8_t handle_produced_work(const worker_map_t& workers) override;
+
  private:
   int8_t produce_data() override;
- private:
 
   /**
    * Reset and restart the system
@@ -65,13 +71,7 @@ class Controller : private ButtonObserver, public Context, public Aggregator, pr
    */
   SavableState get_saved_state();
 
-  /**
-   * Initialize the controller and all of its components
-   */
-  void initialize();
-
   LocalStorage& _config;
-  Button _mode_button;
   bool _state_changed;
 
   friend class InitializeState;

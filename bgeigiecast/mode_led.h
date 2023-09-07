@@ -38,9 +38,10 @@ class ModeLED : private RGBLed, public Supervisor {
 
   void loop();
 
-  void handle_report(const Report& report) override;
+  void handle_report(const worker_map_t& workers, const handler_map_t& handlers) override;
 
-  bool activate() override;
+  void initialize() override;
+
  private:
   typedef struct {
     RGB normal;

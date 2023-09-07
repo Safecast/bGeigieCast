@@ -10,7 +10,7 @@
 /**
  * Configurations for the ESP32, stored in the flash memory
  */
-class LocalStorage : public Handler{
+class LocalStorage : public Handler {
  public:
   LocalStorage();
   virtual ~LocalStorage() = default;
@@ -27,10 +27,11 @@ class LocalStorage : public Handler{
   virtual const char* get_wifi_password() const final;
   virtual const char* get_api_key() const final;
   virtual bool get_use_dev() const final;
+  virtual uint8_t get_send_frequency() const final;
   virtual bool is_led_color_blind() const final;
   virtual uint8_t get_led_color_intensity() const final;
+  virtual bool get_wifi_server() const final;
   virtual int8_t get_saved_state() const final;
-
   virtual bool get_use_home_location() const final;
   virtual double get_home_longitude() const final;
   virtual double get_home_latitude() const final;
@@ -43,8 +44,10 @@ class LocalStorage : public Handler{
   virtual void set_wifi_password(const char* wifi_password, bool force);
   virtual void set_api_key(const char* api_key, bool force);
   virtual void set_use_dev(bool use_dev, bool force);
+  virtual void set_send_frequency(uint8_t send_frequency, bool force);
   virtual void set_led_color_blind(bool led_color_blind, bool force);
   virtual void set_led_color_intensity(uint8_t led_color_intensity, bool force);
+  virtual void set_wifi_server(bool wifi_server, bool force);
   virtual void set_saved_state(uint8_t saved_state, bool force);
   virtual void set_use_home_location(bool use_home_location, bool force);
   virtual void set_home_longitude(double home_longitude, bool force);
@@ -59,7 +62,7 @@ class LocalStorage : public Handler{
    * Read all settings
    */
   bool activate(bool) override;
-  int8_t handle_produced_work(const worker_status_t& worker_reports) override;
+  int8_t handle_produced_work(const worker_map_t& workers) override;
  private:
   Preferences _memory;
 
@@ -76,10 +79,13 @@ class LocalStorage : public Handler{
   // API config (to connect to the API)
   char _api_key[CONFIG_VAL_MAX];
   bool _use_dev;
+  uint8_t _send_frequency;
 
   // RGB LED config
   bool _led_color_blind;
   uint8_t _led_color_intensity;
+
+  bool _wifi_server;
 
   // Flag if fixed or mobile mode is started after init
   int8_t _saved_state;

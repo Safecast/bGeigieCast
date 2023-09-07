@@ -5,7 +5,6 @@
 #include "wifi_connection.h"
 #include "debugger.h"
 
-
 bool WiFiConnection::connect_wifi(const char* ssid, const char* password) {
   if(!ssid) {
     DEBUG_PRINTLN("WiFi connector: No SSID to connect to!");
@@ -15,12 +14,9 @@ bool WiFiConnection::connect_wifi(const char* ssid, const char* password) {
   switch(WiFi.status()) {
     case WL_CONNECTED:
       return true;
-    case WL_DISCONNECTED:
-      WiFi.reconnect();
-      delay(100);
-      return WiFi.isConnected();
     default:
       password ? WiFi.begin(ssid, password) : WiFi.begin(ssid);
+      delay(100);
       return WiFi.isConnected();
   }
 }

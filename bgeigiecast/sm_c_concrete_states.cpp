@@ -1,6 +1,6 @@
 #include <Aggregator.hpp>
 
-#include "sm_c_concete_states.h"
+#include "sm_c_concrete_states.h"
 #include "identifiers.h"
 
 // region InitializeState
@@ -10,6 +10,10 @@ InitializeState::InitializeState(Controller& context) : ControllerState(context)
 
 void InitializeState::entry_action() {
   DEBUG_PRINTLN("-- Entered state Initialize");
+  controller.set_worker_active(k_worker_mode_button, true);
+  controller.set_worker_active(k_worker_controller_state, true);
+  controller.set_handler_active(k_handler_controller_handler, true);
+  controller.set_handler_active(k_handler_storage_handler, true);
 }
 
 void InitializeState::do_activity() {
@@ -41,6 +45,7 @@ InitReadingState::InitReadingState(Controller& context) : ControllerState(contex
 
 void InitReadingState::entry_action() {
   DEBUG_PRINTLN("-- Entered state Initialize reading");
+  controller.set_worker_active(k_worker_bgeigie_connector, true);
 }
 
 void InitReadingState::do_activity() {
@@ -208,7 +213,7 @@ void FixedModeState::entry_action() {
   DEBUG_PRINTLN("-- Entered state FixedMode");
   controller.save_state(Controller::k_savable_FixedMode);
   controller.set_handler_active(k_handler_api_reporter, true);
-  controller.set_worker_active(k_worker_configuration_server, true);
+  controller.set_worker_active(k_worker_configuration_server, controller._config.get_wifi_server());
 }
 
 void FixedModeState::do_activity() {

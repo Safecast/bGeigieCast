@@ -6,6 +6,7 @@
 #include "debugger.h"
 #include "http_pages.h"
 #include "identifiers.h"
+#include "api_connector.h"
 
 #define RETRY_TIMEOUT 4000
 
@@ -16,7 +17,7 @@ T clamp(T2 val, T min, T max) {
 }
 
 ConfigWebServer::ConfigWebServer(LocalStorage& config)
-    : Worker<ServerStatus>(k_worker_configuration_server, k_server_status_offline, 0),
+    : Worker<ServerStatus>(k_server_status_offline, 0),
       _server(SERVER_WIFI_PORT),
       _config(config) {
   add_urls();
@@ -50,9 +51,9 @@ int8_t ConfigWebServer::produce_data() {
   _server.handleClient();
   if(data == k_server_status_offline) {
     data = HttpPages::internet_access ? k_server_status_running_wifi : k_server_status_running_access_point;
-    return WorkerStatus::e_worker_data_read;
+    return Worker::e_worker_data_read;
   }
-  return WorkerStatus::e_worker_idle;
+  return Worker::e_worker_idle;
 }
 
 void ConfigWebServer::add_urls() {
@@ -69,7 +70,8 @@ void ConfigWebServer::add_urls() {
         _server.hasArg("success"),
         _config.get_device_id(),
         _config.get_led_color_intensity(),
-        _config.is_led_color_blind()
+        _config.is_led_color_blind(),
+        _config.get_wifi_server()
     ));
   });
 
@@ -83,6 +85,7 @@ void ConfigWebServer::add_urls() {
         _config.get_wifi_ssid(),
         _config.get_wifi_password(),
         _config.get_api_key(),
+        _config.get_send_frequency(),
         _config.get_use_dev()
     ));
   });
@@ -170,11 +173,14 @@ void ConfigWebServer::handle_save() {
   if(_server.hasArg(FORM_NAME_USE_DEV)) {
     _config.set_use_dev(_server.arg(FORM_NAME_USE_DEV) == "1", false);
   }
-  if(_server.hasArg(FORM_NAME_LED_INTENSITY)) {
-    _config.set_led_color_intensity(clamp<uint8_t>(_server.arg(FORM_NAME_LED_INTENSITY).toInt(), 5, 100), false);
+  if(_server.hasArg(FORM_NAME_SEND_FREQ)){
+    _config.set_send_frequency(_server.arg(FORM_NAME_SEND_FREQ).toInt(), false);
   }
   if(_server.hasArg(FORM_NAME_LED_COLOR)) {
     _config.set_led_color_blind(strcmp(_server.arg(FORM_NAME_LED_COLOR).c_str(), "1") == 0, false);
+  }
+  if(_server.hasArg(FORM_NAME_WIFI_SERVER)) {
+    _config.set_wifi_server(strcmp(_server.arg(FORM_NAME_WIFI_SERVER).c_str(), "1") == 0, false);
   }
   if(_server.hasArg(FORM_NAME_LOC_HOME)) {
     _config.set_use_home_location(strcmp(_server.arg(FORM_NAME_LOC_HOME).c_str(), "1") == 0, false);
@@ -226,7 +232,4 @@ void ConfigWebServer::handle_update_uploading() {
       break;
     }
   }
-}
-
-void ConfigWebServer::handle_report(const Report& report) {
 }

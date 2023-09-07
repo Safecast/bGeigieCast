@@ -18,7 +18,7 @@ class Context {
    * Will exit the current one and enter the new one
    * @param state: New state to be set
    */
-  virtual void set_state(State* state);
+  virtual void set_state(BaseState* state);
 
   virtual /**
    * Run the state machine once, will handle scheduled events and run the do activity from the state
@@ -35,7 +35,7 @@ class Context {
    * Get current state
    * @return
    */
-  State* get_current_state() const;
+  BaseState* get_current_state() const;
 
   /**
    * Clear all events in the event queue
@@ -48,7 +48,7 @@ class Context {
   void handle_events();
  private:
 
-  State* _current_state;
+  BaseState* _current_state;
   CircularBuffer<Event_enum, MAX_EVENTS> _event_queue;
 };
 

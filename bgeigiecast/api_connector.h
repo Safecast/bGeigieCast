@@ -15,33 +15,40 @@
 /**
  * Connects over WiFi to the API to send readings
  */
-class ApiReporter : public Handler {
+class ApiConnector : public Handler {
  public:
-
+  /**
+   * Collection of statuses for the api data handling, default is idle.
+   */
   enum ApiHandlerStatus {
     e_api_reporter_idle,
     e_api_reporter_send_success,
-    e_api_reporter_error_invalid_reading,
+    e_api_reporter_error_to_json,
     e_api_reporter_error_not_connected,
     e_api_reporter_error_remote_not_available,
-    e_api_reporter_error_server_rejected_post,
+    e_api_reporter_error_server_rejected_post_400,
+    e_api_reporter_error_server_rejected_post_401,
+    e_api_reporter_error_server_rejected_post_403,
+    e_api_reporter_error_server_rejected_post_5xx,
   };
 
-  explicit ApiReporter(LocalStorage& config);
-  virtual ~ApiReporter() = default;
+  enum SendFrequency {
+    e_api_send_frequency_5_sec,
+    e_api_send_frequency_1_min,
+    e_api_send_frequency_5_min,
+  };
+
+  explicit ApiConnector(LocalStorage& config);
+  virtual ~ApiConnector() = default;
 
  protected:
 
   /**
    * Check if enough time has passed to send the latest reading to api
-   * @return
+   * @param offset: additional ms offset to check if its *almost* time to send (default 1 second)
+   * @return true if time to send
    */
-  bool time_to_send() const;
-
-  /**
-   * reset_reading the api time and merged readings
-   */
-  void reset_reading();
+  bool time_to_send(unsigned offset = 1000) const;
 
   /**
    * Initialize the connection
@@ -55,12 +62,9 @@ class ApiReporter : public Handler {
    */
   void deactivate() override;
 
-  int8_t handle_produced_work(const worker_status_t& worker_reports) override;
-  /**
-   * When a reading cannot be send to the API, we save it to send later..
-   * @param reading: reading to save
-   */
-  virtual void save_reading(const Reading& reading) final;
+  int8_t handle_produced_work(const worker_map_t& workers) override;
+
+  bool reading_to_json(const Reading& reading, char* out);
 
  private:
 
@@ -71,14 +75,9 @@ class ApiReporter : public Handler {
    */
   ApiHandlerStatus send_reading(const Reading& reading);
 
-
   LocalStorage& _config;
-  CircularBuffer<Reading, MAX_MISSED_READINGS> _saved_readings;
-  uint32_t _last_send;
-  Reading _merged_reading;
+  uint32_t _last_success_send;
   ApiHandlerStatus _current_default_response;
-
-  bool _alert;
 };
 
 #endif //BGEIGIECAST_APICONNECTOR_H

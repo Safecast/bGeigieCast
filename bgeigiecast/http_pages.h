@@ -1,7 +1,7 @@
 #ifndef BGEIGIECAST_HTTP_PAGES_H
 #define BGEIGIECAST_HTTP_PAGES_H
 
-#define TRANMISSION_SIZE 4098
+#define TRANSMISSION_SIZE 4098
 
 #define PURE_CSS_SIZE 3929
 #define FAVICON_SIZE 696
@@ -10,9 +10,11 @@
 #define FORM_NAME_WIFI_PASS "c_wp"
 #define FORM_NAME_API_KEY "c_ak"
 #define FORM_NAME_USE_DEV "c_ud"
+#define FORM_NAME_SEND_FREQ "c_sf"
 #define FORM_NAME_AP_LOGIN "d_ap"
 #define FORM_NAME_LED_INTENSITY "d_li"
 #define FORM_NAME_LED_COLOR "d_lc"
+#define FORM_NAME_WIFI_SERVER "d_ws"
 #define FORM_NAME_LOC_HOME "l_uh"
 #define FORM_NAME_LOC_HOME_LAT "l_ha"
 #define FORM_NAME_LOC_HOME_LON "l_ho"
@@ -51,7 +53,8 @@ class HttpPages {
       bool display_success,
       uint32_t device_id,
       uint8_t led_intensity,
-      bool colorblind
+      bool colorblind,
+      bool webserver
   );
 
   /**
@@ -72,6 +75,7 @@ class HttpPages {
       const char* wifi_ssid,
       const char* wifi_password,
       const char* api_key,
+      uint8_t send_frequency,
       bool use_dev
   );
 
@@ -115,7 +119,7 @@ class HttpPages {
  private:
 
   static const char* render_full_page(uint32_t device_id, const char* page_name, const char* content_format, ...);
-  static char transmission_buffer[TRANMISSION_SIZE];
+  static char transmission_buffer[TRANSMISSION_SIZE];
 
 };
 

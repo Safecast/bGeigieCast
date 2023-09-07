@@ -31,16 +31,10 @@ class Reading {
   Reading& operator=(const Reading& other);
 
   /**
-   * Merge another reading with this one, takes the averages of all
-   * @param o
-   */
-  Reading& operator+=(const Reading& o);
-
-  /**
    * Get this reading as a json object in string
    * @param out: output param
    * @param fixed: if the device is in fixed mode, it will add 60000 to the device id
-   * @return: succes / not
+   * @return: success / not
    */
   bool as_json(char* out = nullptr);
 
@@ -56,17 +50,19 @@ class Reading {
   bool valid_reading() const;
 
   /**
-   * Apply home location. will invalidate the gps status if its out of range, or set the home lat / long if in range.
-   * @param home_lat: latitude
-   * @param home_long: longitude
+   * Check if measurement is within home location.
+   * @param latitude: latitude
+   * @param longitude: longitude
+   * @param distance: distance in kilometers
+   * @return: True if within hom location
    */
-  void apply_home_location(double home_lat, double home_long);
+  bool near_coordinates(double home_lat, double home_long, double distance) const;
 
   const char* get_reading_str() const;
   uint8_t get_status() const;
   uint16_t get_device_id() const;
   uint32_t get_fixed_device_id() const;
-  const char* get_iso_timestr() const;
+  const char* get_iso_timestamp() const;
   uint16_t get_cpm() const;
   uint16_t get_cpb() const;
   uint16_t get_total_count() const;
@@ -84,16 +80,17 @@ class Reading {
 
   char _reading_str[READING_STR_MAX];
   uint8_t _status;
-  uint16_t _average_of;
 
   // Reading content
   uint16_t _device_id;
-  char _iso_timestr[30];
+  char _iso_timestamp[25];
   uint16_t _cpm;
   uint16_t _cpb;
   uint16_t _total_count;
   double _latitude;
   double _longitude;
+  double _last_known_latitude;
+  double _last_known_longitude;
   double _altitude;
   int _sat_count;
   float _precision;
