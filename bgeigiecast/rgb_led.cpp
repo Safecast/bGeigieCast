@@ -15,6 +15,10 @@ RGBLed::RGBLed(uint8_t pin_r, uint8_t pin_g, uint8_t pin_b, bool reversed) : _re
 
 void RGBLed::init() {
 #ifdef USE_FASTLED
+#ifdef LED_EN
+  pinMode(LED_EN, OUTPUT);
+  digitalWrite(LED_EN, HIGH);
+#endif
   FastLED.addLeds<WS2812, FASTLED_PIN, GRB>(leds, 1);
 #else
   // Connect pins to channels
