@@ -1,6 +1,8 @@
 #ifndef BGEIGIECAST_CIRCULAR_BUFFER_HPP
 #define BGEIGIECAST_CIRCULAR_BUFFER_HPP
 
+#include <stdint.h>
+
 /**
  * Simple circular buffer
  * @tparam T: Type of the buffer
